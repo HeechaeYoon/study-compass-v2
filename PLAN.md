@@ -36,19 +36,23 @@
 - [x] Generated 3 paper texture candidates with `$imagegen`.
 - [x] Generated 3 pencil candidates with `$imagegen`.
 - [x] Generated 3 approved `학습 지도 콜라주` start-hero candidates with `$imagegen`.
+- [x] Generated 3 borderless start-hero candidates with `$imagegen` to remove the pasted-frame feeling.
 - [x] Selected candidate C for paper, pencil, and start-hero assets.
+- [x] Selected user-confirmed borderless hero candidate A for the current start hero.
 - [x] Processed assets with `scripts/process-generated-assets.mjs`.
 - [x] Prompt log and rationale recorded in `.prompts/IMAGEGEN_ASSETS.md`.
 - [x] Final local assets:
   - `public/assets/paper-texture.webp` 666 bytes
   - `public/assets/pencil-transparent.webp` 28,932 bytes
   - `public/assets/start-hero-map.webp` 86,168 bytes
+  - `public/assets/start-hero-map-v2.webp` 38,224 bytes
 
 ## 4. Screens And Functionality
 
 - [x] Header removes the unclear `5가지 학습 축` label and keeps only `총 16문항`, `약 5~7분 소요`.
 - [x] Start screen with safety disclaimer, optional nickname, saved-result state, privacy strip, and generated local learning-map hero artwork.
 - [x] Start screen removes the arbitrary HTML 5-axis card constellation; saved-result card remains stable in narrow horizontal space.
+- [x] Start hero uses the user-confirmed borderless learning-map image version with reduced left spacing between the copy and artwork.
 - [x] Question screen with native radios, progress, pointer-only auto-advance after new selections, keyboard/reduced-motion manual pacing, previous/next fallback, browser Back support, and deterministic Q06 fixture.
 - [x] Question screen removes the ambiguous green arrow and uses a non-directional `study-spark` doodle that does not steer layout.
 - [x] Result screen with custom SVG radar chart, no misleading radar caption/legend, summary cards, detail-screen navigation, copy, save, export, and reset.
@@ -65,16 +69,16 @@ Final automated metrics from `npm run test:visual`:
 
 | Screen | Reviewer score | SSIM | Mismatch | Status |
 |---|---:|---:|---:|---|
-| Start | 91 | 0.3552 | 0.1562 | Pass |
-| Question | 91 | 0.4747 | 0.0836 | Pass |
-| Result | 91 | 0.5152 | 0.0820 | Pass |
-| Prompt | 91 | 0.3525 | 0.0967 | Pass |
+| Start | 91 | 0.4116 | 0.1071 | Pass |
+| Question | 91 | 0.4550 | 0.1097 | Pass |
+| Result | 91 | 0.4496 | 0.1242 | Pass |
+| Prompt | 91 | 0.3536 | 0.1327 | Pass |
 
 Notes:
 
 - SSIM is below advisory thresholds because the source is a scaled annotated montage. Pixel mismatch ratios are within the advisory 22% cap.
 - Final evidence paths are under `artifacts/visual/`.
-- Latest UX refinement replaces the start-card flow with the generated learning-map artwork, removes the question arrow, removes the radar caption, removes prompt tabs/guide, improves prompt copy feedback, refreshes the detail report, fixes export capture, and adds toast auto-dismiss.
+- Latest UX refinement replaces the start-card flow with the generated learning-map artwork, switches the start hero to the user-corrected borderless candidate A with tighter left spacing, removes the question arrow, removes the radar caption, removes prompt tabs/guide, improves prompt copy feedback, refreshes the detail report, fixes export capture, and adds toast auto-dismiss.
 - Detail report fixture capture added at `artifacts/visual/detail-1280x800.png`.
 
 ## 6. Accessibility And Robustness

@@ -32,15 +32,16 @@
 | UX cleanup 2 | Detail | 91 | Report felt flat and the mission was too low in the reading order. | Rebuilt it as a student-facing learning-map screen with snapshot, mission, axis cards, recommendations, cautions, and avoid-methods. | `artifacts/visual/detail-1280x800.png` |
 | Reviewer fix 2 | Detail | 91 | Footer actions were pressed into the bottom edge at 1280x800. | Removed duplicate footer actions, moved `리포트 복사` and `AI 프롬프트` to the header, and recaptured the detail fixture. | `artifacts/visual/detail-1280x800.png` |
 | Reviewer fix 2 | Result/report text | 91 | `5가지 학습 축` still appeared in non-visual labels/report copy. | Reworded those surfaces to `학습 지도 결과` and `학습 축별 현재 모습`. | `src/components/RadarChart.tsx` |
+| Hero spacing refresh | Start | 91 | User corrected the intended reference to the borderless generated image and wanted less left whitespace. | Switched to `start-hero-map-v2.webp` candidate A, cropped the blank outer margin, reduced the copy/artwork gap, widened the artwork region, and kept the hard CSS frame removed. | `artifacts/visual/start-1280x800.png` |
 
 ## Automated Metrics
 
 | Screen | SSIM | Pixel mismatch | Actual | Diff |
 |---|---:|---:|---|---|
-| Start | 0.3552 | 0.1562 | `artifacts/visual/start-surface.png` | `artifacts/visual/start-diff.png` |
-| Question | 0.4747 | 0.0836 | `artifacts/visual/question-surface.png` | `artifacts/visual/question-diff.png` |
-| Result | 0.5152 | 0.0820 | `artifacts/visual/result-surface.png` | `artifacts/visual/result-diff.png` |
-| Prompt | 0.3525 | 0.0967 | `artifacts/visual/prompt-surface.png` | `artifacts/visual/prompt-diff.png` |
+| Start | 0.4116 | 0.1071 | `artifacts/visual/start-surface.png` | `artifacts/visual/start-diff.png` |
+| Question | 0.4550 | 0.1097 | `artifacts/visual/question-surface.png` | `artifacts/visual/question-diff.png` |
+| Result | 0.4496 | 0.1242 | `artifacts/visual/result-surface.png` | `artifacts/visual/result-diff.png` |
+| Prompt | 0.3536 | 0.1327 | `artifacts/visual/prompt-surface.png` | `artifacts/visual/prompt-diff.png` |
 
 The SSIM values are advisory because the reference is a scaled montage with annotations. Pixel mismatch ratios remain within the documented advisory limit.
 
@@ -79,6 +80,12 @@ Start hero learning map:
 Selected ImageGen hero-map candidate C because it communicates a warm self-directed learning journey through blank stationery, route markers, and study tools without AI, robot, chat, UI-card, or readable-text cues. Final: public/assets/start-hero-map.webp.
 ```
 
+Borderless start hero:
+
+```text
+Selected ImageGen borderless hero candidate A after the user corrected the intended reference image. It has broad warm-white edges, a clear learning route, and a notebook/pencil collage that works without an image frame. Final: public/assets/start-hero-map-v2.webp.
+```
+
 ## Final Rubric Scores
 
 | Screen | Macro | Type | Color | Geometry | Components | Assets | Polish | Total |
@@ -93,5 +100,5 @@ All screens meet the ≥90 total threshold and every category meets its minimum.
 ## Residual Differences
 
 ```text
-The implementation is not pixel-perfect. The source is a montage, and product-required safety/action content creates some density differences. The start screen now uses an approved generated learning-map asset rather than the original card constellation, so SSIM dropped while the interaction meaning improved. The prompt screen uses a scrollable real text preview rather than visually hiding overflow. The result screen includes more visible action buttons than the board crop so required copy/save/export/detail flows remain discoverable. A dedicated detail screen is intentionally outside the four primary 1280x800 reference states and is captured separately.
+The implementation is not pixel-perfect. The source is a montage, and product-required safety/action content creates some density differences. The start screen now uses the user-confirmed borderless generated learning-map asset rather than the original card constellation, with the copy/artwork gap reduced so the hero image sits closer to the left content. The prompt screen uses a scrollable real text preview rather than visually hiding overflow. The result screen includes more visible action buttons than the board crop so required copy/save/export/detail flows remain discoverable. A dedicated detail screen is intentionally outside the four primary 1280x800 reference states and is captured separately.
 ```

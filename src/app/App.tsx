@@ -320,7 +320,7 @@ export function App() {
         {state.screen === "start" ? (
           <StartScreen
             nickname={state.nickname}
-            heroImageSrc={assetPath("assets/start-hero-map.webp")}
+            heroImageSrc={assetPath("assets/start-hero-map-v2.webp")}
             savedResult={state.savedResult}
             onNicknameChange={(value) =>
               dispatch({ type: "SET_NICKNAME", value })

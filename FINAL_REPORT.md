@@ -22,7 +22,7 @@ Rebuilt the app as a production-quality static React/Vite/TypeScript web app for
 
 ## 3. Implemented Screens
 
-- Start: visual intro, required safety disclaimer, optional nickname, saved-result reload/delete, privacy strip, and generated local learning-map hero artwork.
+- Start: visual intro, required safety disclaimer, optional nickname, saved-result reload/delete, privacy strip, and user-confirmed borderless generated learning-map hero artwork.
 - Question: 16 questions, native radio cards, progress, pointer-only auto-advance after new selections, keyboard/reduced-motion manual pacing, previous/next fallback, browser Back preservation, Q06 5-card fixture.
 - Result: current-response safety language, custom SVG radar without misleading visible caption, strengths/balance/recommendation summary, detail report entry, copy/save/export/reset.
 - Detail report: separate student-facing learning-map report with large title, current-response safety note, strength/balance/growth snapshot, mission, 5-axis interpretation, recommendations, cautions, and avoid methods.
@@ -36,21 +36,22 @@ Rebuilt the app as a production-quality static React/Vite/TypeScript web app for
 | `public/assets/paper-texture.webp` | `.prompts/IMAGEGEN_ASSETS.md` | paper candidate C | 512 square, blended toward `#F7F4EE`, WebP q78 | 666 bytes |
 | `public/assets/pencil-transparent.webp` | `.prompts/IMAGEGEN_ASSETS.md` | pencil candidate C | background removal, trim, padding, WebP alpha | 28,932 bytes |
 | `public/assets/start-hero-map.webp` | `.prompts/IMAGEGEN_ASSETS.md` | hero-map candidate C | 1180px wide, WebP q84 | 86,168 bytes |
+| `public/assets/start-hero-map-v2.webp` | `.prompts/IMAGEGEN_ASSETS.md` | borderless hero candidate A | cropped to central learning-map area, 1180px wide, light tone blend, WebP q86 | 38,224 bytes |
 
 ## 5. Visual Validation
 
 | Screen | Reviewer score | SSIM | Pixel mismatch | Screenshot |
 |---|---:|---:|---:|---|
-| Start | 91 | 0.3552 | 0.1562 | `artifacts/visual/start-1280x800.png` |
-| Question | 91 | 0.4747 | 0.0836 | `artifacts/visual/question-1280x800.png` |
-| Result | 91 | 0.5152 | 0.0820 | `artifacts/visual/result-1280x800.png` |
-| Prompt | 91 | 0.3525 | 0.0967 | `artifacts/visual/prompt-1280x800.png` |
+| Start | 91 | 0.4116 | 0.1071 | `artifacts/visual/start-1280x800.png` |
+| Question | 91 | 0.4550 | 0.1097 | `artifacts/visual/question-1280x800.png` |
+| Result | 91 | 0.4496 | 0.1242 | `artifacts/visual/result-1280x800.png` |
+| Prompt | 91 | 0.3536 | 0.1327 | `artifacts/visual/prompt-1280x800.png` |
 | Detail | reviewed separately | n/a | n/a | `artifacts/visual/detail-1280x800.png` |
 
 Residual differences:
 
 ```text
-Not pixel-perfect. The reference is a scaled montage, and the product-required safety/action content creates some density differences. Start now uses the approved generated learning-map asset instead of the earlier HTML card constellation, so visual similarity metrics are lower while the UI meaning is clearer. Prompt preview is scrollable real text; result actions are more explicit than the board crop to satisfy save/copy/export/detail requirements.
+Not pixel-perfect. The reference is a scaled montage, and the product-required safety/action content creates some density differences. Start now uses the user-confirmed borderless generated learning-map asset instead of the earlier HTML card constellation, with tighter spacing between the copy and artwork. Prompt preview is scrollable real text; result actions are more explicit than the board crop to satisfy save/copy/export/detail requirements.
 ```
 
 ## 6. Functional Validation

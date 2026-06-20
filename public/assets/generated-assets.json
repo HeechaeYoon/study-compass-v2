@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-06-20T00:43:32.430Z",
+  "generatedAt": "2026-06-20T06:42:00.000Z",
   "assets": [
     {
       "file": "paper-texture.webp",
@@ -37,6 +37,19 @@
       "processing": [
         "resize to 1180px wide without enlargement",
         "export webp quality 84 alphaQuality 90"
+      ]
+    },
+    {
+      "file": "start-hero-map-v2.webp",
+      "kind": "imagegen",
+      "promptFile": ".prompts/IMAGEGEN_ASSETS.md",
+      "candidate": "hero-map-borderless-candidate-a",
+      "source": "/home/heechae/.codex/generated_images/019ee32b-539b-7ac1-939f-d9abda2cf3b1/ig_0b13684bb1ee0770016a362ef252b881918cda7b8c04ae4168.png",
+      "processing": [
+        "crop to central learning-map area at x=240 y=130 width=1200 height=717",
+        "resize to 1180px wide",
+        "slightly brighten and desaturate for surface blending",
+        "export webp quality 86 alphaQuality 90"
       ]
     }
   ]

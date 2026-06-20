@@ -176,3 +176,63 @@ Processing:
 ```text
 Resize to 1180px wide without enlargement, export WebP quality 84.
 ```
+
+### Revision 3
+
+Date: 2026-06-20
+
+Mode: built-in `image_gen`
+
+User direction:
+
+```text
+새로 이미지를 생성해서 기존 히어로 페이지와 조화되게 만들고, 특정 프레임 안에 이미지를 첨부한 느낌이 아니라 화면에 자연스럽게 녹아나도록 한다.
+```
+
+Prompt base:
+
+```text
+Use case: stylized-concept
+Asset type: borderless start hero asset for a Korean middle-school self-directed learning web app
+Primary request: Create a warm hero visual that blends naturally into an off-white web app surface, as if study tools are gently laid on the page rather than inside a framed picture.
+Scene/backdrop: almost pure warm white paper surface matching #fffefc, no visible rectangular backdrop, no border, no frame. The edges of the entire image must remain mostly empty warm white so it can disappear into a white app background.
+Subject: a calm self-directed learning map made from an open blank notebook, one warm wooden pencil, a few very light blank paper scraps, tiny check marks, and a soft dotted route. Keep all objects clustered near the center with generous white/ivory breathing room around every edge.
+Style/medium: refined realistic stationery illustration with a subtle hand-crafted Korean educational workbook feeling; polished, warm, age-appropriate for middle-school students; not childish.
+Composition/framing: wide landscape composition for a right-side website hero area. Central floating collage, no hard crop. The outer 15-20 percent on all sides should be plain #fffefc or nearly identical warm white with no objects or texture seams.
+Lighting/mood: soft natural light, reassuring, quiet, self-directed learning mood. Very subtle shadows only under objects, no dramatic shadow.
+Color palette: warm white #fffefc, gentle ivory, deep navy linework, soft indigo, muted mint, tiny coral/yellow accents.
+Materials/textures: matte notebook paper, light stationery, soft pencil wood, very subtle paper fibers; all paper must visually blend into the warm white surface.
+Text (verbatim): none. No letters, no numbers, no pseudo-writing.
+Constraints: no frame, no border, no rounded rectangle, no UI card, no app screen, no computer, no phone, no chatbot, no robot, no AI symbols, no faces, no characters, no logo, no watermark. Avoid edge clutter. Do not make the image look like a photo pasted inside a card.
+Avoid: beige rectangular background, framed poster look, strong drop shadow, dark corners, vignette, readable writing, labels, neon, glossy 3D, childish stickers.
+```
+
+Candidates:
+
+- Borderless hero candidate A: `/home/heechae/.codex/generated_images/019ee32b-539b-7ac1-939f-d9abda2cf3b1/ig_0b13684bb1ee0770016a362ef252b881918cda7b8c04ae4168.png`
+- Borderless hero candidate B: `/home/heechae/.codex/generated_images/019ee32b-539b-7ac1-939f-d9abda2cf3b1/ig_0b13684bb1ee0770016a362f43b4f4819193f2d9c1681e934b.png`
+- Borderless hero candidate C: `/home/heechae/.codex/generated_images/019ee32b-539b-7ac1-939f-d9abda2cf3b1/ig_0b13684bb1ee0770016a362fbea5208191ba31aa759871999f.png`
+
+Selected:
+
+```text
+Borderless hero candidate A -> public/assets/start-hero-map-v2.webp
+```
+
+Reason:
+
+```text
+Candidate A is the user-selected image. It keeps the borderless warm-white surface, has the strongest learning-map route across the top, and gives the notebook/pencil collage enough presence for the hero area without UI, AI, or frame cues.
+```
+
+Processing:
+
+```text
+Crop the source to the central learning-map area (1200x717 from x=240, y=130), resize to 1180px wide, modulate brightness 1.015 and saturation 0.96, export WebP quality 86 alphaQuality 90. CSS keeps the reduced copy/artwork spacing and removes the previous hard image frame.
+```
+
+Status:
+
+```text
+Current app hero asset after user corrected the intended reference image.
+```
