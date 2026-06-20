@@ -149,7 +149,7 @@ test("detail report opens as a readable screen and returns to summary", async ({
   await expect(page.getByRole("button", { name: /AI 프롬프트 만들기/ })).toBeVisible();
 });
 
-test("memo is excluded by default and can be included", async ({ page }) => {
+test("memo is included automatically and prompt modes switch preview purpose", async ({ page }) => {
   await page.goto("/?fixture=prompt");
   await expect(page.getByText(/아직 AI로 보내지지 않아요/)).toBeVisible();
   await expect(page.getByText(/민감한 개인정보를 빼주세요/)).toBeVisible();
@@ -157,10 +157,21 @@ test("memo is excluded by default and can be included", async ({ page }) => {
   await expect(page.getByRole("button", { name: /상세 리포트 복사/ })).toHaveCount(0);
   await expect(page.getByRole("tablist")).toHaveCount(0);
   await expect(page.getByText("학습 전략 가이드")).toHaveCount(0);
+  await expect(page.getByRole("checkbox")).toHaveCount(0);
   await page.getByLabel("내가 보기엔 다른 점").fill("나는 문제풀이가 더 편해요.");
-  await expect(page.locator(".promptPreview")).not.toContainText("나는 문제풀이가 더 편해요.");
-  await page.getByLabel(/내가 쓴 메모/).check();
   await expect(page.locator(".promptPreview")).toContainText("나는 문제풀이가 더 편해요.");
+  await expect(page.locator(".promptPreview")).toContainText("30~40분");
+
+  await page.getByRole("button", { name: "개념 학습" }).click();
+  await expect(page.locator(".promptPreview")).toContainText("개념 학습용 설명");
+  await expect(page.locator(".promptPreview")).toContainText("확인문제 3개");
+
+  await page.getByRole("button", { name: "계획 이미지" }).click();
+  await expect(page.locator(".promptPreview")).toContainText("학습 계획 인포그래픽");
+  await expect(page.locator(".promptPreview")).toContainText("이미지에 그대로 쓰지 말 것");
+
+  await page.getByRole("button", { name: "개념 이미지" }).click();
+  await expect(page.locator(".promptPreview")).toContainText("개념 학습 인포그래픽");
 });
 
 test("prompt preview updates live and copy button confirms success", async ({ page }) => {
@@ -196,7 +207,6 @@ test("save and delete latest result", async ({ page }) => {
   const uniqueMemo = "삭제 확인용 메모 6b47";
   await page.goto("/?fixture=prompt");
   await page.getByLabel("내가 보기엔 다른 점").fill(uniqueMemo);
-  await page.getByLabel(/내가 쓴 메모/).check();
   await page.getByRole("button", { name: /결과 저장/ }).click();
   await expect(page.getByRole("status")).toContainText("저장");
   await page.goto("/");
@@ -268,7 +278,6 @@ test("image export downloads a safe summary filename", async ({ page }) => {
   await page.goto("/?fixture=prompt");
   await page.getByLabel("과목").fill("비밀과목 57ac");
   await page.getByLabel("내가 보기엔 다른 점").fill("비밀메모 57ac");
-  await page.getByLabel(/내가 쓴 메모/).check();
   const exportCard = page.locator("[data-export-card]");
   await expect(exportCard).toContainText("강점");
   await expect(exportCard).toContainText("균형");

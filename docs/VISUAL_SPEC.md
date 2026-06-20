@@ -682,6 +682,11 @@ gap: 40px;
   - entered content changes the preview only
   - the app has not sent anything to AI
   - remove names, contact details, and sensitive personal information before pasting into an AI chatbot
+- Compact prompt-mode selector:
+  - `공부 계획`
+  - `개념 학습`
+  - `계획 이미지`
+  - `개념 이미지`
 
 Fields in vertical stack:
 
@@ -692,7 +697,6 @@ Fields in vertical stack:
 5. 어려운 점
 6. 원하는 도움
 7. 내가 보기엔 다른 점 textarea
-8. 학생 메모 포함 checkbox
 
 The reference shows four fields. At canonical height, group optional fields into two-column rows or use compact 46px fields so the form fits without a dense appearance.
 
@@ -709,7 +713,8 @@ Preview behavior:
 
 - No separate generate button.
 - The preview updates live as fields change.
-- Memo inclusion defaults to off and only enters the prompt when the checkbox is checked.
+- Memo text enters the prompt automatically when the textarea is not empty.
+- The selected prompt mode changes the preview immediately.
 - Utility actions below the fields: `결과 저장`, `이미지 저장`, `저장 결과 삭제`.
 
 ### Notebook preview

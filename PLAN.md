@@ -87,7 +87,7 @@ Notes:
 
 - [x] Keyboard-reachable native controls.
 - [x] Radio groups use fieldset/legend.
-- [x] Inputs and checkbox have labels.
+- [x] Inputs and prompt mode controls have labels.
 - [x] Progress has accessible values.
 - [x] Radar has text summary.
 - [x] Toast uses live region.
@@ -153,3 +153,14 @@ Notes:
 - [x] Kept the 16-question structure unchanged; Q13/Q15/Q16 score edits were not needed after profile and guardrail calibration.
 - [x] Recorded the exact distribution from `npm run logic:distribution`: `strategy_designer` 22.85%, `execution_driver` 19.00%, `concept_explorer` 17.57%, `resource_user` 14.10%, `foundation_builder` 9.62%, `reflection_grower` 7.80%, `routine_stabilizer` 6.04%, `balanced_coordinator` 3.03%.
 - [x] Added regression expectations: every type >=3%, every type <=30%, `foundation_builder` <=30%, `balanced_coordinator` <=22%, and `strategy_designer` >=3%.
+
+## 12. Prompt Generator Upgrade
+
+- [x] Added `IMPLEMENTATION_NOTES.md` as the subtask progress and resume ledger.
+- [x] Replaced the single AI prompt with four modes: `공부 계획`, `개념 학습`, `계획 이미지`, `개념 이미지`.
+- [x] Added full 16-question answer context to generated prompts.
+- [x] Removed the memo inclusion checkbox; non-empty memo text is included automatically in prompts.
+- [x] Added image-generation prompt modes for Gemini/ChatGPT infographic use without calling external AI from the app.
+- [x] Migrated saved results to schema version 2 while preserving a v1 load migration.
+- [x] Updated unit, E2E, visual, PRD, content, technical, visual, QA, and final-report docs for the new prompt behavior.
+- [x] Final validation: `npm run typecheck`, `npm run lint`, `npm run test`, `npm run build`, `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:e2e`, and `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:visual` passed.

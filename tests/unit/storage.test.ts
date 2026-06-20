@@ -33,18 +33,49 @@ describe("storage", () => {
     const storage = makeStorage();
     stubWindow(storage);
     const saved: SavedResult = {
-      schemaVersion: 1,
+      schemaVersion: 2,
       savedAt: "2026-06-20T00:00:00.000Z",
       result: createFixtureResult(),
       memo: "",
-      includeMemoInPrompt: false,
       promptInputs: EMPTY_PROMPT_INPUTS,
     };
     expect(saveResult(saved).ok).toBe(true);
     expect(storage.setItem).toHaveBeenCalledWith(STORAGE_KEY, expect.any(String));
     const loaded = loadResult();
     expect(loaded.ok).toBe(true);
-    expect(loaded.ok ? loaded.value?.schemaVersion : null).toBe(1);
+    expect(loaded.ok ? loaded.value?.schemaVersion : null).toBe(2);
+  });
+
+  it("migrates v1 data by dropping memo checkbox state", () => {
+    const storage = makeStorage();
+    storage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        schemaVersion: 1,
+        savedAt: "2026-06-20T00:00:00.000Z",
+        result: createFixtureResult(),
+        memo: "상위 메모",
+        includeMemoInPrompt: false,
+        promptInputs: {
+          ...EMPTY_PROMPT_INPUTS,
+          memo: "입력 메모",
+          includeMemo: false,
+        },
+      }),
+    );
+    stubWindow(storage);
+
+    const loaded = loadResult();
+
+    expect(loaded.ok).toBe(true);
+    expect(loaded.ok ? loaded.value?.schemaVersion : null).toBe(2);
+    expect(loaded.ok ? loaded.value?.memo : null).toBe("입력 메모");
+    expect(loaded.ok ? loaded.value?.promptInputs.memo : null).toBe("입력 메모");
+    expect(
+      loaded.ok && loaded.value
+        ? "includeMemoInPrompt" in loaded.value
+        : true,
+    ).toBe(false);
   });
 
   it("returns null when no saved result exists", () => {
@@ -66,11 +97,10 @@ describe("storage", () => {
     storage.setItem(
       STORAGE_KEY,
       JSON.stringify({
-        schemaVersion: 1,
+        schemaVersion: 2,
         savedAt: "2026-06-20T00:00:00.000Z",
         result: {},
         memo: "",
-        includeMemoInPrompt: false,
         promptInputs: EMPTY_PROMPT_INPUTS,
       }),
     );

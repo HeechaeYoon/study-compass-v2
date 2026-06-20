@@ -8,11 +8,10 @@ import { validateAnswers } from "../domain/validation";
 export const STORAGE_KEY = "srl-coach-result-v1";
 
 export type SavedResult = {
-  schemaVersion: 1;
+  schemaVersion: 2;
   savedAt: string;
   result: Result;
   memo: string;
-  includeMemoInPrompt: boolean;
   promptInputs: PromptInputs;
 };
 
@@ -72,9 +71,32 @@ function isPromptInputs(value: unknown): value is PromptInputs {
     typeof value.situation === "string" &&
     typeof value.difficulty === "string" &&
     typeof value.desiredHelp === "string" &&
-    typeof value.memo === "string" &&
-    typeof value.includeMemo === "boolean"
+    typeof value.memo === "string"
   );
+}
+
+function toPromptInputs(value: unknown, fallbackMemo = ""): PromptInputs | null {
+  if (!isRecord(value)) return null;
+  if (
+    typeof value.subject !== "string" ||
+    typeof value.unit !== "string" ||
+    typeof value.goal !== "string" ||
+    typeof value.situation !== "string" ||
+    typeof value.difficulty !== "string" ||
+    typeof value.desiredHelp !== "string"
+  ) {
+    return null;
+  }
+
+  return {
+    subject: value.subject,
+    unit: value.unit,
+    goal: value.goal,
+    situation: value.situation,
+    difficulty: value.difficulty,
+    desiredHelp: value.desiredHelp,
+    memo: typeof value.memo === "string" ? value.memo : fallbackMemo,
+  };
 }
 
 function isLearningTypeMatch(value: unknown): value is Result["match"] {
@@ -113,13 +135,40 @@ function isResult(value: unknown): value is Result {
 
 export function isSavedResult(value: unknown): value is SavedResult {
   if (!isRecord(value)) return false;
-  if (value.schemaVersion !== 1) return false;
+  if (value.schemaVersion !== 2) return false;
   if (typeof value.savedAt !== "string") return false;
   if (!isResult(value.result)) return false;
   if (typeof value.memo !== "string") return false;
-  if (typeof value.includeMemoInPrompt !== "boolean") return false;
   if (!isPromptInputs(value.promptInputs)) return false;
   return true;
+}
+
+function migrateSavedResult(value: unknown): SavedResult | null {
+  if (!isRecord(value)) return null;
+
+  if (isSavedResult(value)) {
+    return value;
+  }
+
+  if (value.schemaVersion !== 1) return null;
+  if (typeof value.savedAt !== "string") return null;
+  if (!isResult(value.result)) return null;
+  if (typeof value.memo !== "string") return null;
+
+  const promptInputs = toPromptInputs(value.promptInputs, value.memo);
+  if (!promptInputs) return null;
+  const memo = promptInputs.memo.trim().length > 0 ? promptInputs.memo : value.memo;
+
+  return {
+    schemaVersion: 2,
+    savedAt: value.savedAt,
+    result: value.result,
+    memo,
+    promptInputs: {
+      ...promptInputs,
+      memo,
+    },
+  };
 }
 
 export function saveResult(value: SavedResult): StorageResult<void> {
@@ -145,10 +194,11 @@ export function loadResult(): StorageResult<SavedResult | null> {
     const raw = storage.getItem(STORAGE_KEY);
     if (raw === null) return { ok: true, value: null };
     const parsed: unknown = JSON.parse(raw);
-    if (!isSavedResult(parsed)) {
+    const savedResult = migrateSavedResult(parsed);
+    if (!savedResult) {
       return { ok: false, error: "invalid" };
     }
-    return { ok: true, value: parsed };
+    return { ok: true, value: savedResult };
   } catch {
     return { ok: false, error: "invalid" };
   }

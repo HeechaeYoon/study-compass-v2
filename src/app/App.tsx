@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { QUESTIONS, type AnswerValue } from "../data/questions";
-import { buildAiPrompt } from "../domain/prompt";
 import { buildDetailedReport, createResult, createResultSummary } from "../domain/result";
 import { copyText } from "../infrastructure/clipboard";
 import { exportSummaryCard } from "../infrastructure/imageExport";
@@ -254,12 +253,8 @@ export function App() {
     return false;
   }
 
-  async function handleCopyPrompt(): Promise<boolean> {
-    if (!state.result) return false;
-    return handleCopy(
-      buildAiPrompt(state.result, state.promptInputs),
-      "AI 프롬프트를 복사했어요.",
-    );
+  async function handleCopyPrompt(promptText: string): Promise<boolean> {
+    return handleCopy(promptText, "AI 프롬프트를 복사했어요.");
   }
 
   async function handleCopyReport(): Promise<void> {
@@ -271,11 +266,10 @@ export function App() {
     if (!state.result) return;
 
     const saved: SavedResult = {
-      schemaVersion: 1,
+      schemaVersion: 2,
       savedAt: new Date().toISOString(),
       result: state.result,
       memo: state.memo,
-      includeMemoInPrompt: state.includeMemoInPrompt,
       promptInputs: state.promptInputs,
     };
     const outcome = saveResult(saved);

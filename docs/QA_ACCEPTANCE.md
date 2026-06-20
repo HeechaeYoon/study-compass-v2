@@ -268,12 +268,14 @@ Minimum: 9/10
 - [ ] works with all inputs blank
 - [ ] subject/unit/goal included when set
 - [ ] situation/difficulty/help included when set
-- [ ] memo excluded by default
-- [ ] memo included only when checked
+- [ ] memo included automatically when any text is entered
+- [ ] all 16 question prompts and selected answers included
+- [ ] four prompt modes available: study plan, concept learning, study-plan image, concept image
 - [ ] 30–40 minute request included
 - [ ] 3 self-check questions requested
 - [ ] 2 follow-up questions requested
 - [ ] middle-school language requested
+- [ ] image prompts instruct not to render raw Q/A or private information
 
 ### Copy
 
@@ -346,8 +348,9 @@ Required test groups:
 
 - empty optional inputs
 - all inputs
-- memo false
-- memo true
+- memo auto-include
+- all question/answer context
+- four prompt modes
 - safety/current-response language
 
 ### Storage
@@ -371,6 +374,7 @@ start without nickname
 → see result
 → open prompt
 → enter subject/unit/goal
+→ switch prompt modes
 → copy prompt
 ```
 
@@ -380,9 +384,8 @@ start without nickname
 enter nickname
 → complete
 → write memo
-→ confirm memo initially excluded
-→ check include
-→ confirm included
+→ confirm memo is included automatically
+→ confirm no memo checkbox is shown
 ```
 
 ### E2E-03 Save and delete

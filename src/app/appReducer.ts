@@ -13,7 +13,6 @@ export function appReducer(state: AppState, action: AppAction): AppState {
         answers: {},
         result: null,
         memo: "",
-        includeMemoInPrompt: false,
         promptInputs: { ...EMPTY_PROMPT_INPUTS },
       };
     case "ANSWER":
@@ -55,23 +54,13 @@ export function appReducer(state: AppState, action: AppAction): AppState {
         memo: action.value,
         promptInputs: { ...state.promptInputs, memo: action.value },
       };
-    case "SET_INCLUDE_MEMO":
-      return {
-        ...state,
-        includeMemoInPrompt: action.value,
-        promptInputs: { ...state.promptInputs, includeMemo: action.value },
-      };
     case "SET_PROMPT_INPUT":
       return {
         ...state,
         memo:
-          action.field === "memo" && typeof action.value === "string"
+          action.field === "memo"
             ? action.value
             : state.memo,
-        includeMemoInPrompt:
-          action.field === "includeMemo" && typeof action.value === "boolean"
-            ? action.value
-            : state.includeMemoInPrompt,
         promptInputs: {
           ...state.promptInputs,
           [action.field]: action.value,
@@ -84,7 +73,6 @@ export function appReducer(state: AppState, action: AppAction): AppState {
         nickname: action.value.result.nickname ?? "",
         result: action.value.result,
         memo: action.value.memo,
-        includeMemoInPrompt: action.value.includeMemoInPrompt,
         promptInputs: action.value.promptInputs,
         savedResult: action.value,
       };
@@ -98,7 +86,6 @@ export function appReducer(state: AppState, action: AppAction): AppState {
         answers: {},
         result: null,
         memo: "",
-        includeMemoInPrompt: false,
         promptInputs: { ...EMPTY_PROMPT_INPUTS },
         savedResult: null,
       };
@@ -110,7 +97,6 @@ export function appReducer(state: AppState, action: AppAction): AppState {
         answers: {},
         result: null,
         memo: "",
-        includeMemoInPrompt: false,
         promptInputs: { ...EMPTY_PROMPT_INPUTS },
       };
     default:

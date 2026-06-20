@@ -138,7 +138,6 @@ export type AppState = {
   answers: Record<string, number | string>;
   result: Result | null;
   memo: string;
-  includeMemoInPrompt: boolean;
   promptInputs: PromptInputs;
   savedResultAvailable: boolean;
 };
@@ -157,8 +156,7 @@ export type AppAction =
   | { type: "OPEN_PROMPT" }
   | { type: "OPEN_RESULT" }
   | { type: "SET_MEMO"; value: string }
-  | { type: "SET_INCLUDE_MEMO"; value: boolean }
-  | { type: "SET_PROMPT_INPUT"; field: keyof PromptInputs; value: string | boolean }
+  | { type: "SET_PROMPT_INPUT"; field: keyof PromptInputs; value: string }
   | { type: "LOAD_SAVED_RESULT"; value: SavedResult }
   | { type: "RESET" };
 ```
@@ -253,14 +251,15 @@ export const STORAGE_KEY = "srl-coach-result-v1";
 
 ```ts
 export type SavedResult = {
-  schemaVersion: 1;
+  schemaVersion: 2;
   savedAt: string;
   result: Result;
   memo: string;
-  includeMemoInPrompt: boolean;
   promptInputs: PromptInputs;
 };
 ```
+
+`schemaVersion: 1` saved results may be migrated on load by dropping the old memo checkbox fields and preserving memo text. Malformed saved data must still be rejected.
 
 ### API
 

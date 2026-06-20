@@ -156,7 +156,7 @@ Do not polish micro details before macro layout passes.
 - detail report
 - prompt inputs
 - prompt generation
-- memo and inclusion checkbox
+- memo auto-inclusion and prompt mode selector
 - copy and fallback
 - local save/load/delete
 - image export

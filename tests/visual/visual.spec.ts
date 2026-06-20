@@ -41,4 +41,26 @@ test.describe("visual fixtures", () => {
       await expect(page.locator("body")).not.toHaveCSS("overflow-x", "scroll");
     }
   });
+
+  test("prompt mode selector fits the canonical surface", async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto("/?fixture=prompt");
+    await page.evaluate(() => document.fonts.ready);
+
+    const surfaceBox = await page.getByTestId("screen-surface").boundingBox();
+    const modeBox = await page.locator(".promptModeSelector").boundingBox();
+    const notebookBox = await page.locator(".notebookSheet").boundingBox();
+
+    expect(surfaceBox).not.toBeNull();
+    expect(modeBox).not.toBeNull();
+    expect(notebookBox).not.toBeNull();
+    if (!surfaceBox || !modeBox || !notebookBox) return;
+
+    expect(modeBox.x).toBeGreaterThanOrEqual(surfaceBox.x);
+    expect(modeBox.y).toBeGreaterThanOrEqual(surfaceBox.y);
+    expect(modeBox.y + modeBox.height).toBeLessThanOrEqual(
+      surfaceBox.y + surfaceBox.height,
+    );
+    expect(modeBox.x + modeBox.width).toBeLessThan(notebookBox.x);
+  });
 });

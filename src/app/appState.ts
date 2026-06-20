@@ -12,7 +12,6 @@ export type AppState = {
   answers: AnswerMap;
   result: Result | null;
   memo: string;
-  includeMemoInPrompt: boolean;
   promptInputs: PromptInputs;
   savedResult: SavedResult | null;
 };
@@ -29,8 +28,7 @@ export type AppAction =
   | { type: "OPEN_PROMPT" }
   | { type: "OPEN_RESULT" }
   | { type: "SET_MEMO"; value: string }
-  | { type: "SET_INCLUDE_MEMO"; value: boolean }
-  | { type: "SET_PROMPT_INPUT"; field: keyof PromptInputs; value: string | boolean }
+  | { type: "SET_PROMPT_INPUT"; field: keyof PromptInputs; value: string }
   | { type: "LOAD_SAVED_RESULT"; value: SavedResult }
   | { type: "SET_SAVED_RESULT"; value: SavedResult | null }
   | { type: "DELETE_LOCAL_RESULT" }
@@ -43,7 +41,6 @@ export const initialAppState: AppState = {
   answers: {},
   result: null,
   memo: "",
-  includeMemoInPrompt: false,
   promptInputs: EMPTY_PROMPT_INPUTS,
   savedResult: null,
 };

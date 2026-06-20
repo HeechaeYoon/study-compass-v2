@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-20T14:33:26.211Z",
+  "generatedAt": "2026-06-20T15:36:23.600Z",
   "note": "Metrics are advisory because the source is a scaled montage with annotations.",
   "results": [
     {
@@ -28,8 +28,8 @@
     },
     {
       "screen": "prompt",
-      "ssim": 0.3057,
-      "mismatchRatio": 0.1057,
+      "ssim": 0.3257,
+      "mismatchRatio": 0.1067,
       "reference": "reference/prompt-screen-reference.png",
       "actual": "artifacts/visual/prompt-surface.png",
       "diff": "artifacts/visual/prompt-diff.png"
