@@ -2,7 +2,7 @@ import { mkdir } from "node:fs/promises";
 import path from "node:path";
 import { expect, test } from "@playwright/test";
 
-const fixtures = ["start", "question", "result", "prompt"] as const;
+const fixtures = ["start", "question", "result", "prompt", "detail"] as const;
 
 test.describe("visual fixtures", () => {
   for (const fixture of fixtures) {

@@ -121,3 +121,58 @@ Status:
 ```text
 Not generated in Revision 1. CSS backing paper will be tried first as required.
 ```
+
+## Start hero learning map
+
+### Revision 2
+
+Date: 2026-06-20
+
+Mode: built-in `image_gen`
+
+User-approved direction:
+
+```text
+학습 지도 콜라주
+```
+
+Prompt base:
+
+```text
+Use case: stylized-concept
+Asset type: start screen hero illustration for a Korean middle-school self-directed learning web app
+Primary request: Create a warm top-down study map collage that represents a student's self-directed learning journey, without any readable text.
+Scene/backdrop: refined Korean educational stationery on warm ivory paper, calm desk surface, subtle tactile paper texture.
+Subject: an open blank planner and layered blank paper scraps arranged like a map, with a hand-drawn dotted route, gentle compass/path motif, small blank sticky notes, a pencil, eraser, paper clip, and colored circular markers. The route should suggest a calm journey through planning, doing, understanding, reviewing, and asking for help, but with no words or labels.
+Style/medium: refined realistic stationery illustration, soft hand-crafted workbook feel, polished enough for a production educational web app, not childish.
+Composition/framing: wide landscape composition; main objects form a cohesive cluster that fits a right-side hero area about 620 by 420 CSS pixels; leave breathing room and avoid edge clutter.
+Lighting/mood: soft natural light, warm, reassuring, quietly motivational.
+Color palette: warm ivory, navy blue linework, soft indigo, mint green, muted yellow, coral accent.
+Materials/textures: matte paper, blank notebook, sticky notes, wooden pencil, soft eraser, subtle paper fibers and shadows.
+Text (verbatim): none. No letters, no numbers, no labels, no pseudo-handwriting.
+Constraints: no UI cards, no buttons, no app screen, no computer screen, no robot, no chatbot, no characters, no faces, no logos, no watermark, no readable writing, no grades/ranks. Avoid generic AI visuals, neon, futuristic effects, glossy 3D, childish stickers, clutter, dramatic shadows, and tiny illegible glyphs.
+```
+
+Candidates:
+
+- Hero map candidate A: `/home/heechae/.codex/generated_images/019ee32b-539b-7ac1-939f-d9abda2cf3b1/ig_09d05b312e641711016a3622d1553481918643895fe71324ee.png`
+- Hero map candidate B: `/home/heechae/.codex/generated_images/019ee32b-539b-7ac1-939f-d9abda2cf3b1/ig_09d05b312e641711016a36231bdf548191b0fad3801108317f.png`
+- Hero map candidate C: `/home/heechae/.codex/generated_images/019ee32b-539b-7ac1-939f-d9abda2cf3b1/ig_09d05b312e641711016a362359331481918adaa216bf0f41ff.png`
+
+Selected:
+
+```text
+Hero map candidate C -> public/assets/start-hero-map.webp
+```
+
+Reason:
+
+```text
+Candidate C best communicates a learning-map journey through stationery, route markers, and a blank notebook without AI or app UI cues. Candidate A was richer but heavier and included more real compass imagery; candidate B had more open space but felt less connected to the app identity.
+```
+
+Processing:
+
+```text
+Resize to 1180px wide without enlargement, export WebP quality 84.
+```

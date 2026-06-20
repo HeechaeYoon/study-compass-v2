@@ -5,7 +5,7 @@
 Rebuilt the app as a production-quality static React/Vite/TypeScript web app for a Korean middle-school self-directed-learning class.
 
 - Primary visual target: `reference/design-board.png`
-- Product status: complete static app with four core screens and required flows
+- Product status: complete static app with four core screens, detail report screen, generated local hero asset, and required flows
 - Deployment status: production `dist/` builds locally; GitHub Pages workflow added
 - Data policy: no backend, login, analytics, tracking, external AI call, or automatic save
 
@@ -22,10 +22,11 @@ Rebuilt the app as a production-quality static React/Vite/TypeScript web app for
 
 ## 3. Implemented Screens
 
-- Start: visual intro, required safety disclaimer, optional nickname, saved-result reload/delete, privacy strip.
-- Question: 16 questions, native radio cards, progress, previous/next, browser Back preservation, Q06 5-card fixture.
-- Result: current-response safety language, custom SVG radar, strengths/balance/growth summary, detailed report, copy/save/export/reset.
-- AI prompt: prompt inputs, memo default off, ARIA tabs, scrollable preview, copy fallback, save/delete/export.
+- Start: visual intro, required safety disclaimer, optional nickname, saved-result reload/delete, privacy strip, and generated local learning-map hero artwork.
+- Question: 16 questions, native radio cards, progress, pointer-only auto-advance after new selections, keyboard/reduced-motion manual pacing, previous/next fallback, browser Back preservation, Q06 5-card fixture.
+- Result: current-response safety language, custom SVG radar without misleading visible caption, strengths/balance/recommendation summary, detail report entry, copy/save/export/reset.
+- Detail report: separate student-facing learning-map report with large title, current-response safety note, strength/balance/growth snapshot, mission, 5-axis interpretation, recommendations, cautions, and avoid methods.
+- AI prompt: prompt inputs, memo default off, no tabs, live-updating preview, `실시간 갱신` state, copy success feedback, copy fallback, save/delete/export, and result-summary navigation.
 - Wide-only: under 900px shows guidance instead of a compromised mobile redesign.
 
 ## 4. ImageGen Assets
@@ -34,31 +35,35 @@ Rebuilt the app as a production-quality static React/Vite/TypeScript web app for
 |---|---|---|---|---:|
 | `public/assets/paper-texture.webp` | `.prompts/IMAGEGEN_ASSETS.md` | paper candidate C | 512 square, blended toward `#F7F4EE`, WebP q78 | 666 bytes |
 | `public/assets/pencil-transparent.webp` | `.prompts/IMAGEGEN_ASSETS.md` | pencil candidate C | background removal, trim, padding, WebP alpha | 28,932 bytes |
+| `public/assets/start-hero-map.webp` | `.prompts/IMAGEGEN_ASSETS.md` | hero-map candidate C | 1180px wide, WebP q84 | 86,168 bytes |
 
 ## 5. Visual Validation
 
 | Screen | Reviewer score | SSIM | Pixel mismatch | Screenshot |
 |---|---:|---:|---:|---|
-| Start | 91 | 0.3882 | 0.0994 | `artifacts/visual/start-1280x800.png` |
-| Question | 91 | 0.5016 | 0.0779 | `artifacts/visual/question-1280x800.png` |
-| Result | 91 | 0.5015 | 0.0805 | `artifacts/visual/result-1280x800.png` |
-| Prompt | 91 | 0.3463 | 0.1016 | `artifacts/visual/prompt-1280x800.png` |
+| Start | 91 | 0.3552 | 0.1562 | `artifacts/visual/start-1280x800.png` |
+| Question | 91 | 0.4747 | 0.0836 | `artifacts/visual/question-1280x800.png` |
+| Result | 91 | 0.5152 | 0.0820 | `artifacts/visual/result-1280x800.png` |
+| Prompt | 91 | 0.3525 | 0.0967 | `artifacts/visual/prompt-1280x800.png` |
+| Detail | reviewed separately | n/a | n/a | `artifacts/visual/detail-1280x800.png` |
 
 Residual differences:
 
 ```text
-Not pixel-perfect. The reference is a scaled montage, and the product-required safety/action content creates some density differences. Prompt preview is scrollable real text; result actions are more explicit than the board crop to satisfy save/copy/export requirements.
+Not pixel-perfect. The reference is a scaled montage, and the product-required safety/action content creates some density differences. Start now uses the approved generated learning-map asset instead of the earlier HTML card constellation, so visual similarity metrics are lower while the UI meaning is clearer. Prompt preview is scrollable real text; result actions are more explicit than the board crop to satisfy save/copy/export/detail requirements.
 ```
 
 ## 6. Functional Validation
 
 - Questionnaire: 16 questions, 12 Likert, 4 scenario, Q06 5 options.
+- Question UX: pointer/touch selecting a new answer auto-advances after a short delay; keyboard and reduced-motion users keep manual pacing; previous/browser-back restored answers do not auto-advance by themselves.
 - Scoring: data-derived bounds, normalized 0-100, threshold labels, exact balanced/foundation rules.
 - Type matching: typed profiles and secondary-type threshold.
-- Prompt: blank inputs work; subject/unit/goal/situation/difficulty/help included when set; memo excluded by default and included only when checked.
-- Copy: Clipboard API, `execCommand`, and manual-copy fallback.
+- Prompt: blank inputs work; subject/unit/goal/situation/difficulty/help update the preview live when set; memo excluded by default and included only when checked.
+- Copy: Clipboard API, `execCommand`, and manual-copy fallback. Prompt copy success changes the button to `복사됨` only after a confirmed copy path.
 - Save/delete: explicit save only; malformed saved data rejected; delete clears storage and visible state.
-- Image export: exports result summary only and excludes free-form memo.
+- Image export: exports a dedicated result summary card including growth point, 강점, 균형, 추천 전략; excludes free-form memo and prompt inputs; PNG output is checked for non-empty content pixels.
+- Toast: status messages auto-dismiss after 3 seconds and stale timers do not clear newer messages.
 - Privacy: no app-level network path for answers, nickname, memo, result, or prompt.
 
 ## 7. Commands Run
@@ -68,8 +73,8 @@ Not pixel-perfect. The reference is a scaled montage, and the product-required s
 | `npm run typecheck` | Pass |
 | `npm run lint` | Pass |
 | `npm run test` | Pass, 4 files / 19 tests |
-| `npm run test:visual` | Pass, 5 Chromium tests |
-| `npm run test:e2e` | Pass, 8 Chromium tests |
+| `npm run test:visual` | Pass, 6 Chromium tests |
+| `npm run test:e2e` | Pass, 13 Chromium tests |
 | `npm run build` | Pass |
 | `npm run test:e2e:webkit` | Blocked: host missing WebKit system libraries |
 
@@ -77,7 +82,7 @@ Not pixel-perfect. The reference is a scaled montage, and the product-required s
 
 | Browser | Viewport | Result | Notes |
 |---|---:|---|---|
-| Chromium | 1280x800 | Pass | four fixture captures |
+| Chromium | 1280x800 | Pass | start, question, result, prompt, detail fixture captures |
 | Chromium | 1024x768 | Pass | smoke test |
 | Chromium | 1366x768 | Pass | smoke test |
 | Chromium | 1440x900 | Pass | smoke test |
@@ -97,15 +102,21 @@ Not pixel-perfect. The reference is a scaled montage, and the product-required s
 
 ### Visual Reviewer
 
-Initial prompt score was 87 due pencil obstruction and flatter notebook depth. Fixed by moving the pencil behind/outside UI text, strengthening notebook backing/binding/shadow, making the prompt preview scrollable, moving the question doodle, and tightening result actions. Final main score: 91 for all screens.
+Initial prompt score was 87 due pencil obstruction and flatter notebook depth. Later UX cleanup replaced the unclear start HTML card constellation with the approved learning-map asset, removed the question arrow, removed radar caption/dots, removed prompt tabs/guide, strengthened the paper/pencil layering, and rebuilt the detail report as a student-facing learning-map screen. Final main score remains 91 for all four core screens.
+
+Second review found the detail footer actions were pressed into the 1280×800 bottom edge and that `5가지 학습 축` remained in non-visual labels/copy. Fixed by moving detail actions into the header and rewording those surfaces to `학습 지도 결과` / `학습 축별 현재 모습`, then reran visual and E2E tests.
 
 ### Functional/Privacy Reviewer
 
-Fixed exact balanced-rule divergence, deepened saved-result validation, removed low/high/comparison wording from runtime content, added start safety disclaimer, made delete clear current visible data, and added browser Back support without storing student data in URL/history.
+Fixed exact balanced-rule divergence, deepened saved-result validation, removed low/high/comparison wording from runtime content, added start safety disclaimer, made delete clear current visible data, added browser Back support without storing student data in URL/history, fixed image export capture, added toast auto-dismiss, and added E2E coverage for memo deletion plus export exclusion of free-form inputs.
+
+Second review found no blocking functional/privacy issues after the export, toast, copy, prompt-tab removal, local-storage, auto-advance, and detail fixture changes.
 
 ### Accessibility/Performance Reviewer
 
-Fixed modal focus trap/restore and inert background, strengthened focus ring and muted contrast, completed ARIA tabs, respected reduced motion for scroll, made prompt preview focusable/scrollable, and reduced font import spread.
+Fixed modal focus trap/restore and inert background, strengthened focus ring and muted contrast, removed the prompt tab model, respected reduced motion for questionnaire pacing and scroll, moved focus to each new screen heading after navigation, made prompt preview focusable/scrollable, kept the decorative hero image hidden from assistive tech, and reduced font import spread.
+
+Second accessibility/performance pass was also checked against the final screens: the prompt screen keeps a focused screen heading after tab removal, copy feedback changes the button label and announces through the toast live region, new animations are covered by `prefers-reduced-motion`, the export card is `aria-hidden`, and the generated hero/pencil assets are local WebP files.
 
 ## 11. GitHub Pages
 

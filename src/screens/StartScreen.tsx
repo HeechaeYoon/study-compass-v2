@@ -1,38 +1,17 @@
 import {
   ArrowRight,
-  BookOpen,
-  CalendarDays,
-  ClipboardCheck,
   Lock,
   Pencil,
-  PlayCircle,
   ShieldCheck,
   Trash2,
   UserRound,
-  Users,
 } from "lucide-react";
-import { AXES, AXIS_DEFINITIONS, AXIS_SHORT_NAMES, type Axis } from "../data/axes";
 import type { SavedResult } from "../infrastructure/storage";
 import { Doodle } from "../components/Doodle";
 
-const axisIcons = {
-  P: CalendarDays,
-  E: PlayCircle,
-  U: BookOpen,
-  M: ClipboardCheck,
-  H: Users,
-} satisfies Record<Axis, typeof CalendarDays>;
-
-const axisQuestion = {
-  P: "공부를 시작하기 전, 어떻게 계획하나요?",
-  E: "공부할 때, 어떻게 실천하나요?",
-  U: "어려운 내용을 어떻게 이해하나요?",
-  M: "공부한 내용을 어떻게 확인하나요?",
-  H: "누구에게 도움을 받고 있나요?",
-} satisfies Record<Axis, string>;
-
 type StartScreenProps = {
   nickname: string;
+  heroImageSrc: string;
   savedResult: SavedResult | null;
   onNicknameChange: (value: string) => void;
   onStart: () => void;
@@ -42,6 +21,7 @@ type StartScreenProps = {
 
 export function StartScreen({
   nickname,
+  heroImageSrc,
   savedResult,
   onNicknameChange,
   onStart,
@@ -52,7 +32,7 @@ export function StartScreen({
     <main className="screenSurface startSurface" data-testid="screen-surface">
       <section className="startHero" aria-labelledby="start-heading">
         <div className="heroCopy">
-          <h2 id="start-heading" className="displayTitle">
+          <h2 id="start-heading" className="displayTitle" data-screen-heading tabIndex={-1}>
             나의 공부 스타일을
             <br />
             탐색하는 시간
@@ -87,11 +67,13 @@ export function StartScreen({
           </button>
           {savedResult ? (
             <div className="savedResultPanel" aria-label="저장된 결과">
-              <p>
-                저장된 결과가 있어요.
-                <span>{new Date(savedResult.savedAt).toLocaleDateString("ko-KR")}</span>
-              </p>
-              <div>
+              <div className="savedResultMeta">
+                <strong>저장된 결과</strong>
+                <time dateTime={savedResult.savedAt}>
+                  {new Date(savedResult.savedAt).toLocaleDateString("ko-KR")}
+                </time>
+              </div>
+              <div className="savedResultActions">
                 <button
                   type="button"
                   className="textButton"
@@ -110,24 +92,12 @@ export function StartScreen({
             </div>
           ) : null}
         </div>
-        <div className="axisConstellation" aria-label="5가지 학습 축">
-          <Doodle kind="connector" className="axisConnector" />
-          <Doodle kind="flag" className="axisFlag" />
-          {AXES.map((axis) => {
-            const Icon = axisIcons[axis];
-            return (
-              <article key={axis} className={`axisIntroCard axisIntro-${axis}`}>
-                <div className="axisCardTitle">
-                  <Icon aria-hidden="true" size={22} />
-                  <h3>{AXIS_SHORT_NAMES[axis]}</h3>
-                </div>
-                <p>{axisQuestion[axis]}</p>
-                <small>{AXIS_DEFINITIONS[axis]}</small>
-                <span className={`cardScribble cardScribble-${axis}`} aria-hidden="true" />
-              </article>
-            );
-          })}
-        </div>
+        <figure className="startHeroArtwork">
+          <img src={heroImageSrc} alt="" aria-hidden="true" />
+          <figcaption className="srOnly">
+            계획하고 실행하며 스스로 공부 방향을 찾아가는 학습 지도 이미지
+          </figcaption>
+        </figure>
       </section>
       <section className="privacyStrip" aria-label="개인정보 보호 안내">
         <span className="privacyLegend">개인정보 보호 안내</span>

@@ -16,8 +16,6 @@ export function AppHeader() {
           <Doodle kind="star" className="headerStar" />
           <span>총 16문항</span>
           <span className="metaDivider" aria-hidden="true" />
-          <span>5가지 학습 축</span>
-          <span className="metaDivider" aria-hidden="true" />
           <span>약 5~7분 소요</span>
         </div>
       </div>

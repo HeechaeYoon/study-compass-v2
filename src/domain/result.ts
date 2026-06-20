@@ -181,7 +181,7 @@ export function buildDetailedReport(result: Result): string {
     summary.representativeSentence,
     summary.safetyNote,
     "",
-    "5가지 학습 축",
+    "학습 축별 현재 모습",
     ...axisLines,
     "",
     "강점",

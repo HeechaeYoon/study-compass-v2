@@ -43,6 +43,8 @@ export function appReducer(state: AppState, action: AppAction): AppState {
         screen: "result",
         result: action.result,
       };
+    case "OPEN_DETAIL":
+      return { ...state, screen: "detail" };
     case "OPEN_PROMPT":
       return { ...state, screen: "prompt" };
     case "OPEN_RESULT":

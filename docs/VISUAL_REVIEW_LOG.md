@@ -19,15 +19,28 @@
 | Final main review | Question | 91 | Doodle placement differs from board crop but no longer collides. | Accepted; title, cards, progress, and bottom nav meet rubric. | `artifacts/visual/question-1280x800.png` |
 | Final main review | Result | 91 | Functional action row remains denser than reference. | Accepted; all actions visible and no clipping. | `artifacts/visual/result-1280x800.png` |
 | Final main review | Prompt | 91 | Prompt text still denser than board but scrollable and readable. | Accepted after pencil/notebook fixes. | `artifacts/visual/prompt-1280x800.png` |
+| UX refinement | Start | 91 | Prior card constellation felt arbitrary. | Repositioned cards into a plan → execute → understand → check → help loop and replaced connector paths with directional flow. | `artifacts/visual/start-1280x800.png` |
+| UX refinement | Question | 91 | Star decoration had no functional meaning. | Removed star and positioned the mint arrow as a subtle guide from question to answer choices. | `artifacts/visual/question-1280x800.png` |
+| UX refinement | Result | 91 | Radar legend dots implied a false chart encoding. | Replaced dots with a text guide: current-response basis and 1.0/3.0/5.0 label meaning. | `artifacts/visual/result-1280x800.png` |
+| UX refinement | Prompt | 91 | Generate button and guide tab purpose were unclear. | Added result navigation, live-update badge, removed generate button, and rebuilt guide tab as strategy cards. | `artifacts/visual/prompt-1280x800.png` |
+| Reviewer fix | Prompt guide | 91 | Guide tab utilities clipped below the canonical surface. | Compressed guide into two-column cards and added bounding-box E2E coverage. | `tests/e2e/app.spec.ts` |
+| Reviewer fix | Result | 91 | Text-only radar guide diverged from reference scale. | Restored dots as a meaningful 1/3/5 score scale instead of a false growth-to-strength legend. | `artifacts/visual/result-1280x800.png` |
+| UX cleanup 2 | Start | 91 | `5가지 학습 축` label and HTML constellation still felt like implementation decoration. | Removed the label, removed the card constellation, and integrated the approved ImageGen learning-map collage. | `artifacts/visual/start-1280x800.png` |
+| UX cleanup 2 | Question | 91 | Directional arrow still implied an instruction that was not real. | Replaced it with a small non-directional `study-spark` decoration. | `artifacts/visual/question-1280x800.png` |
+| UX cleanup 2 | Result | 91 | Radar helper caption was not encoded in the chart and did not help interpretation. | Removed the visible caption/dots and kept the radar as an accessible SVG image. | `artifacts/visual/result-1280x800.png` |
+| UX cleanup 2 | Prompt | 91 | Tabs and guide panel created an unclear second mode; copy completion was easy to miss. | Removed tabs/guide, kept live preview only, added `복사됨` success state, and adjusted paper/pencil layering. | `artifacts/visual/prompt-1280x800.png` |
+| UX cleanup 2 | Detail | 91 | Report felt flat and the mission was too low in the reading order. | Rebuilt it as a student-facing learning-map screen with snapshot, mission, axis cards, recommendations, cautions, and avoid-methods. | `artifacts/visual/detail-1280x800.png` |
+| Reviewer fix 2 | Detail | 91 | Footer actions were pressed into the bottom edge at 1280x800. | Removed duplicate footer actions, moved `리포트 복사` and `AI 프롬프트` to the header, and recaptured the detail fixture. | `artifacts/visual/detail-1280x800.png` |
+| Reviewer fix 2 | Result/report text | 91 | `5가지 학습 축` still appeared in non-visual labels/report copy. | Reworded those surfaces to `학습 지도 결과` and `학습 축별 현재 모습`. | `src/components/RadarChart.tsx` |
 
 ## Automated Metrics
 
 | Screen | SSIM | Pixel mismatch | Actual | Diff |
 |---|---:|---:|---|---|
-| Start | 0.3882 | 0.0994 | `artifacts/visual/start-surface.png` | `artifacts/visual/start-diff.png` |
-| Question | 0.5016 | 0.0779 | `artifacts/visual/question-surface.png` | `artifacts/visual/question-diff.png` |
-| Result | 0.5015 | 0.0805 | `artifacts/visual/result-surface.png` | `artifacts/visual/result-diff.png` |
-| Prompt | 0.3463 | 0.1016 | `artifacts/visual/prompt-surface.png` | `artifacts/visual/prompt-diff.png` |
+| Start | 0.3552 | 0.1562 | `artifacts/visual/start-surface.png` | `artifacts/visual/start-diff.png` |
+| Question | 0.4747 | 0.0836 | `artifacts/visual/question-surface.png` | `artifacts/visual/question-diff.png` |
+| Result | 0.5152 | 0.0820 | `artifacts/visual/result-surface.png` | `artifacts/visual/result-diff.png` |
+| Prompt | 0.3525 | 0.0967 | `artifacts/visual/prompt-surface.png` | `artifacts/visual/prompt-diff.png` |
 
 The SSIM values are advisory because the reference is a scaled montage with annotations. Pixel mismatch ratios remain within the documented advisory limit.
 
@@ -60,6 +73,12 @@ Pencil:
 Selected ImageGen pencil candidate C because it matches the diagonal stationery reference without logos or extra objects. Final: public/assets/pencil-transparent.webp.
 ```
 
+Start hero learning map:
+
+```text
+Selected ImageGen hero-map candidate C because it communicates a warm self-directed learning journey through blank stationery, route markers, and study tools without AI, robot, chat, UI-card, or readable-text cues. Final: public/assets/start-hero-map.webp.
+```
+
 ## Final Rubric Scores
 
 | Screen | Macro | Type | Color | Geometry | Components | Assets | Polish | Total |
@@ -74,5 +93,5 @@ All screens meet the ≥90 total threshold and every category meets its minimum.
 ## Residual Differences
 
 ```text
-The implementation is not pixel-perfect. The source is a montage, and product-required safety/action content creates some density differences. The prompt screen uses a scrollable real text preview rather than visually hiding overflow. The result screen includes more visible action buttons than the board crop so required copy/save/export flows remain discoverable.
+The implementation is not pixel-perfect. The source is a montage, and product-required safety/action content creates some density differences. The start screen now uses an approved generated learning-map asset rather than the original card constellation, so SSIM dropped while the interaction meaning improved. The prompt screen uses a scrollable real text preview rather than visually hiding overflow. The result screen includes more visible action buttons than the board crop so required copy/save/export/detail flows remain discoverable. A dedicated detail screen is intentionally outside the four primary 1280x800 reference states and is captured separately.
 ```

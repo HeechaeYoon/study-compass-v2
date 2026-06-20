@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import { ArrowLeft, ArrowRight, Check, Lightbulb } from "lucide-react";
 import {
   AXIS_SHORT_NAMES,
@@ -15,10 +16,20 @@ type QuestionScreenProps = {
   answer: AnswerValue | undefined;
   index: number;
   total: number;
-  onAnswer: (questionId: string, value: AnswerValue) => void;
+  isAutoAdvancing: boolean;
+  onAnswer: (
+    questionId: string,
+    value: AnswerValue,
+    options: { autoAdvance: boolean },
+  ) => void;
   onPrevious: () => void;
   onNext: () => void;
 };
+
+type PointerIntent = {
+  value: AnswerValue;
+  at: number;
+} | null;
 
 function questionAxis(question: Question): Axis {
   if (question.type === "likert") return question.axis;
@@ -52,6 +63,7 @@ export function QuestionScreen({
   answer,
   index,
   total,
+  isAutoAdvancing,
   onAnswer,
   onPrevious,
   onNext,
@@ -61,6 +73,7 @@ export function QuestionScreen({
   const axis = questionAxis(question);
   const options = getOptions(question);
   const hasAnswer = answer !== undefined;
+  const pointerIntentRef = useRef<PointerIntent>(null);
 
   return (
     <main className="screenSurface questionSurface" data-testid="screen-surface">
@@ -86,23 +99,41 @@ export function QuestionScreen({
           {AXIS_SHORT_NAMES[axis]}
         </span>
         <div className="questionHeadingWrap">
-          <h2 className="questionTitle">{question.text}</h2>
-          <Doodle kind="curved-arrow" className="questionArrow" />
-          <Doodle kind="star" className="questionStar" />
+          <h2 className="questionTitle" data-screen-heading tabIndex={-1}>
+            {question.text}
+          </h2>
+          <Doodle kind="study-spark" className="questionSpark" />
         </div>
         <fieldset className={`answerGrid answerGrid-${options.length}`}>
           <legend className="srOnly">{question.text}</legend>
           {options.map((option) => {
             const selected = answer === option.value;
             return (
-              <label key={option.id} className="answerCard" data-selected={selected}>
+              <label
+                key={option.id}
+                className="answerCard"
+                data-selected={selected}
+                onPointerDown={() => {
+                  pointerIntentRef.current = {
+                    value: option.value,
+                    at: Date.now(),
+                  };
+                }}
+              >
                 <input
                   className="srOnly"
                   type="radio"
                   name={question.id}
                   value={String(option.value)}
                   checked={selected}
-                  onChange={() => onAnswer(question.id, option.value)}
+                  onChange={() => {
+                    const pointerIntent = pointerIntentRef.current;
+                    const autoAdvance =
+                      pointerIntent?.value === option.value &&
+                      Date.now() - pointerIntent.at < 1000;
+                    pointerIntentRef.current = null;
+                    onAnswer(question.id, option.value, { autoAdvance });
+                  }}
                 />
                 {selected ? (
                   <span className="answerCheck" aria-hidden="true">
@@ -132,7 +163,9 @@ export function QuestionScreen({
         </button>
         <p className="honestHint">
           <Lightbulb aria-hidden="true" size={16} />
-          솔직하게 선택할수록 결과가 더 정확해요.
+          {isAutoAdvancing
+            ? "선택했어요. 잠시 후 다음 문항으로 이동해요."
+            : "솔직하게 선택할수록 결과가 더 정확해요."}
         </p>
         <button
           className="buttonPrimary navButton"
@@ -140,7 +173,7 @@ export function QuestionScreen({
           onClick={onNext}
           disabled={!hasAnswer}
         >
-          다음
+          {isAutoAdvancing ? "바로 다음" : "다음"}
           <ArrowRight aria-hidden="true" size={18} />
         </button>
       </footer>

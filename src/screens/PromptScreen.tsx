@@ -1,17 +1,18 @@
-import { useMemo, useState, type KeyboardEvent } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
+  ArrowLeft,
+  Check,
   ClipboardCopy,
   Copy,
   Download,
   Info,
-  Pencil,
+  RefreshCw,
   Save,
   Trash2,
 } from "lucide-react";
 import { AXIS_NAMES } from "../data/axes";
-import { LEARNING_TYPE_CONTENT } from "../data/learningTypes";
 import { buildAiPrompt, type PromptInputs } from "../domain/prompt";
-import { createResultSummary, type Result } from "../domain/result";
+import { type Result } from "../domain/result";
 import { Doodle } from "../components/Doodle";
 
 type PromptScreenProps = {
@@ -20,7 +21,7 @@ type PromptScreenProps = {
   pencilSrc: string;
   onInputChange: (field: keyof PromptInputs, value: string | boolean) => void;
   onOpenResult: () => void;
-  onCopyPrompt: () => void;
+  onCopyPrompt: () => Promise<boolean>;
   onCopyReport: () => void;
   onSave: () => void;
   onExportImage: () => void;
@@ -40,13 +41,6 @@ const fieldConfig: Array<{
   { field: "desiredHelp", label: "원하는 도움", placeholder: "예) 30분 계획과 질문 예시" },
 ];
 
-type PromptTab = "prompt" | "guide";
-
-const tabs: Array<{ id: PromptTab; label: string }> = [
-  { id: "prompt", label: "AI 프롬프트" },
-  { id: "guide", label: "학습 전략 가이드" },
-];
-
 export function PromptScreen({
   result,
   inputs,
@@ -59,138 +53,96 @@ export function PromptScreen({
   onExportImage,
   onRequestDelete,
 }: PromptScreenProps) {
-  const [tab, setTab] = useState<PromptTab>("prompt");
+  const [copySucceeded, setCopySucceeded] = useState(false);
+  const copyResetTimeoutRef = useRef<number | null>(null);
   const prompt = useMemo(() => buildAiPrompt(result, inputs), [inputs, result]);
-  const summary = createResultSummary(result);
-  const content = LEARNING_TYPE_CONTENT[result.match.primaryType];
 
-  function focusTab(nextTab: PromptTab): void {
-    setTab(nextTab);
-    window.requestAnimationFrame(() => {
-      document.getElementById(`${nextTab}-tab`)?.focus();
-    });
-  }
+  useEffect(() => {
+    return () => {
+      if (copyResetTimeoutRef.current !== null) {
+        window.clearTimeout(copyResetTimeoutRef.current);
+      }
+    };
+  }, []);
 
-  function handleTabKeyDown(event: KeyboardEvent<HTMLButtonElement>): void {
-    const currentIndex = tabs.findIndex((item) => item.id === tab);
-    if (currentIndex < 0) return;
-
-    if (event.key === "ArrowRight") {
-      event.preventDefault();
-      const nextTab = tabs[(currentIndex + 1) % tabs.length];
-      if (nextTab) focusTab(nextTab.id);
-    } else if (event.key === "ArrowLeft") {
-      event.preventDefault();
-      const nextTab = tabs[(currentIndex + tabs.length - 1) % tabs.length];
-      if (nextTab) focusTab(nextTab.id);
-    } else if (event.key === "Home") {
-      event.preventDefault();
-      const nextTab = tabs[0];
-      if (nextTab) focusTab(nextTab.id);
-    } else if (event.key === "End") {
-      event.preventDefault();
-      const nextTab = tabs[tabs.length - 1];
-      if (nextTab) focusTab(nextTab.id);
+  async function handlePromptCopy(): Promise<void> {
+    if (copyResetTimeoutRef.current !== null) {
+      window.clearTimeout(copyResetTimeoutRef.current);
+      copyResetTimeoutRef.current = null;
     }
+    setCopySucceeded(false);
+    const copied = await onCopyPrompt();
+    if (!copied) return;
+    setCopySucceeded(true);
+    copyResetTimeoutRef.current = window.setTimeout(() => {
+      setCopySucceeded(false);
+      copyResetTimeoutRef.current = null;
+    }, 2000);
   }
 
   return (
     <main className="screenSurface promptSurface" data-testid="screen-surface">
       <section className="promptFormPanel">
-        <div className="tabs" role="tablist" aria-label="프롬프트 화면">
-          {tabs.map((item) => (
-            <button
-              key={item.id}
-              id={`${item.id}-tab`}
-              type="button"
-              role="tab"
-              aria-selected={tab === item.id}
-              aria-controls={`${item.id}-panel`}
-              tabIndex={tab === item.id ? 0 : -1}
-              className={tab === item.id ? "active" : ""}
-              onClick={() => setTab(item.id)}
-              onKeyDown={handleTabKeyDown}
-            >
-              {item.label}
-            </button>
-          ))}
+        <h2 className="srOnly" data-screen-heading tabIndex={-1}>
+          AI 프롬프트 생성
+        </h2>
+        <div className="promptTopNav">
+          <button className="buttonSecondary compactButton" type="button" onClick={onOpenResult}>
+            <ArrowLeft aria-hidden="true" size={16} />
+            결과 요약으로
+          </button>
+          <span className="liveUpdateBadge">
+            <RefreshCw aria-hidden="true" size={14} />
+            실시간 갱신
+          </span>
         </div>
         <p className="promptIntro">
-          결과를 바탕으로 나만의 학습 전략 프롬프트를 만들어 보세요.
+          입력한 내용은 바로 오른쪽 미리보기에 반영돼요.
         </p>
-        {tab === "prompt" ? (
-          <div
-            id="prompt-panel"
-            className="promptFields"
-            role="tabpanel"
-            aria-labelledby="prompt-tab"
-          >
-            {fieldConfig.map((config) => (
-              <label key={config.field} className="field">
-                <span className="label">{config.label}</span>
-                <input
-                  className="input"
-                  value={String(inputs[config.field] ?? "")}
-                  onChange={(event) => onInputChange(config.field, event.target.value)}
-                  placeholder={config.placeholder}
-                />
-              </label>
-            ))}
-            <label className="field promptMemoField">
-              <span className="label">내가 보기엔 다른 점</span>
-              <textarea
-                className="textarea"
-                value={inputs.memo}
-                onChange={(event) => onInputChange("memo", event.target.value)}
-                placeholder="결과가 나와 조금 다르게 느껴진다면 여기에 적어보세요."
-              />
-            </label>
-            <label className="checkboxLine promptCheckbox">
+        <div className="promptFields">
+          {fieldConfig.map((config) => (
+            <label key={config.field} className="field">
+              <span className="label">{config.label}</span>
               <input
-                type="checkbox"
-                checked={inputs.includeMemo}
-                onChange={(event) =>
-                  onInputChange("includeMemo", event.target.checked)
-                }
+                className="input"
+                value={String(inputs[config.field] ?? "")}
+                onChange={(event) => onInputChange(config.field, event.target.value)}
+                placeholder={config.placeholder}
               />
-              내가 쓴 메모를 AI 챗봇용 프롬프트에 포함하기
             </label>
-            <button className="buttonOutlinePrimary generateButton" type="button" onClick={onCopyPrompt}>
-              프롬프트 생성하기
-              <Pencil aria-hidden="true" size={17} />
-            </button>
-          </div>
-        ) : (
-          <div
-            id="guide-panel"
-            className="strategyGuide"
-            role="tabpanel"
-            aria-labelledby="guide-tab"
-          >
-            <h2>{summary.typeName}</h2>
-            <p>{summary.representativeSentence}</p>
-            <ul>
-              {content.recommendedMethods.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
-            <button className="buttonSecondary" type="button" onClick={onOpenResult}>
-              결과 요약으로 돌아가기
-            </button>
-          </div>
-        )}
+          ))}
+          <label className="field promptMemoField">
+            <span className="label">내가 보기엔 다른 점</span>
+            <textarea
+              className="textarea"
+              value={inputs.memo}
+              onChange={(event) => onInputChange("memo", event.target.value)}
+              placeholder="결과가 나와 조금 다르게 느껴진다면 여기에 적어보세요."
+            />
+          </label>
+          <label className="checkboxLine promptCheckbox">
+            <input
+              type="checkbox"
+              checked={inputs.includeMemo}
+              onChange={(event) =>
+                onInputChange("includeMemo", event.target.checked)
+              }
+            />
+            내가 쓴 메모를 AI 챗봇용 프롬프트에 포함하기
+          </label>
+        </div>
         <div className="promptUtility">
           <button className="buttonSecondary" type="button" onClick={onSave}>
             <Save aria-hidden="true" size={16} />
-            저장
+            결과 저장
           </button>
           <button className="buttonSecondary" type="button" onClick={onExportImage}>
             <Download aria-hidden="true" size={16} />
-            이미지
+            이미지 저장
           </button>
           <button className="buttonDanger" type="button" onClick={onRequestDelete}>
             <Trash2 aria-hidden="true" size={16} />
-            삭제
+            저장 결과 삭제
           </button>
         </div>
       </section>
@@ -207,9 +159,18 @@ export function PromptScreen({
               <h2>프롬프트 미리보기</h2>
               <Doodle kind="underline-blue" className="notebookUnderline" />
             </div>
-            <button className="copyButton" type="button" onClick={onCopyPrompt}>
-              <ClipboardCopy aria-hidden="true" size={16} />
-              복사하기
+            <button
+              className="copyButton"
+              type="button"
+              data-copied={copySucceeded}
+              onClick={handlePromptCopy}
+            >
+              {copySucceeded ? (
+                <Check aria-hidden="true" size={16} />
+              ) : (
+                <ClipboardCopy aria-hidden="true" size={16} />
+              )}
+              {copySucceeded ? "복사됨" : "복사하기"}
             </button>
           </header>
           <pre className="promptPreview" tabIndex={0} aria-label="AI 프롬프트 전문">

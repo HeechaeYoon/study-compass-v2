@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useReducer, useRef, useState } from "react";
-import { QUESTIONS } from "../data/questions";
+import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
+import { QUESTIONS, type AnswerValue } from "../data/questions";
 import { buildAiPrompt } from "../domain/prompt";
 import { buildDetailedReport, createResult, createResultSummary } from "../domain/result";
 import { copyText } from "../infrastructure/clipboard";
@@ -19,7 +19,8 @@ import { createFixtureState } from "./fixtures";
 import { initialAppState } from "./appState";
 import { StartScreen } from "../screens/StartScreen";
 import { QuestionScreen } from "../screens/QuestionScreen";
-import { ResultScreen } from "../screens/ResultScreen";
+import { ResultExportCard, ResultScreen } from "../screens/ResultScreen";
+import { DetailReportScreen } from "../screens/DetailReportScreen";
 import { PromptScreen } from "../screens/PromptScreen";
 
 const assetBase = import.meta.env.BASE_URL;
@@ -39,7 +40,7 @@ type ToastState = {
 
 type AppHistoryState = {
   app: "study-compass";
-  screen: "start" | "question" | "result" | "prompt";
+  screen: "start" | "question" | "result" | "detail" | "prompt";
   questionIndex?: number;
 };
 
@@ -55,6 +56,7 @@ function isAppHistoryState(value: unknown): value is AppHistoryState {
     (candidate.screen === "start" ||
       candidate.screen === "question" ||
       candidate.screen === "result" ||
+      candidate.screen === "detail" ||
       candidate.screen === "prompt")
   );
 }
@@ -68,10 +70,23 @@ export function App() {
   const [toast, setToast] = useState<ToastState | null>(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [manualCopyText, setManualCopyText] = useState<string | null>(null);
+  const [autoAdvanceQuestionId, setAutoAdvanceQuestionId] = useState<string | null>(null);
   const exportRef = useRef<HTMLDivElement | null>(null);
+  const autoAdvanceTimeoutRef = useRef<number | null>(null);
+  const toastIdRef = useRef(0);
   const historyReadyRef = useRef(false);
   const handlingPopRef = useRef(false);
   const lastHistorySignatureRef = useRef("");
+
+  const clearAutoAdvance = useCallback((resetPending = true): void => {
+    if (autoAdvanceTimeoutRef.current !== null) {
+      window.clearTimeout(autoAdvanceTimeoutRef.current);
+      autoAdvanceTimeoutRef.current = null;
+    }
+    if (resetPending) {
+      setAutoAdvanceQuestionId(null);
+    }
+  }, []);
 
   const styleVars: CssVars = {
     "--paper-texture": `url("${assetPath("assets/paper-texture.webp")}")`,
@@ -90,6 +105,31 @@ export function App() {
   }, []);
 
   useEffect(() => {
+    if (!toast) return undefined;
+    const timeout = window.setTimeout(() => {
+      setToast((current) => (current?.id === toast.id ? null : current));
+    }, 3000);
+    return () => window.clearTimeout(timeout);
+  }, [toast]);
+
+  useEffect(() => {
+    return () => clearAutoAdvance(false);
+  }, [clearAutoAdvance]);
+
+  useEffect(() => {
+    clearAutoAdvance();
+  }, [clearAutoAdvance, state.currentQuestionIndex, state.screen]);
+
+  useEffect(() => {
+    const frame = window.requestAnimationFrame(() => {
+      const surface = document.querySelector('[data-testid="screen-surface"]');
+      const heading = surface?.querySelector<HTMLElement>("[data-screen-heading]");
+      heading?.focus({ preventScroll: true });
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [state.currentQuestionIndex, state.screen]);
+
+  useEffect(() => {
     if (fixture) return;
     const onPopState = (event: PopStateEvent) => {
       handlingPopRef.current = true;
@@ -102,6 +142,8 @@ export function App() {
         dispatch({ type: "GO_TO_QUESTION", index: event.state.questionIndex ?? 0 });
       } else if (event.state.screen === "result" && state.result) {
         dispatch({ type: "OPEN_RESULT" });
+      } else if (event.state.screen === "detail" && state.result) {
+        dispatch({ type: "OPEN_DETAIL" });
       } else if (event.state.screen === "prompt" && state.result) {
         dispatch({ type: "OPEN_PROMPT" });
       } else {
@@ -145,18 +187,20 @@ export function App() {
   }, [fixture, state.currentQuestionIndex, state.screen]);
 
   function announce(message: string): void {
-    setToast({ id: Date.now(), message });
+    toastIdRef.current += 1;
+    setToast({ id: toastIdRef.current, message });
   }
 
-  function completeCurrentQuestion(): void {
+  function completeCurrentQuestion(answers = state.answers): void {
     const result = createResult({
-      answers: state.answers,
+      answers,
       nickname: state.nickname,
     });
     dispatch({ type: "COMPLETE", result });
   }
 
   function handleNext(): void {
+    clearAutoAdvance();
     if (state.currentQuestionIndex === QUESTIONS.length - 1) {
       completeCurrentQuestion();
       return;
@@ -168,19 +212,51 @@ export function App() {
     });
   }
 
-  async function handleCopy(text: string, successMessage: string): Promise<void> {
+  function handleQuestionAnswer(
+    questionId: string,
+    value: AnswerValue,
+    options: { autoAdvance: boolean },
+  ): void {
+    const changed = state.answers[questionId] !== value;
+    const nextAnswers = { ...state.answers, [questionId]: value };
+    dispatch({ type: "ANSWER", questionId, value });
+    if (!changed) return;
+    if (!options.autoAdvance || prefersReducedMotion()) {
+      clearAutoAdvance();
+      return;
+    }
+
+    clearAutoAdvance();
+    setAutoAdvanceQuestionId(questionId);
+    autoAdvanceTimeoutRef.current = window.setTimeout(() => {
+      autoAdvanceTimeoutRef.current = null;
+      setAutoAdvanceQuestionId(null);
+      if (state.currentQuestionIndex === QUESTIONS.length - 1) {
+        completeCurrentQuestion(nextAnswers);
+        return;
+      }
+      dispatch({ type: "NEXT_QUESTION" });
+      window.scrollTo({
+        top: 0,
+        behavior: prefersReducedMotion() ? "auto" : "smooth",
+      });
+    }, 620);
+  }
+
+  async function handleCopy(text: string, successMessage: string): Promise<boolean> {
     const result = await copyText(text);
     if (result.ok) {
       announce(successMessage);
-      return;
+      return true;
     }
     setManualCopyText(result.manualText);
     announce("자동 복사가 어려워요. 아래 텍스트를 길게 눌러 복사해주세요.");
+    return false;
   }
 
-  async function handleCopyPrompt(): Promise<void> {
-    if (!state.result) return;
-    await handleCopy(
+  async function handleCopyPrompt(): Promise<boolean> {
+    if (!state.result) return false;
+    return handleCopy(
       buildAiPrompt(state.result, state.promptInputs),
       "AI 프롬프트를 복사했어요.",
     );
@@ -244,6 +320,7 @@ export function App() {
         {state.screen === "start" ? (
           <StartScreen
             nickname={state.nickname}
+            heroImageSrc={assetPath("assets/start-hero-map.webp")}
             savedResult={state.savedResult}
             onNicknameChange={(value) =>
               dispatch({ type: "SET_NICKNAME", value })
@@ -261,22 +338,32 @@ export function App() {
             answer={state.answers[currentQuestion.id]}
             index={state.currentQuestionIndex}
             total={QUESTIONS.length}
-            onAnswer={(questionId, value) =>
-              dispatch({ type: "ANSWER", questionId, value })
-            }
-            onPrevious={() => dispatch({ type: "PREVIOUS_QUESTION" })}
+            isAutoAdvancing={autoAdvanceQuestionId === currentQuestion.id}
+            onAnswer={handleQuestionAnswer}
+            onPrevious={() => {
+              clearAutoAdvance();
+              dispatch({ type: "PREVIOUS_QUESTION" });
+            }}
             onNext={handleNext}
           />
         ) : null}
         {state.screen === "result" && state.result ? (
           <ResultScreen
-            ref={exportRef}
             result={state.result}
+            onOpenDetail={() => dispatch({ type: "OPEN_DETAIL" })}
             onOpenPrompt={() => dispatch({ type: "OPEN_PROMPT" })}
             onCopyReport={handleCopyReport}
             onSave={handleSave}
             onExportImage={handleExportImage}
             onRestart={() => dispatch({ type: "RESET" })}
+          />
+        ) : null}
+        {state.screen === "detail" && state.result ? (
+          <DetailReportScreen
+            result={state.result}
+            onOpenResult={() => dispatch({ type: "OPEN_RESULT" })}
+            onOpenPrompt={() => dispatch({ type: "OPEN_PROMPT" })}
+            onCopyReport={handleCopyReport}
           />
         ) : null}
         {state.screen === "prompt" && state.result ? (
@@ -295,6 +382,7 @@ export function App() {
             onRequestDelete={() => setDeleteModalOpen(true)}
           />
         ) : null}
+        {state.result ? <ResultExportCard ref={exportRef} result={state.result} /> : null}
       </div>
       <Toast toast={toast} />
       <ConfirmModal

@@ -3,7 +3,7 @@ import type { Result } from "../domain/result";
 import type { AnswerMap, AnswerValue } from "../data/questions";
 import type { SavedResult } from "../infrastructure/storage";
 
-export type Screen = "start" | "question" | "result" | "prompt";
+export type Screen = "start" | "question" | "result" | "detail" | "prompt";
 
 export type AppState = {
   screen: Screen;
@@ -25,6 +25,7 @@ export type AppAction =
   | { type: "GO_TO_QUESTION"; index: number }
   | { type: "NEXT_QUESTION" }
   | { type: "COMPLETE"; result: Result }
+  | { type: "OPEN_DETAIL" }
   | { type: "OPEN_PROMPT" }
   | { type: "OPEN_RESULT" }
   | { type: "SET_MEMO"; value: string }

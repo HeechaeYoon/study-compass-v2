@@ -19,10 +19,27 @@ export async function exportSummaryCard(
   try {
     await document.fonts.ready;
     const { toPng } = await import("html-to-image");
+    const width = Math.ceil(element.getBoundingClientRect().width || element.offsetWidth);
+    const height = Math.ceil(element.getBoundingClientRect().height || element.offsetHeight);
     const dataUrl = await toPng(element, {
       cacheBust: true,
       pixelRatio: 2,
       backgroundColor: "#fffefc",
+      width,
+      height,
+      canvasWidth: width,
+      canvasHeight: height,
+      style: {
+        position: "relative",
+        left: "0",
+        top: "0",
+        right: "auto",
+        bottom: "auto",
+        margin: "0",
+        transform: "none",
+        opacity: "1",
+        visibility: "visible",
+      },
     });
     const filename = `학습성향_${sanitizeTypeName(typeName)}_${formatDate(
       new Date(),
@@ -30,7 +47,9 @@ export async function exportSummaryCard(
     const link = document.createElement("a");
     link.download = filename;
     link.href = dataUrl;
+    document.body.appendChild(link);
     link.click();
+    document.body.removeChild(link);
     return { ok: true, filename };
   } catch {
     return { ok: false, error: "unknown" };

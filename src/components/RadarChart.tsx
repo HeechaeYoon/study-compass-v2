@@ -38,7 +38,7 @@ export function RadarChart({ scores, displayScores, labels, size = 360 }: RadarC
         height={size}
         viewBox={`0 0 ${size} ${size}`}
         role="img"
-        aria-label={`5가지 학습 축 결과: ${summary}`}
+        aria-label={`학습 지도 결과: ${summary}`}
       >
         {[0.2, 0.4, 0.6, 0.8, 1].map((ratio) => (
           <polygon
@@ -104,17 +104,6 @@ export function RadarChart({ scores, displayScores, labels, size = 360 }: RadarC
           />
         ))}
       </svg>
-      <figcaption className="radarLegend">
-        <span>성장 포인트</span>
-        <span className="legendDots" aria-hidden="true">
-          <i />
-          <i />
-          <i />
-          <i />
-          <i />
-        </span>
-        <span>강점</span>
-      </figcaption>
     </figure>
   );
 }

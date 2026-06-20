@@ -97,6 +97,16 @@ export function createFixtureState(name: string | null): AppState {
     };
   }
 
+  if (name === "detail") {
+    return {
+      ...initialAppState,
+      screen: "detail",
+      nickname: result.nickname ?? "",
+      answers: fixtureAnswers,
+      result,
+    };
+  }
+
   return {
     ...initialAppState,
     screen: "start",
