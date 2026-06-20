@@ -22,14 +22,14 @@ export type LearningTypeContent = {
 };
 
 export const TYPE_PROFILES: Record<LearningTypeId, AxisScores> = {
-  strategy_designer: { P: 82, E: 82, U: 72, M: 75, H: 62 },
-  execution_driver: { P: 60, E: 85, U: 55, M: 50, H: 45 },
-  concept_explorer: { P: 50, E: 50, U: 85, M: 55, H: 60 },
-  reflection_grower: { P: 55, E: 55, U: 65, M: 85, H: 50 },
-  resource_user: { P: 50, E: 50, U: 60, M: 60, H: 85 },
-  balanced_coordinator: { P: 70, E: 70, U: 70, M: 70, H: 70 },
-  routine_stabilizer: { P: 60, E: 80, U: 50, M: 65, H: 50 },
-  foundation_builder: { P: 45, E: 45, U: 45, M: 45, H: 45 },
+  strategy_designer: { P: 70, E: 58, U: 50, M: 74, H: 44 },
+  execution_driver: { P: 58, E: 84, U: 56, M: 50, H: 44 },
+  concept_explorer: { P: 47, E: 47, U: 83, M: 56, H: 61 },
+  reflection_grower: { P: 53, E: 53, U: 61, M: 83, H: 50 },
+  resource_user: { P: 47, E: 47, U: 61, M: 56, H: 83 },
+  balanced_coordinator: { P: 48, E: 48, U: 48, M: 50, H: 48 },
+  routine_stabilizer: { P: 58, E: 74, U: 50, M: 67, H: 50 },
+  foundation_builder: { P: 24, E: 24, U: 24, M: 24, H: 24 },
 };
 
 export const TYPE_NAMES: Record<LearningTypeId, string> = {
@@ -50,9 +50,9 @@ export const LEARNING_TYPE_CONTENT: Record<
   strategy_designer: {
     name: TYPE_NAMES.strategy_designer,
     summary:
-      "공부를 시작하기 전에 방향과 순서를 잡을 때 강점이 잘 드러나요.",
+      "공부를 시작하기 전에 방향과 순서를 잡는 전략이 잘 맞을 수 있어요.",
     description:
-      "공부를 시작하기 전에 길을 먼저 그리는 지도 제작자처럼 목표와 순서를 정할 때 강점이 드러납니다.",
+      "공부를 시작하기 전에 길을 먼저 그리는 지도 제작자처럼 목표와 순서를 정할 때 흐름이 안정될 수 있습니다.",
     strengths: [
       "목표와 순서를 정리하기 좋습니다.",
       "공부할 양이 많을 때 작은 단위로 나누기 좋습니다.",
@@ -105,7 +105,7 @@ export const LEARNING_TYPE_CONTENT: Record<
   reflection_grower: {
     name: TYPE_NAMES.reflection_grower,
     summary: "공부가 잘 되고 있는지 확인하고 고치는 힘이 좋아요.",
-    description: "학습 결과를 확인하고 다음 방법을 고치는 데 강점이 있습니다.",
+    description: "학습 결과를 확인하고 다음 방법을 고치는 전략이 잘 맞을 수 있습니다.",
     strengths: ["오답 원인 찾기", "공부 방법 수정", "작은 테스트 활용"],
     cautions: [
       "점검이 많아지면 자신감이 떨어질 수 있습니다.",

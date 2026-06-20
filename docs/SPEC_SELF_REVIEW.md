@@ -98,13 +98,13 @@ The following checks were run on the generated package.
 
 **Correction applied:**
 
-`strategy_designer` was adjusted to:
+The fixture still demonstrates a clear strategy-designer result, but the production matching profile was later recalibrated through response-space distribution testing to:
 
 ```ts
-{ P: 82, E: 82, U: 72, M: 75, H: 62 }
+{ P: 70, E: 58, U: 50, M: 74, H: 44 }
 ```
 
-This is also more consistent with the reference explanation: plan systematically, execute, and self-check.
+This keeps the type anchored in planning and checking without letting the balanced profile hide it, while keeping all 8 types above the 3% response-space floor.
 
 **Status:** Resolved for the fixture and initial heuristic. It remains a non-standardized design value and must be reviewed after student pilot data.
 

@@ -21,6 +21,7 @@
     "playwright.config.ts",
     "eslint.config.js",
     "scripts/**/*.mjs",
+    "scripts/**/*.ts",
     "tests/e2e/**/*.ts",
     "tests/visual/**/*.ts"
   ]

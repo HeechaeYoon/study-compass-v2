@@ -75,14 +75,14 @@ export function DetailReportScreen({
         <article>
           <Sparkles aria-hidden="true" size={21} />
           <div>
-            <strong>강점</strong>
+            <strong>{summary.strengthTitle}</strong>
             <span>{strengthNames}</span>
           </div>
         </article>
         <article>
           <BarChart3 aria-hidden="true" size={21} />
           <div>
-            <strong>균형</strong>
+            <strong>{summary.balanceTitle}</strong>
             <span>{balanceNames}</span>
           </div>
         </article>
@@ -127,10 +127,22 @@ export function DetailReportScreen({
           </div>
         </article>
 
+        <article className="detailCard evidenceDetailCard">
+          <h3>
+            <ClipboardList aria-hidden="true" size={20} />
+            왜 이렇게 봤나요?
+          </h3>
+          <ul>
+            {summary.evidenceLines.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </article>
+
         <article className="detailCard">
           <h3>
             <Lightbulb aria-hidden="true" size={20} />
-            잘 맞는 방법
+            성향별 참고 전략 묶음
           </h3>
           <ul>
             {content.recommendedMethods.slice(0, 4).map((item) => (
@@ -142,7 +154,7 @@ export function DetailReportScreen({
         <article className="detailCard">
           <h3>
             <Target aria-hidden="true" size={20} />
-            주의할 점
+            조심하면 좋은 점
           </h3>
           <ul>
             {content.cautions.map((item) => (

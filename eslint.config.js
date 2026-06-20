@@ -29,7 +29,7 @@ export default tseslint.config(
     },
   },
   {
-    files: ["tests/**/*.ts", "scripts/**/*.mjs"],
+    files: ["tests/**/*.ts", "scripts/**/*.{mjs,ts}"],
     languageOptions: {
       globals: {
         ...globals.node,

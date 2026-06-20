@@ -57,6 +57,9 @@ test("standard flow works without nickname", async ({ page }) => {
   await expect(
     page.getByTestId("screen-surface").getByText(/현재 답변 기준으로는/),
   ).toBeVisible();
+  await expect(
+    page.getByTestId("screen-surface").getByText(/고정된 성격이나 능력이 아니라/),
+  ).toBeVisible();
   await page.getByRole("button", { name: /AI 프롬프트 만들기/ }).click();
   await page.getByLabel("과목").fill("수학");
   await page.getByLabel("단원").fill("일차함수");
@@ -138,6 +141,7 @@ test("detail report opens as a readable screen and returns to summary", async ({
 
   await expect(page.getByRole("heading", { name: "지금의 공부 길을 한눈에 보기" })).toBeVisible();
   await expect(page.getByText("학습 지도 리포트")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "왜 이렇게 봤나요?" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "내 학습 지도" })).toBeVisible();
   await expect(page.getByText("오늘의 성장 미션")).toBeVisible();
   await expect(page.getByText("피하면 좋은 방식")).toBeVisible();
@@ -147,6 +151,8 @@ test("detail report opens as a readable screen and returns to summary", async ({
 
 test("memo is excluded by default and can be included", async ({ page }) => {
   await page.goto("/?fixture=prompt");
+  await expect(page.getByText(/아직 AI로 보내지지 않아요/)).toBeVisible();
+  await expect(page.getByText(/민감한 개인정보를 빼주세요/)).toBeVisible();
   await expect(page.getByRole("button", { name: /프롬프트 생성하기/ })).toHaveCount(0);
   await expect(page.getByRole("button", { name: /상세 리포트 복사/ })).toHaveCount(0);
   await expect(page.getByRole("tablist")).toHaveCount(0);
@@ -161,6 +167,7 @@ test("prompt preview updates live and copy button confirms success", async ({ pa
   await page.goto("/?fixture=prompt");
   await page.getByLabel("원하는 도움").fill("예시 문제를 두 개만 추천");
   await expect(page.locator(".promptPreview")).toContainText("예시 문제를 두 개만 추천");
+  await expect(page.locator(".promptPreview")).toContainText("자동으로 전송하지 않습니다");
   await page.getByRole("button", { name: "복사하기" }).click();
   await expect(page.getByRole("button", { name: "복사됨" })).toBeVisible();
   await expect(page.getByRole("status")).toContainText("AI 프롬프트를 복사했어요.");

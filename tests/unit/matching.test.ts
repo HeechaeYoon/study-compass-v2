@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { TYPE_PROFILES } from "../../src/data/learningTypes";
 import { matchLearningType } from "../../src/domain/matching";
+import { calculateLearningTypeDistribution } from "../../src/domain/distribution";
 import {
   createResult,
   selectGrowthAxes,
@@ -29,7 +30,7 @@ const baseAnswers = {
 describe("learning type matching", () => {
   it("matches exact profile vectors", () => {
     expect(matchLearningType(TYPE_PROFILES.strategy_designer).primaryType).toBe(
-      "balanced_coordinator",
+      "strategy_designer",
     );
     expect(matchLearningType(TYPE_PROFILES.execution_driver).primaryType).toBe(
       "execution_driver",
@@ -43,18 +44,51 @@ describe("learning type matching", () => {
     expect(matchLearningType(TYPE_PROFILES.resource_user).primaryType).toBe(
       "resource_user",
     );
-  });
-
-  it("applies special rules before distance", () => {
-    expect(matchLearningType({ P: 44, E: 45, U: 46, M: 47, H: 48 }).primaryType).toBe(
+    expect(matchLearningType(TYPE_PROFILES.balanced_coordinator).primaryType).toBe(
+      "balanced_coordinator",
+    );
+    expect(matchLearningType(TYPE_PROFILES.routine_stabilizer).primaryType).toBe(
+      "routine_stabilizer",
+    );
+    expect(matchLearningType(TYPE_PROFILES.foundation_builder).primaryType).toBe(
       "foundation_builder",
     );
-    expect(matchLearningType({ P: 65, E: 66, U: 64, M: 67, H: 65 }).primaryType).toBe(
+  });
+
+  it("keeps special handling from overriding a closer concrete profile", () => {
+    expect(matchLearningType({ P: 29, E: 31, U: 30, M: 32, H: 33 }).primaryType).toBe(
+      "foundation_builder",
+    );
+    expect(matchLearningType(TYPE_PROFILES.balanced_coordinator).primaryType).toBe(
       "balanced_coordinator",
     );
-    expect(matchLearningType({ P: 45, E: 59, U: 64, M: 65, H: 67 }).primaryType).toBe(
+    expect(matchLearningType({ P: 35, E: 34, U: 36, M: 35, H: 34 }).primaryType).not.toBe(
       "balanced_coordinator",
     );
+    expect(matchLearningType(TYPE_PROFILES.strategy_designer).primaryType).not.toBe(
+      "balanced_coordinator",
+    );
+  });
+
+  it("keeps the full response-space distribution within target bounds", () => {
+    const distribution = calculateLearningTypeDistribution();
+
+    expect(distribution.questionCount).toBe(16);
+    expect(distribution.likertCount).toBe(12);
+    expect(distribution.scenarioCount).toBe(4);
+    expect(distribution.totalCombinations).toBe(10_485_760_000);
+
+    for (const row of distribution.typeRows) {
+      expect(row.percent).toBeGreaterThanOrEqual(3);
+      expect(row.percent).toBeLessThanOrEqual(30);
+    }
+
+    const byId = Object.fromEntries(
+      distribution.typeRows.map((row) => [row.id, row]),
+    );
+    expect(byId.strategy_designer?.percent).toBeGreaterThanOrEqual(3);
+    expect(byId.foundation_builder?.percent).toBeLessThanOrEqual(30);
+    expect(byId.balanced_coordinator?.percent).toBeLessThanOrEqual(22);
   });
 
   it("sets secondary type when the next profile is very close", () => {

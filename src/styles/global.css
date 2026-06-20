@@ -1078,9 +1078,18 @@ button:disabled {
 .checkboxLine {
   display: inline-flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 8px;
   font-size: 12px;
   color: var(--ink-soft);
+}
+
+.checkboxLine span {
+  display: block;
+  margin-left: 2px;
+  font-size: 11px;
+  line-height: 1.35;
+  color: #687181;
 }
 
 .resultDetailsRow {
@@ -1154,9 +1163,9 @@ button:disabled {
   height: auto;
   min-height: 680px;
   overflow: visible;
-  padding: 22px 34px 24px;
+  padding: 20px 34px 22px;
   display: grid;
-  gap: 10px;
+  gap: 9px;
 }
 
 .detailHeader {
@@ -1181,21 +1190,21 @@ button:disabled {
 
 .detailTitle {
   font-family: var(--font-display);
-  font-size: 32px;
+  font-size: 30px;
   line-height: 1.18;
   color: var(--ink);
 }
 
 .detailLead {
-  margin-top: 5px;
+  margin-top: 4px;
   font-size: 14px;
-  line-height: 1.55;
+  line-height: 1.45;
   color: #475064;
 }
 
 .detailNotice {
-  min-height: 44px;
-  padding: 10px 14px;
+  min-height: 40px;
+  padding: 8px 14px;
   border: 1px solid rgba(69, 89, 222, 0.16);
   border-radius: 8px;
   background:
@@ -1205,7 +1214,7 @@ button:disabled {
   align-items: center;
   gap: 10px;
   font-size: 13px;
-  line-height: 1.55;
+  line-height: 1.45;
 }
 
 .detailNotice svg {
@@ -1220,8 +1229,8 @@ button:disabled {
 }
 
 .detailSnapshot article {
-  min-height: 54px;
-  padding: 10px 14px;
+  min-height: 50px;
+  padding: 8px 14px;
   border: 1px solid var(--border);
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.82);
@@ -1257,12 +1266,13 @@ button:disabled {
 
 .detailGrid {
   display: grid;
-  grid-template-columns: 1.15fr 0.85fr;
-  gap: 12px;
+  grid-template-columns: minmax(0, 1.08fr) minmax(290px, 0.92fr);
+  align-items: start;
+  gap: 10px;
 }
 
 .detailCard {
-  padding: 13px 16px;
+  padding: 11px 14px;
   border: 1px solid var(--border);
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.82);
@@ -1272,7 +1282,7 @@ button:disabled {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 17px;
+  font-size: 16px;
   color: var(--ink);
 }
 
@@ -1281,31 +1291,39 @@ button:disabled {
 }
 
 .detailCard h4 {
-  margin-top: 12px;
-  font-size: 14px;
+  margin-top: 8px;
+  font-size: 13px;
   color: var(--ink);
 }
 
 .detailCard ul {
-  margin: 7px 0 0;
-  padding-left: 18px;
-  font-size: 13.4px;
-  line-height: 1.58;
+  margin: 6px 0 0;
+  padding-left: 17px;
+  font-size: 12.8px;
+  line-height: 1.43;
+}
+
+.evidenceDetailCard {
+  grid-column: auto;
+}
+
+.evidenceDetailCard ul {
+  display: block;
 }
 
 .axisDetailCard {
-  grid-row: span 2;
+  grid-row: span 3;
 }
 
 .axisDetailList {
-  margin-top: 10px;
+  margin-top: 8px;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px 10px;
+  gap: 7px 9px;
 }
 
 .axisDetailList article {
-  padding: 10px 12px;
+  padding: 8px 10px;
   border: 1px solid rgba(69, 89, 222, 0.08);
   border-radius: 7px;
   background: #fbfcff;
@@ -1329,7 +1347,7 @@ button:disabled {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  font-size: 13.2px;
+  font-size: 12.8px;
 }
 
 .axisDetailList em {
@@ -1339,16 +1357,16 @@ button:disabled {
 
 .axisDetailList p,
 .missionDetailCard p {
-  margin-top: 6px;
-  font-size: 13.2px;
-  line-height: 1.56;
+  margin-top: 5px;
+  font-size: 12.7px;
+  line-height: 1.42;
 }
 
 .missionDetailCard {
   display: grid;
-  grid-template-columns: 210px 1fr;
+  grid-template-columns: 190px 1fr;
   align-items: center;
-  column-gap: 18px;
+  column-gap: 14px;
   border-color: rgba(229, 189, 76, 0.45);
   background:
     linear-gradient(rgba(255, 245, 199, 0.82), rgba(255, 245, 199, 0.82)),
@@ -1361,9 +1379,9 @@ button:disabled {
 
 .missionDetailCard strong {
   display: block;
-  margin-top: 6px;
-  font-size: 14px;
-  line-height: 1.36;
+  margin-top: 5px;
+  font-size: 13.2px;
+  line-height: 1.3;
   color: #5b4720;
 }
 
@@ -1549,7 +1567,7 @@ button:disabled {
 
 .promptPreview {
   margin-top: 24px;
-  height: 374px;
+  height: 354px;
   overflow: auto;
   white-space: pre-wrap;
   font-family: var(--font-body);
@@ -1568,16 +1586,17 @@ button:disabled {
 }
 
 .notebookHint {
-  height: 44px;
+  min-height: 58px;
   margin-top: 14px;
   border: 1px solid #d9dde5;
   border-radius: 7px;
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 0 13px;
+  padding: 8px 13px;
   color: #5a6271;
   font-size: 11px;
+  line-height: 1.45;
 }
 
 .pencilAsset {

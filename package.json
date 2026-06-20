@@ -14,6 +14,7 @@
     "test:e2e": "playwright test tests/e2e",
     "test:e2e:webkit": "ENABLE_WEBKIT=true playwright test tests/e2e --project=webkit",
     "test:visual": "playwright test tests/visual && node scripts/visual-compare.mjs",
+    "logic:distribution": "vite-node --script scripts/logic-distribution.ts",
     "visual:compare": "node scripts/visual-compare.mjs",
     "assets:process": "node scripts/process-generated-assets.mjs"
   },

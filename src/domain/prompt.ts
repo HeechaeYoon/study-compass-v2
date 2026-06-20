@@ -1,6 +1,11 @@
 import { AXES, AXIS_NAMES } from "../data/axes";
 import { LEARNING_TYPE_CONTENT, TYPE_NAMES } from "../data/learningTypes";
-import { createResultSummary, getAxisInterpretation, type Result } from "./result";
+import {
+  AI_PRIVACY_NOTE,
+  createResultSummary,
+  getAxisInterpretation,
+  type Result,
+} from "./result";
 
 export type PromptInputs = {
   subject: string;
@@ -57,10 +62,13 @@ export function buildAiPrompt(result: Result, inputs: PromptInputs): string {
     "",
     axisProfile,
     "",
-    "나의 주요 강점:",
+    "이렇게 판단한 근거:",
+    bulletList(summary.evidenceLines),
+    "",
+    "현재 활용할 수 있는 전략:",
     strengthSentences,
     "",
-    "주의할 점:",
+    "조심하면 좋은 점:",
     cautionSentences,
     "",
     "이번에 키워볼 성장 포인트:",
@@ -90,8 +98,10 @@ export function buildAiPrompt(result: Result, inputs: PromptInputs): string {
     "5. 마지막에 스스로 점검할 질문 3개를 만들어주세요.",
     "6. AI에게 다시 물어볼 수 있는 후속 질문 예시 2개도 만들어주세요.",
     "7. 중학교 2학년 학생이 이해하기 쉬운 말로 설명해주세요.",
+    "8. 내가 쓴 정보에 이름, 연락처, 민감한 개인정보가 있다면 사용하지 말라고 알려주세요.",
     "",
     `참고: ${summary.safetyNote}`,
+    AI_PRIVACY_NOTE,
   ]
     .filter((line, index, lines) => {
       if (line !== "") return true;

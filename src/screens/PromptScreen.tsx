@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import { AXIS_NAMES } from "../data/axes";
 import { buildAiPrompt, type PromptInputs } from "../domain/prompt";
-import { type Result } from "../domain/result";
+import { createResultSummary, type Result } from "../domain/result";
 import { Doodle } from "../components/Doodle";
 
 type PromptScreenProps = {
@@ -52,6 +52,7 @@ export function PromptScreen({
 }: PromptScreenProps) {
   const [copySucceeded, setCopySucceeded] = useState(false);
   const copyResetTimeoutRef = useRef<number | null>(null);
+  const summary = useMemo(() => createResultSummary(result), [result]);
   const prompt = useMemo(() => buildAiPrompt(result, inputs), [inputs, result]);
 
   useEffect(() => {
@@ -94,7 +95,8 @@ export function PromptScreen({
           </span>
         </div>
         <p className="promptIntro">
-          입력한 내용은 바로 오른쪽 미리보기에 반영돼요.
+          입력한 내용은 오른쪽 미리보기만 바꾸며 아직 AI로 보내지지 않아요.
+          복사해 붙여넣을 때는 이름, 연락처, 민감한 개인정보를 빼주세요.
         </p>
         <div className="promptFields">
           {fieldConfig.map((config) => (
@@ -126,6 +128,7 @@ export function PromptScreen({
               }
             />
             내가 쓴 메모를 AI 챗봇용 프롬프트에 포함하기
+            <span>개인적인 내용이 있으면 체크하지 않아도 됩니다.</span>
           </label>
         </div>
         <div className="promptUtility">
@@ -175,7 +178,7 @@ export function PromptScreen({
           </pre>
           <footer className="notebookHint">
             <Info aria-hidden="true" size={16} />
-            프롬프트를 복사해서 Gemini 등 AI 챗봇에 붙여넣어 사용하세요.
+            {summary.aiPrivacyNote}
           </footer>
         </article>
         <img className="pencilAsset" src={pencilSrc} alt="" aria-hidden="true" />

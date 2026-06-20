@@ -476,6 +476,7 @@ Visual tests may run separately if browser installation makes deployment workflo
     "test:watch": "vitest",
     "test:e2e": "playwright test tests/e2e",
     "test:visual": "playwright test tests/visual",
+    "logic:distribution": "vite-node --script scripts/logic-distribution.ts",
     "visual:compare": "node scripts/visual-compare.mjs"
   }
 }

@@ -594,7 +594,7 @@ gap: 34px;
 ### Left result narrative
 
 1. Eyebrow: `진단이 완료되었어요!`
-2. Line: `당신의 학습 성향은`
+2. Line: `현재 답변으로 본 학습 전략 지도`
 3. Type name: large 38px
 4. Gray star doodle
 5. Mint underline under type
@@ -604,14 +604,14 @@ gap: 34px;
 Example:
 
 ```text
-당신의 학습 성향은
+현재 답변으로 본 학습 전략 지도
 전략 설계형
 ```
 
 Use personalized title if nickname exists:
 
 ```text
-민트고래님의 학습 성향은
+민트고래님의 현재 답변 지도
 전략 설계형
 ```
 
@@ -646,8 +646,8 @@ Use personalized title if nickname exists:
 
 Three columns:
 
-1. 강점
-2. 균형
+1. 강점, or `먼저 활용할 전략` when no axis is in the actual `강점` range
+2. 균형, or `다음 점검` when no axis is in the actual `균형` range
 3. 추천 전략
 
 - Height: 98–110px
@@ -675,13 +675,13 @@ gap: 40px;
 
 ### Left form
 
-- Tabs at top:
-  - `AI 프롬프트`
-  - `학습 전략 가이드`
-- Active tab:
-  - indigo text
-  - blue underline 2px
-- Intro text below tabs
+- Top row:
+  - compact back button `결과 요약으로`
+  - small status badge `실시간 갱신`
+- Intro text below top row:
+  - entered content changes the preview only
+  - the app has not sent anything to AI
+  - remove names, contact details, and sensitive personal information before pasting into an AI chatbot
 
 Fields in vertical stack:
 
@@ -691,7 +691,8 @@ Fields in vertical stack:
 4. 현재 상황
 5. 어려운 점
 6. 원하는 도움
-7. 학생 메모 포함 checkbox
+7. 내가 보기엔 다른 점 textarea
+8. 학생 메모 포함 checkbox
 
 The reference shows four fields. At canonical height, group optional fields into two-column rows or use compact 46px fields so the form fits without a dense appearance.
 
@@ -704,12 +705,12 @@ Input:
 - Placeholder light gray
 - Gap between fields 12px
 
-Primary action:
+Preview behavior:
 
-- Outline indigo button `프롬프트 생성하기`
-- Pencil icon
-- Height 50px
-- When fields change, preview can update live; button may flash highlight and move focus to preview.
+- No separate generate button.
+- The preview updates live as fields change.
+- Memo inclusion defaults to off and only enters the prompt when the checkbox is checked.
+- Utility actions below the fields: `결과 저장`, `이미지 저장`, `저장 결과 삭제`.
 
 ### Notebook preview
 
@@ -728,7 +729,7 @@ Composition:
 - Dynamic text with blue highlighted placeholders/values
 - Bottom hint strip:
   - info icon
-  - `프롬프트를 복사해서 Gemini 등 AI 챗봇에 붙여넣어 사용하세요.`
+  - `앱은 프롬프트를 자동으로 전송하지 않습니다. 다만 복사한 내용을 AI 챗봇에 붙여넣으면 해당 서비스로 전송될 수 있으니 이름, 연락처, 민감한 개인정보는 빼고 사용하세요.`
 
 ### Pencil asset
 

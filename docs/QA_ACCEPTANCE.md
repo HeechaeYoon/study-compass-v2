@@ -245,7 +245,8 @@ Minimum: 9/10
 - [ ] bounds derived from question data
 - [ ] normalized scores all 0–100
 - [ ] labels at exact thresholds
-- [ ] type special rules applied before distance
+- [ ] type matching ranks profiles first, then applies balanced/foundation guardrails only when the score pattern fits
+- [ ] response-space distribution keeps every type at 3% or above and no single type above 30%
 - [ ] primary type always set
 - [ ] secondary type follows 0.03/5 rules
 - [ ] strength axes deterministic
@@ -331,6 +332,7 @@ Required test groups:
 - resource profile
 - balanced special rule
 - foundation special rule
+- response-space distribution regression
 - secondary type threshold
 
 ### Growth axis

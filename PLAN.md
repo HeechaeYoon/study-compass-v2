@@ -27,7 +27,7 @@
 - [x] 16 questions implemented: 12 Likert, 4 scenario; Q06 has 5 cards.
 - [x] Scoring derives bounds from question data and normalizes to 0-100.
 - [x] Labels use `강점`, `균형`, `성장 포인트`.
-- [x] Type matching implements foundation and balanced special rules before distance matching.
+- [x] Type matching ranks nearest profiles first, then applies foundation/balanced guardrails so those types appear only when their score patterns actually fit.
 - [x] Result summary, detailed report, growth axes, prompt builder, and safety copy implemented.
 - [x] Storage validation rejects malformed saved result data before React state load.
 
@@ -56,13 +56,13 @@
 - [x] Question screen with native radios, progress, pointer-only auto-advance after new selections, keyboard/reduced-motion manual pacing, previous/next fallback, browser Back support, and deterministic Q06 fixture.
 - [x] Question screen adds a visible `처음으로` button so students can return to the start screen and enter a missed nickname.
 - [x] Question screen removes the ambiguous green arrow and uses a non-directional `study-spark` doodle that does not steer layout.
-- [x] Result screen with custom SVG radar chart, no misleading radar caption/legend, summary cards, detail-screen navigation, copy, save, export, and reset.
+- [x] Result screen with custom SVG radar chart, no misleading radar caption/legend, conditional summary cards, current-response type summary, detail-screen navigation, copy, save, export, and reset.
 - [x] Dedicated detail report screen rebuilt as a student-facing learning map with clear headline, safety note, snapshot, mission, 5-axis cards, recommendations, cautions, and avoid-methods.
 - [x] Prompt screen removes tabs and the unclear strategy-guide tab; it keeps live-updating inputs, preview, result navigation, copy success state, copy fallback, save/delete/export, and local pencil asset.
 - [x] Prompt screen removes the hidden lower `상세 리포트 복사` floating button from the notebook area.
 - [x] Wide-only guidance under 900px.
 - [x] No backend, login, analytics, tracking, external AI call, or runtime external font request.
-- [x] Export uses a dedicated hidden summary card that includes growth point, 강점, 균형, 추천 전략 and excludes free-form prompt inputs/memo.
+- [x] Export uses a dedicated hidden summary card that includes growth point, conditional strength/balance labels, recommended strategies, and excludes free-form prompt inputs/memo.
 - [x] Toast messages auto-dismiss after 3 seconds and ignore stale timers.
 
 ## 5. Visual Validation
@@ -72,9 +72,9 @@ Final automated metrics from `npm run test:visual`:
 | Screen | Reviewer score | SSIM | Mismatch | Status |
 |---|---:|---:|---:|---|
 | Start | 91 | 0.4116 | 0.1071 | Pass |
-| Question | 91 | 0.4550 | 0.1097 | Pass |
-| Result | 91 | 0.4496 | 0.1242 | Pass |
-| Prompt | 91 | 0.3536 | 0.1327 | Pass |
+| Question | 91 | 0.4637 | 0.0871 | Pass |
+| Result | 91 | 0.4948 | 0.0887 | Pass |
+| Prompt | 91 | 0.3057 | 0.1057 | Pass |
 
 Notes:
 
@@ -105,6 +105,7 @@ Notes:
 - [x] Second visual reviewer: fixed detail footer clipping at 1280x800 by moving copy/prompt actions into the detail header; also removed remaining non-visual `5가지 학습 축` wording.
 - [x] Second functional/privacy reviewer: no blocking findings after export, toast, copy feedback, prompt-tab removal, storage, auto-advance, and detail fixture coverage.
 - [x] Fast accessibility/performance reviewer: no blocking findings on focus handoff, copy feedback, reduced motion, radar labeling, decorative hero image treatment, or visible tests.
+- [x] Learning-logic reviewers: fixed no-strength type-summary leakage, neutralized raw scenario-answer evidence, compressed detail report layout, and synced prompt visual spec.
 - [x] Remaining environment blocker: optional WebKit smoke cannot run on this host because WebKit system libraries are missing and `install-deps` needs sudo authentication.
 
 ## 8. Final Commands
@@ -113,9 +114,10 @@ Notes:
 |---|---|
 | `npm run typecheck` | Pass |
 | `npm run lint` | Pass |
-| `npm run test` | Pass, 19 unit tests |
-| `npm run test:visual` | Pass, 6 Chromium visual/viewport tests |
-| `npm run test:e2e` | Pass, 13 Chromium E2E tests |
+| `npm run test` | Pass, 23 unit tests |
+| `npm run logic:distribution` | Pass, all 8 types within 3-30% |
+| `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:visual` | Pass, 6 Chromium visual/viewport tests |
+| `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:e2e` | Pass, 14 Chromium E2E tests |
 | `npm run build` | Pass, production `dist/` generated |
 | `npm run test:e2e:webkit` | Blocked by host missing WebKit libraries |
 
@@ -129,3 +131,25 @@ Notes:
 - [x] `FINAL_REPORT.md`
 - [x] Local privacy scan: no `fetch`, XHR, beacon, sockets, analytics, external URLs, or console logging in app source.
 - [x] Preview smoke: local preview returned production HTML with relative asset URLs.
+
+## 10. Learning Logic Quality Pass
+
+- [x] Reviewed the audit-driven improvement plan against current source, PRD, scoring/content spec, QA criteria, and code review rules.
+- [x] Rebalance learning-type matching so all 8 profiles are reachable and `strategy_designer` is no longer hidden by the balanced special rule.
+- [x] Rewrite scenario options toward recent observable study behavior while preserving 16 questions, 12 Likert, and 4 scenario items.
+- [x] Make result summary cards conditional so `강점` and `균형` wording matches actual axis labels.
+- [x] Add answer-grounded evidence to detailed report and AI prompt while keeping type content as a secondary strategy bundle.
+- [x] Replace raw scenario-answer quotations with neutral evidence summaries and keep no-strength type summaries free of `강점` wording.
+- [x] Add result-screen and prompt-screen safety/privacy copy near the relevant actions.
+- [x] Add distribution, matching-anchor, report-copy, and prompt-safety tests.
+- [x] Run validation commands and record results: `npm run test`, `npm run typecheck`, `npm run lint`, `npm run build`, `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:e2e`, and `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:visual` passed.
+
+## 11. Learning Logic Distribution Calibration
+
+- [x] Added reusable response-space distribution helper and `npm run logic:distribution`.
+- [x] Replaced hidden test-only DP distribution code with the shared helper.
+- [x] Reworked primary type selection into a ranked guardrail loop.
+- [x] Recalibrated `strategy_designer` and `balanced_coordinator` profiles so all 8 types clear the response-space floor.
+- [x] Kept the 16-question structure unchanged; Q13/Q15/Q16 score edits were not needed after profile and guardrail calibration.
+- [x] Recorded the exact distribution from `npm run logic:distribution`: `strategy_designer` 22.85%, `execution_driver` 19.00%, `concept_explorer` 17.57%, `resource_user` 14.10%, `foundation_builder` 9.62%, `reflection_grower` 7.80%, `routine_stabilizer` 6.04%, `balanced_coordinator` 3.03%.
+- [x] Added regression expectations: every type >=3%, every type <=30%, `foundation_builder` <=30%, `balanced_coordinator` <=22%, and `strategy_designer` >=3%.

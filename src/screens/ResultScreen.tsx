@@ -9,7 +9,6 @@ import {
   Target,
   Trophy,
 } from "lucide-react";
-import { LEARNING_TYPE_CONTENT } from "../data/learningTypes";
 import { createResultSummary, type Result } from "../domain/result";
 import { Doodle } from "../components/Doodle";
 import { RadarChart } from "../components/RadarChart";
@@ -32,14 +31,14 @@ function SummaryCards({ result }: { result: Result }) {
       <article className="summaryCard">
         <Trophy aria-hidden="true" />
         <div>
-          <h3>강점</h3>
+          <h3>{summary.strengthTitle}</h3>
           <p>{summary.strengthSummary}</p>
         </div>
       </article>
       <article className="summaryCard">
         <BarChart3 aria-hidden="true" />
         <div>
-          <h3>균형</h3>
+          <h3>{summary.balanceTitle}</h3>
           <p>{summary.balanceSummary}</p>
         </div>
       </article>
@@ -64,10 +63,9 @@ export function ResultScreen({
   onRestart,
 }: ResultScreenProps) {
   const summary = createResultSummary(result);
-  const content = LEARNING_TYPE_CONTENT[result.match.primaryType];
   const headline = result.nickname
-    ? `${result.nickname}님의 학습 성향은`
-    : "당신의 학습 성향은";
+    ? `${result.nickname}님의 현재 답변 지도`
+    : "현재 답변으로 본 학습 전략 지도";
 
   return (
     <main className="screenSurface resultSurface" data-testid="screen-surface">
@@ -82,8 +80,9 @@ export function ResultScreen({
             <Doodle kind="star" className="resultStar" />
             <Doodle kind="underline-mint" className="typeUnderline" />
           </div>
-          <p className="resultDescription">{content.summary}</p>
+          <p className="resultDescription">{summary.typeSummary}</p>
           <p className="resultSafety">{summary.representativeSentence}</p>
+          <p className="resultSafety">{summary.safetyNote}</p>
           <article className="growthCard">
             <h3>성장 포인트</h3>
             <p>{summary.primaryGrowthCopy}</p>
@@ -133,10 +132,9 @@ export function ResultScreen({
 export const ResultExportCard = forwardRef<HTMLDivElement, { result: Result }>(
   function ResultExportCard({ result }, ref) {
     const summary = createResultSummary(result);
-    const content = LEARNING_TYPE_CONTENT[result.match.primaryType];
     const headline = result.nickname
-      ? `${result.nickname}님의 학습 성향은`
-      : "현재 답변 기준 학습 성향은";
+      ? `${result.nickname}님의 현재 답변 지도`
+      : "현재 답변 기준 학습 전략 지도";
 
     return (
       <section
@@ -149,8 +147,9 @@ export const ResultExportCard = forwardRef<HTMLDivElement, { result: Result }>(
           <p className="resultEyebrow">나의 공부 스타일 요약</p>
           <p className="resultLead">{headline}</p>
           <h2 className="resultType">{summary.typeName}</h2>
-          <p>{content.summary}</p>
+          <p>{summary.typeSummary}</p>
           <p className="resultSafety">{summary.representativeSentence}</p>
+          <p className="resultSafety">{summary.safetyNote}</p>
           <article className="growthCard exportGrowthCard">
             <h3>성장 포인트</h3>
             <p>{summary.primaryGrowthCopy}</p>

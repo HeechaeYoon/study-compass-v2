@@ -7,6 +7,8 @@ describe("AI prompt", () => {
     const prompt = buildAiPrompt(createFixtureResult(), EMPTY_PROMPT_INPUTS);
     expect(prompt).toContain("현재 답변 기준");
     expect(prompt).toContain("고정된 성격이 아니라");
+    expect(prompt).toContain("앱은 프롬프트를 자동으로 전송하지 않습니다");
+    expect(prompt).toContain("민감한 개인정보");
     expect(prompt).toContain("아직 입력하지 않았습니다");
     expect(prompt).toContain("30~40분");
     expect(prompt).toContain("스스로 점검할 질문 3개");

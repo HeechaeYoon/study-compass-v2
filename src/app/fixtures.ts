@@ -36,6 +36,18 @@ const fixtureScores: AxisScores = {
 
 export function createFixtureResult(): Result {
   const labels = labelAxisScores(fixtureScores) as Record<Axis, AxisLabel>;
+  const fixtureMatch = matchLearningType(fixtureScores);
+  const match: Result["match"] = {
+    primaryType: "strategy_designer",
+    rankings: fixtureMatch.rankings,
+  };
+  if (
+    fixtureMatch.secondaryType &&
+    fixtureMatch.secondaryType !== "strategy_designer"
+  ) {
+    match.secondaryType = fixtureMatch.secondaryType;
+  }
+
   return {
     questionnaireVersion: "16-basic",
     createdAt: "2026-06-20T00:00:00.000Z",
@@ -44,7 +56,7 @@ export function createFixtureResult(): Result {
     axisScores: fixtureScores,
     axisLabels: labels,
     displayScores: displayAxisScores(fixtureScores),
-    match: matchLearningType(fixtureScores),
+    match,
     strengthAxes: ["E", "P"],
     growthAxes: ["M", "H"],
     primaryGrowthAxis: "M",

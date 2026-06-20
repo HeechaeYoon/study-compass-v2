@@ -47,20 +47,49 @@ function rankProfiles(scores: AxisScores) {
     .sort((left, right) => left.distance - right.distance);
 }
 
-function pickPrimaryType(scores: AxisScores): LearningTypeId {
-  const avg = mean(scores);
-  const values = AXES.map((axis) => scores[axis]);
-  const highest = Math.max(...values);
-  if (avg < 50 && highest < 60) return "foundation_builder";
-  if (standardDeviation(scores) < 8 && avg >= 60) {
-    return "balanced_coordinator";
+function maxScore(scores: AxisScores): number {
+  return Math.max(...AXES.map((axis) => scores[axis]));
+}
+
+function allAxesAtLeast(scores: AxisScores, minScore: number): boolean {
+  return AXES.every((axis) => scores[axis] >= minScore);
+}
+
+function canUsePrimaryType(
+  typeId: LearningTypeId,
+  scores: AxisScores,
+): boolean {
+  if (typeId === "balanced_coordinator") {
+    return (
+      mean(scores) >= 45 &&
+      standardDeviation(scores) < 15 &&
+      allAxesAtLeast(scores, 30)
+    );
   }
-  return rankProfiles(scores)[0]?.id ?? "foundation_builder";
+
+  if (typeId === "foundation_builder") {
+    return mean(scores) < 32 && maxScore(scores) < 55;
+  }
+
+  return true;
+}
+
+function pickPrimaryType(
+  scores: AxisScores,
+  rankings: ReturnType<typeof rankProfiles>,
+): LearningTypeId {
+  for (const ranking of rankings) {
+    if (canUsePrimaryType(ranking.id, scores)) {
+      return ranking.id;
+    }
+  }
+
+  return rankings[0]?.id ?? "foundation_builder";
 }
 
 export function matchLearningType(scores: AxisScores): LearningTypeMatch {
   const rankings = rankProfiles(scores);
-  const primaryType = pickPrimaryType(scores);
+  const primaryType = pickPrimaryType(scores, rankings);
   const primaryRanking =
     rankings.find((ranking) => ranking.id === primaryType) ?? rankings[0];
   const secondaryCandidate = rankings.find(
@@ -76,7 +105,7 @@ export function matchLearningType(scores: AxisScores): LearningTypeMatch {
     const similarityGap =
       primaryRanking.similarity - secondaryCandidate.similarity;
     const distanceGap = secondaryCandidate.distance - primaryRanking.distance;
-    if (similarityGap < 0.03 || distanceGap < 5) {
+    if (distanceGap >= 0 && (similarityGap < 0.03 || distanceGap < 5)) {
       match.secondaryType = secondaryCandidate.id;
     }
   }
