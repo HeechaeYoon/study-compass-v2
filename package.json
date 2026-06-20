@@ -1,0 +1,48 @@
+{
+  "name": "study-compass-v2",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test tests/e2e",
+    "test:e2e:webkit": "ENABLE_WEBKIT=true playwright test tests/e2e --project=webkit",
+    "test:visual": "playwright test tests/visual && node scripts/visual-compare.mjs",
+    "visual:compare": "node scripts/visual-compare.mjs",
+    "assets:process": "node scripts/process-generated-assets.mjs"
+  },
+  "dependencies": {
+    "@fontsource/gowun-dodum": "^5.2.8",
+    "@fontsource/pretendard": "^5.2.5",
+    "html-to-image": "^1.11.13",
+    "lucide-react": "^0.468.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.0",
+    "@types/node": "^22.10.0",
+    "@types/pngjs": "^6.0.5",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "eslint": "^9.17.0",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "eslint-plugin-react-refresh": "^0.4.16",
+    "globals": "^15.14.0",
+    "pixelmatch": "^7.1.0",
+    "pngjs": "^7.0.0",
+    "sharp": "^0.33.5",
+    "ssim.js": "^3.5.0",
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.18.0",
+    "vite": "^6.0.5",
+    "vitest": "^2.1.8"
+  }
+}

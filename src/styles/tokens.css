@@ -1,0 +1,44 @@
+:root {
+  color-scheme: light;
+  --font-display:
+    "Gowun Dodum", "Pretendard", "Apple SD Gothic Neo", "Noto Sans KR",
+    "Malgun Gothic", sans-serif;
+  --font-body:
+    "Pretendard", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic",
+    sans-serif;
+  --ink: #101d4b;
+  --ink-soft: #30384f;
+  --text-muted: #5f6675;
+  --text-faint: #6f7582;
+  --primary: #4559de;
+  --primary-dark: #3148d4;
+  --primary-light: #eef1ff;
+  --primary-ring: rgba(49, 72, 212, 0.5);
+  --mint: #43c99b;
+  --mint-light: #e6f7ee;
+  --yellow: #f5be2e;
+  --yellow-light: #fff5c7;
+  --coral: #f16d48;
+  --orange: #e8a45e;
+  --bg: #f7f4ee;
+  --surface: #fffefc;
+  --surface-solid: #ffffff;
+  --border: #d9d9d6;
+  --border-strong: #bfc3cd;
+  --doodle: #8e96a6;
+  --shadow-surface:
+    0 2px 4px rgba(30, 37, 60, 0.08),
+    0 12px 28px rgba(45, 39, 26, 0.06);
+  --shadow-card: 0 3px 8px rgba(25, 34, 60, 0.1);
+  --shadow-selected: 0 7px 18px rgba(69, 89, 222, 0.12);
+  --shadow-notebook: 0 12px 26px rgba(28, 36, 64, 0.15);
+  --radius-surface: 10px;
+  --radius-card: 9px;
+  --radius-small: 7px;
+  --radius-pill: 999px;
+  --header-height: 72px;
+  --surface-max: 1216px;
+  --motion-fast: 160ms;
+  --motion-standard: 200ms;
+  --ease-standard: cubic-bezier(0.2, 0.8, 0.2, 1);
+}

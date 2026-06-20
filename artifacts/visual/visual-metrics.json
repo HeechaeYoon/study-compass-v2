@@ -1,0 +1,38 @@
+{
+  "generatedAt": "2026-06-20T03:42:31.803Z",
+  "note": "Metrics are advisory because the source is a scaled montage with annotations.",
+  "results": [
+    {
+      "screen": "start",
+      "ssim": 0.3882,
+      "mismatchRatio": 0.0994,
+      "reference": "reference/start-screen-reference.png",
+      "actual": "artifacts/visual/start-surface.png",
+      "diff": "artifacts/visual/start-diff.png"
+    },
+    {
+      "screen": "question",
+      "ssim": 0.5016,
+      "mismatchRatio": 0.0779,
+      "reference": "reference/question-screen-reference.png",
+      "actual": "artifacts/visual/question-surface.png",
+      "diff": "artifacts/visual/question-diff.png"
+    },
+    {
+      "screen": "result",
+      "ssim": 0.5015,
+      "mismatchRatio": 0.0805,
+      "reference": "reference/result-screen-reference.png",
+      "actual": "artifacts/visual/result-surface.png",
+      "diff": "artifacts/visual/result-diff.png"
+    },
+    {
+      "screen": "prompt",
+      "ssim": 0.3463,
+      "mismatchRatio": 0.1016,
+      "reference": "reference/prompt-screen-reference.png",
+      "actual": "artifacts/visual/prompt-surface.png",
+      "diff": "artifacts/visual/prompt-diff.png"
+    }
+  ]
+}

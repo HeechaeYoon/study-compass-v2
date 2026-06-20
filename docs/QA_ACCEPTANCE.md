@@ -1,0 +1,547 @@
+# QA and Acceptance Criteria
+
+## 1. Completion policy
+
+The app is not complete when it merely builds or when the first screenshot looks “close enough.” It is complete only when visual, functional, privacy, accessibility, and deployment gates all pass.
+
+Use this document as the source of truth for acceptance.
+
+---
+
+## 2. Canonical visual test setup
+
+```text
+Browser: Chromium
+Viewport: 1280×800
+Device scale factor: 1
+Color scheme: light
+Reduced motion: reduce
+Locale: ko-KR
+Timezone: Asia/Seoul
+Animations: disabled
+Fonts: await document.fonts.ready
+```
+
+Fixture routes:
+
+- `/?fixture=start`
+- `/?fixture=question`
+- `/?fixture=result`
+- `/?fixture=prompt`
+
+Each fixture must be deterministic.
+
+---
+
+## 3. Reference comparison strategy
+
+The reference is a montage rather than a direct full-page export. Compare in two layers.
+
+### Layer A — shared header
+
+- Compare implementation header with `reference/header-reference.png`.
+- Focus on title, underline, divider, subtitle, metadata, star, baseline.
+
+### Layer B — screen surface
+
+- Capture `[data-testid="screen-surface"]` for each fixture.
+- Compare with matching screen crop.
+- Mask the blue numbered annotation area defined in `reference/manifest.json`.
+- Resize the implementation capture to the reference crop dimensions for automated metrics.
+- Save:
+  - implementation image
+  - reference image
+  - overlay
+  - diff heatmap
+  - metric JSON
+
+Automated comparison is a support tool, not the only acceptance signal.
+
+---
+
+## 4. Automated visual metrics
+
+Recommended implementation:
+
+- `sharp` for resize and mask
+- `ssim.js` for structural similarity
+- `pixelmatch` for difference image
+
+Before metrics:
+
+1. convert to sRGB
+2. resize with Lanczos
+3. apply masks
+4. optionally apply 0.5–1px blur to both images to reduce antialiasing noise
+
+### Advisory thresholds
+
+Each surface:
+
+- SSIM ≥ 0.80
+- mismatched pixels ≤ 22% at a reasonable perceptual threshold
+
+Header:
+
+- SSIM ≥ 0.84
+
+These numbers are advisory because the source is a scaled montage. Failing them requires investigation. Passing them does not override a poor human/agent visual review.
+
+---
+
+## 5. Visual review rubric
+
+Each core screen is scored out of 100.
+
+### A. Macro layout — 25
+
+- shared canvas and surface scale
+- column ratios
+- vertical positioning
+- card arrangement
+- header relationship
+- whitespace distribution
+
+Minimum: 22/25
+
+### B. Typography — 15
+
+- title character
+- hierarchy
+- Korean line wrapping
+- font weight
+- body density
+- readable alignment
+
+Minimum: 13/15
+
+### C. Color and surface — 15
+
+- warm ivory background
+- white paper surfaces
+- indigo primary
+- mint/yellow/coral accents
+- border warmth
+- paper texture subtlety
+
+Minimum: 13/15
+
+### D. Spacing and geometry — 10
+
+- paddings
+- gaps
+- card dimensions
+- radii
+- button and input proportions
+
+Minimum: 9/10
+
+### E. Components and states — 15
+
+- answer cards
+- selected state
+- progress
+- radar chart
+- fields
+- notebook
+- bottom cards
+
+Minimum: 13/15
+
+### F. Doodles and generated assets — 10
+
+- underlines
+- stars
+- arrows
+- connectors
+- paper texture
+- pencil
+
+Minimum: 8/10
+
+### G. Polish and consistency — 10
+
+- no generic library feel
+- no clipping
+- balanced visual density
+- consistent icon strokes
+- coherent interaction states
+
+Minimum: 9/10
+
+### Pass
+
+- Total ≥90/100 for each screen
+- Every category meets its minimum
+- No severe mismatch identified by reviewer
+
+---
+
+## 6. Screen-specific visual acceptance
+
+### Start
+
+- Shared header visually matches.
+- Left hero begins near upper-left of surface.
+- 5-axis cards form clear 2-over-3 constellation.
+- Connector paths remain behind cards.
+- CTA size and gradient match.
+- Privacy strip spans bottom.
+- No mockup number label.
+
+### Question
+
+- Count, bar, and remaining time align.
+- Q06 fixture shows 5 cards.
+- Selected D card has blue border, pale fill, and check circle.
+- Heading is two lines at most.
+- Navigation anchors bottom row.
+- Card row uses full width and is not cramped.
+
+### Result
+
+- Left narrative and right radar have balanced weight.
+- Type name is large and underlined in mint.
+- Growth note is warm yellow.
+- Radar grid, fill, point labels, and display scores align.
+- Three bottom cards are equal and fit without truncation.
+
+### Prompt
+
+- Left form and right notebook maintain reference ratio.
+- Tabs and active underline are accurate.
+- Notebook has white page, pale blue backing, binding, shadow.
+- Pencil is diagonal at right and does not obstruct.
+- Prompt text remains readable and not overly dense.
+- Copy button is visible.
+
+---
+
+## 7. Functional acceptance
+
+### Start
+
+- [ ] nickname empty allowed
+- [ ] nickname displayed when entered
+- [ ] start button enters Q1
+- [ ] saved result appears when present
+- [ ] saved result can be deleted
+
+### Questionnaire
+
+- [ ] exactly 16 questions
+- [ ] exactly 12 Likert and 4 scenario questions
+- [ ] Likert answers 1–4
+- [ ] scenario options resolve by ID
+- [ ] next disabled before answer
+- [ ] previous preserves answer
+- [ ] progress correct
+- [ ] Q06 has 5 cards
+- [ ] last answer creates result
+- [ ] no reverse item
+
+### Scoring
+
+- [ ] bounds derived from question data
+- [ ] normalized scores all 0–100
+- [ ] labels at exact thresholds
+- [ ] type special rules applied before distance
+- [ ] primary type always set
+- [ ] secondary type follows 0.03/5 rules
+- [ ] strength axes deterministic
+- [ ] growth axis deterministic
+- [ ] display scores 1.0–5.0 when shown
+
+### Result
+
+- [ ] current-response language visible
+- [ ] five axes visible
+- [ ] strong and growth copy reflects result
+- [ ] growth mission reflects primary growth axis
+- [ ] detail report expands/collapses
+- [ ] no fixed-personality wording
+- [ ] no student comparison
+
+### Prompt
+
+- [ ] works with all inputs blank
+- [ ] subject/unit/goal included when set
+- [ ] situation/difficulty/help included when set
+- [ ] memo excluded by default
+- [ ] memo included only when checked
+- [ ] 30–40 minute request included
+- [ ] 3 self-check questions requested
+- [ ] 2 follow-up questions requested
+- [ ] middle-school language requested
+
+### Copy
+
+- [ ] Clipboard API attempted from click
+- [ ] fallback works
+- [ ] manual-copy fallback shown if both fail
+- [ ] success and failure announced
+
+### Save/delete
+
+- [ ] no automatic local save
+- [ ] explicit save works
+- [ ] saved result loads
+- [ ] wrong schema handled
+- [ ] delete confirmation appears
+- [ ] delete removes result and memo
+- [ ] localStorage failure does not break diagnosis
+
+### Image export
+
+- [ ] exports summary card
+- [ ] excludes free-form memo
+- [ ] waits for fonts/assets
+- [ ] filename safe
+- [ ] failure message accurate
+
+---
+
+## 8. Unit tests
+
+Required test groups:
+
+### Scoring bounds
+
+- minimum answers
+- maximum answers
+- mixed answers
+- scenario option contribution
+- all axes remain in range
+
+### Label thresholds
+
+- 0
+- 39
+- 40
+- 69
+- 70
+- 100
+
+### Type matching
+
+- strategy profile
+- execution profile
+- concept profile
+- reflection profile
+- resource profile
+- balanced special rule
+- foundation special rule
+- secondary type threshold
+
+### Growth axis
+
+- clear minimum
+- tied minima
+- all axes ≥70
+- type-specific priority
+
+### Prompt
+
+- empty optional inputs
+- all inputs
+- memo false
+- memo true
+- safety/current-response language
+
+### Storage
+
+- valid data
+- null
+- invalid JSON
+- wrong schema
+- quota/unavailable mock
+- delete
+
+---
+
+## 9. End-to-end scenarios
+
+### E2E-01 Standard
+
+```text
+start without nickname
+→ answer all questions
+→ see result
+→ open prompt
+→ enter subject/unit/goal
+→ copy prompt
+```
+
+### E2E-02 Nickname and memo
+
+```text
+enter nickname
+→ complete
+→ write memo
+→ confirm memo initially excluded
+→ check include
+→ confirm included
+```
+
+### E2E-03 Save and delete
+
+```text
+complete
+→ save
+→ reload page
+→ view saved result
+→ delete
+→ reload
+→ no saved result
+```
+
+### E2E-04 Clipboard failure
+
+Mock Clipboard API failure and verify fallback.
+
+### E2E-05 Storage failure
+
+Mock localStorage exception and verify app remains usable.
+
+### E2E-06 Wide-only
+
+At width 820px, show guidance and hide full app.
+
+---
+
+## 10. Privacy acceptance
+
+Use browser network inspection during a full flow.
+
+Pass only when:
+
+- no answers in URL
+- no nickname in URL
+- no memo in URL
+- no requests to analytics services
+- no request body contains student data
+- no console logging of prompt or answers
+- fonts and images are local
+- external AI is never called
+
+Static asset requests and GitHub Pages hosting requests are allowed.
+
+---
+
+## 11. Accessibility acceptance
+
+### Required
+
+- All interactive elements reachable by keyboard.
+- Focus order follows visual order.
+- Focus ring visible.
+- Radio groups have fieldset/legend.
+- Inputs have labels.
+- Progress has accessible value.
+- Radar has text summary.
+- Toast uses live region.
+- Modal traps and restores focus.
+- Color is never the sole indicator.
+- Contrast is acceptable for body text and controls.
+- `prefers-reduced-motion` works.
+- Icon-only buttons have accessible names.
+
+No critical axe-core violations on core screens if automated accessibility testing is added.
+
+---
+
+## 12. Responsive acceptance
+
+### 1024×768
+
+- no horizontal page scroll
+- surface fits
+- question cards readable
+- result remains two columns
+- prompt pencil shrinks or hides safely
+
+### 1366×768
+
+- core content fits without unintended clipping
+- main action remains visible
+- no excessive empty top space
+
+### 1440×900
+
+- surface centered
+- does not stretch awkwardly
+- visual density remains similar
+
+### 1920×1080
+
+- max width respected
+- background provides outer whitespace
+- typography does not scale excessively
+
+### 820×1180
+
+- wide-only guidance shown
+
+---
+
+## 13. Performance acceptance
+
+- build completes
+- no uncompressed multi-megabyte assets
+- no unnecessary chart/UI library
+- no runtime external font fetch
+- no obvious layout shift
+- interaction remains responsive on a typical tablet
+- image export library may be lazy-loaded
+
+Suggested target:
+
+- generated assets total <700KB
+- app JS gzip <250KB where practical
+- no single image >400KB
+
+---
+
+## 14. GitHub Pages acceptance
+
+- relative or correct base path
+- direct root load works
+- refresh does not 404
+- asset URLs work under repository subpath
+- Actions build uses lockfile
+- deployed version has no fixture mode unless intentionally enabled
+- privacy behavior remains unchanged in production
+
+---
+
+## 15. Final review output
+
+`docs/VISUAL_REVIEW_LOG.md` must include a table:
+
+| Pass | Screen | Score | Main gaps | Changes made | Evidence |
+|---|---|---:|---|---|---|
+
+`FINAL_REPORT.md` must include:
+
+- final visual scores
+- automated metrics
+- exact commands and pass/fail
+- browser matrix results
+- network/privacy result
+- generated asset list
+- known residual differences
+
+---
+
+## 16. Stop conditions
+
+Do not finish when:
+
+- any screen <90 visual score
+- any visual category below minimum
+- any critical/high reviewer finding unresolved
+- build/test failure
+- network privacy failure
+- no imagegen asset log
+- no visual review log
+- no final report

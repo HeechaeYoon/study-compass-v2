@@ -1,0 +1,94 @@
+{
+  "source": "design-board.png",
+  "sourceSize": {
+    "width": 1536,
+    "height": 1024
+  },
+  "interpretation": {
+    "canonicalAppViewport": {
+      "width": 1280,
+      "height": 800
+    },
+    "note": "The board is a 2x2 design montage. Blue numbered corner tags are design annotations, not production UI."
+  },
+  "regions": {
+    "header": {
+      "file": "header-reference.png",
+      "crop": [
+        0,
+        0,
+        1536,
+        84
+      ],
+      "masks": []
+    },
+    "start": {
+      "file": "start-screen-reference.png",
+      "crop": [
+        28,
+        88,
+        758,
+        548
+      ],
+      "masks": [
+        [
+          0,
+          0,
+          125,
+          31
+        ]
+      ]
+    },
+    "question": {
+      "file": "question-screen-reference.png",
+      "crop": [
+        778,
+        88,
+        1509,
+        548
+      ],
+      "masks": [
+        [
+          0,
+          0,
+          125,
+          31
+        ]
+      ]
+    },
+    "result": {
+      "file": "result-screen-reference.png",
+      "crop": [
+        28,
+        563,
+        758,
+        994
+      ],
+      "masks": [
+        [
+          0,
+          0,
+          140,
+          31
+        ]
+      ]
+    },
+    "prompt": {
+      "file": "prompt-screen-reference.png",
+      "crop": [
+        778,
+        563,
+        1509,
+        994
+      ],
+      "masks": [
+        [
+          0,
+          0,
+          140,
+          31
+        ]
+      ]
+    }
+  }
+}
