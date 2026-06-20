@@ -33,6 +33,7 @@
 | Reviewer fix 2 | Detail | 91 | Footer actions were pressed into the bottom edge at 1280x800. | Removed duplicate footer actions, moved `리포트 복사` and `AI 프롬프트` to the header, and recaptured the detail fixture. | `artifacts/visual/detail-1280x800.png` |
 | Reviewer fix 2 | Result/report text | 91 | `5가지 학습 축` still appeared in non-visual labels/report copy. | Reworded those surfaces to `학습 지도 결과` and `학습 축별 현재 모습`. | `src/components/RadarChart.tsx` |
 | Hero spacing refresh | Start | 91 | User corrected the intended reference to the borderless generated image and wanted less left whitespace. | Switched to `start-hero-map-v2.webp` candidate A, cropped the blank outer margin, reduced the copy/artwork gap, widened the artwork region, and kept the hard CSS frame removed. | `artifacts/visual/start-1280x800.png` |
+| UX cleanup 3 | Question/Prompt | 91 | Prompt had a hidden lower report-copy button; question flow lacked a visible return path for missed nickname entry. | Removed the hidden prompt button and added a left-side `처음으로` questionnaire action that returns to the start screen. | `tests/e2e/app.spec.ts` |
 
 ## Automated Metrics
 

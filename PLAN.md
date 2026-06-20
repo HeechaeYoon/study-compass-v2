@@ -54,10 +54,12 @@
 - [x] Start screen removes the arbitrary HTML 5-axis card constellation; saved-result card remains stable in narrow horizontal space.
 - [x] Start hero uses the user-confirmed borderless learning-map image version with reduced left spacing between the copy and artwork.
 - [x] Question screen with native radios, progress, pointer-only auto-advance after new selections, keyboard/reduced-motion manual pacing, previous/next fallback, browser Back support, and deterministic Q06 fixture.
+- [x] Question screen adds a visible `처음으로` button so students can return to the start screen and enter a missed nickname.
 - [x] Question screen removes the ambiguous green arrow and uses a non-directional `study-spark` doodle that does not steer layout.
 - [x] Result screen with custom SVG radar chart, no misleading radar caption/legend, summary cards, detail-screen navigation, copy, save, export, and reset.
 - [x] Dedicated detail report screen rebuilt as a student-facing learning map with clear headline, safety note, snapshot, mission, 5-axis cards, recommendations, cautions, and avoid-methods.
 - [x] Prompt screen removes tabs and the unclear strategy-guide tab; it keeps live-updating inputs, preview, result navigation, copy success state, copy fallback, save/delete/export, and local pencil asset.
+- [x] Prompt screen removes the hidden lower `상세 리포트 복사` floating button from the notebook area.
 - [x] Wide-only guidance under 900px.
 - [x] No backend, login, analytics, tracking, external AI call, or runtime external font request.
 - [x] Export uses a dedicated hidden summary card that includes growth point, 강점, 균형, 추천 전략 and excludes free-form prompt inputs/memo.

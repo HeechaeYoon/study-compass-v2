@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { ArrowLeft, ArrowRight, Check, Lightbulb } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Home, Lightbulb } from "lucide-react";
 import {
   AXIS_SHORT_NAMES,
   type Axis,
@@ -22,6 +22,7 @@ type QuestionScreenProps = {
     value: AnswerValue,
     options: { autoAdvance: boolean },
   ) => void;
+  onReturnHome: () => void;
   onPrevious: () => void;
   onNext: () => void;
 };
@@ -65,6 +66,7 @@ export function QuestionScreen({
   total,
   isAutoAdvancing,
   onAnswer,
+  onReturnHome,
   onPrevious,
   onNext,
 }: QuestionScreenProps) {
@@ -152,15 +154,25 @@ export function QuestionScreen({
         </fieldset>
       </section>
       <footer className="questionFooter">
-        <button
-          className="buttonSecondary navButton"
-          type="button"
-          onClick={onPrevious}
-          disabled={index === 0}
-        >
-          <ArrowLeft aria-hidden="true" size={18} />
-          이전
-        </button>
+        <div className="questionNavGroup">
+          <button
+            className="buttonSecondary navButton"
+            type="button"
+            onClick={onReturnHome}
+          >
+            <Home aria-hidden="true" size={17} />
+            처음으로
+          </button>
+          <button
+            className="buttonSecondary navButton"
+            type="button"
+            onClick={onPrevious}
+            disabled={index === 0}
+          >
+            <ArrowLeft aria-hidden="true" size={18} />
+            이전
+          </button>
+        </div>
         <p className="honestHint">
           <Lightbulb aria-hidden="true" size={16} />
           {isAutoAdvancing

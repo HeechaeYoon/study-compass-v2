@@ -3,7 +3,6 @@ import {
   ArrowLeft,
   Check,
   ClipboardCopy,
-  Copy,
   Download,
   Info,
   RefreshCw,
@@ -22,7 +21,6 @@ type PromptScreenProps = {
   onInputChange: (field: keyof PromptInputs, value: string | boolean) => void;
   onOpenResult: () => void;
   onCopyPrompt: () => Promise<boolean>;
-  onCopyReport: () => void;
   onSave: () => void;
   onExportImage: () => void;
   onRequestDelete: () => void;
@@ -48,7 +46,6 @@ export function PromptScreen({
   onInputChange,
   onOpenResult,
   onCopyPrompt,
-  onCopyReport,
   onSave,
   onExportImage,
   onRequestDelete,
@@ -182,10 +179,6 @@ export function PromptScreen({
           </footer>
         </article>
         <img className="pencilAsset" src={pencilSrc} alt="" aria-hidden="true" />
-        <button className="buttonSecondary promptReportCopy" type="button" onClick={onCopyReport}>
-          <Copy aria-hidden="true" size={16} />
-          상세 리포트 복사
-        </button>
         <p className="axisMiniNote">
           성장 초점: {AXIS_NAMES[result.primaryGrowthAxis]}
         </p>

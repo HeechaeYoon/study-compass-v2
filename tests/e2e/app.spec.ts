@@ -91,6 +91,31 @@ test("browser back returns to the previous questionnaire step without URL data",
   expect(page.url()).not.toContain("nickname");
 });
 
+test("question home button returns to start so nickname can be added", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "시작하기" }).click();
+  await expect(page.getByText(/1\s*\/\s*16/)).toBeVisible();
+  await expect(page.getByRole("button", { name: "처음으로" })).toBeVisible();
+
+  await page.locator(".answerCard").nth(1).click();
+  await expect(page.getByText(/2\s*\/\s*16/)).toBeVisible();
+  await page.getByRole("button", { name: "처음으로" }).click();
+
+  await expect(
+    page.getByTestId("screen-surface").getByRole("heading", {
+      name: /나의 공부 스타일을/,
+    }),
+  ).toBeVisible();
+  await page.getByLabel(/닉네임을 입력/).fill("다시입력");
+  await page.getByRole("button", { name: "시작하기" }).click();
+
+  await expect(page.getByText(/1\s*\/\s*16/)).toBeVisible();
+  await expect(page.locator(".answerCard").nth(1)).toHaveAttribute(
+    "data-selected",
+    "false",
+  );
+});
+
 test("keyboard and reduced-motion users keep manual questionnaire pacing", async ({ page }) => {
   await page.goto("/");
   await page.getByRole("button", { name: "시작하기" }).click();
@@ -123,6 +148,7 @@ test("detail report opens as a readable screen and returns to summary", async ({
 test("memo is excluded by default and can be included", async ({ page }) => {
   await page.goto("/?fixture=prompt");
   await expect(page.getByRole("button", { name: /프롬프트 생성하기/ })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: /상세 리포트 복사/ })).toHaveCount(0);
   await expect(page.getByRole("tablist")).toHaveCount(0);
   await expect(page.getByText("학습 전략 가이드")).toHaveCount(0);
   await page.getByLabel("내가 보기엔 다른 점").fill("나는 문제풀이가 더 편해요.");

@@ -340,6 +340,10 @@ export function App() {
             total={QUESTIONS.length}
             isAutoAdvancing={autoAdvanceQuestionId === currentQuestion.id}
             onAnswer={handleQuestionAnswer}
+            onReturnHome={() => {
+              clearAutoAdvance();
+              dispatch({ type: "RESET" });
+            }}
             onPrevious={() => {
               clearAutoAdvance();
               dispatch({ type: "PREVIOUS_QUESTION" });
@@ -376,7 +380,6 @@ export function App() {
             }
             onOpenResult={() => dispatch({ type: "OPEN_RESULT" })}
             onCopyPrompt={handleCopyPrompt}
-            onCopyReport={handleCopyReport}
             onSave={handleSave}
             onExportImage={handleExportImage}
             onRequestDelete={() => setDeleteModalOpen(true)}

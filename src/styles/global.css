@@ -783,13 +783,22 @@ button:disabled {
 
 .questionFooter {
   display: grid;
-  grid-template-columns: 130px 1fr 130px;
+  grid-template-columns: max-content minmax(220px, 1fr) 130px;
   align-items: center;
-  gap: 18px;
+  gap: 16px;
+}
+
+.questionNavGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .navButton {
   height: 50px;
+  min-width: 112px;
+  padding: 0 13px;
+  font-size: 13px;
 }
 
 .honestHint {
@@ -1580,15 +1589,6 @@ button:disabled {
   pointer-events: none;
   opacity: 0.96;
   transform: rotate(-8deg);
-}
-
-.promptReportCopy {
-  position: absolute;
-  left: 12px;
-  bottom: 8px;
-  min-height: 36px;
-  padding: 0 12px;
-  font-size: 12px;
 }
 
 .axisMiniNote {
