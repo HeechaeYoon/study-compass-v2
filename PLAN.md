@@ -121,6 +121,7 @@ Notes:
 
 - [x] `README.md`
 - [x] `.github/workflows/deploy-pages.yml`
+- [x] Rechecked GitHub Pages deployment setup on 2026-06-20: `base: "./"` is present, Pages workflow targets `main`, workflow uses Node 24 and `npm ci`, and README documents `Settings > Pages > Source > GitHub Actions`.
 - [x] `.prompts/IMAGEGEN_ASSETS.md`
 - [x] `docs/VISUAL_REVIEW_LOG.md`
 - [x] `FINAL_REPORT.md`

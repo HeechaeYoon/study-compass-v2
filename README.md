@@ -39,4 +39,16 @@ Student answers, nickname, memo, result, and generated prompt stay in the browse
 
 ## Deployment
 
-The Vite base is `./`, so the production build works on GitHub Pages repository subpaths. The included Pages workflow builds and uploads `dist/`.
+The Vite base is `./`, so the production build works on GitHub Pages repository subpaths such as:
+
+```text
+https://heechaeyoon.github.io/study-compass-v2/
+```
+
+Deployment is handled by `.github/workflows/deploy-pages.yml`.
+
+1. In GitHub, open `Settings > Pages`.
+2. Set `Build and deployment > Source` to `GitHub Actions`.
+3. Push to `main`, or run the `Deploy Pages` workflow manually from the `Actions` tab.
+
+The workflow uses Node 24, installs from `package-lock.json` with `npm ci`, runs typecheck, lint, unit tests, Chromium E2E tests, visual tests, and then uploads `dist/` to GitHub Pages.
