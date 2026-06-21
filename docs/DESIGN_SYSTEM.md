@@ -581,7 +581,7 @@ type DoodleProps = {
   }
 }
 
-@media (max-width: 899px) {
+@media (max-width: 559px), (max-width: 899px) and (orientation: portrait) {
   .wideApp {
     display: none;
   }
@@ -600,9 +600,23 @@ type DoodleProps = {
     display: none;
   }
 }
+
+@media (min-width: 560px) and (max-width: 899px) and (orientation: landscape) {
+  :root {
+    --header-height: 48px;
+    --surface-max: 100%;
+  }
+
+  .screenSurface {
+    width: calc(100vw - 14px);
+    height: auto;
+    min-height: calc(100svh - var(--header-height) - 12px);
+    overflow: visible;
+  }
+}
 ```
 
-Use component-level CSS to reduce gaps at 1024px rather than globally shrinking all text.
+Use component-level CSS to reduce gaps at 1024px and compact landscape widths rather than globally shrinking all text.
 
 ---
 

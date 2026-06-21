@@ -410,7 +410,7 @@ Mock localStorage exception and verify app remains usable.
 
 ### E2E-06 Wide-only
 
-At width 820px, show guidance and hide full app.
+At 820×1180 portrait and below-560px landscape, show guidance and hide full app.
 
 ---
 
@@ -483,9 +483,24 @@ No critical axe-core violations on core screens if automated accessibility testi
 - background provides outer whitespace
 - typography does not scale excessively
 
-### 820×1180
+### 820×1180 portrait
 
 - wide-only guidance shown
+
+### 844×390 and 667×375 landscape
+
+- app surface renders instead of wide-only guidance
+- start screen and questionnaire flow are usable
+- no horizontal page scroll
+
+### 560×375 landscape
+
+- prompt fixture content stays inside the viewport at the compact minimum width
+- no horizontal page scroll
+
+### 559×375 landscape
+
+- wide-only guidance shown because the viewport is below the compact minimum width
 
 ---
 

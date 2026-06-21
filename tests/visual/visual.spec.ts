@@ -1,8 +1,32 @@
 import { mkdir } from "node:fs/promises";
 import path from "node:path";
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 
 const fixtures = ["start", "question", "result", "prompt", "detail"] as const;
+
+async function expectNoHorizontalScroll(page: Page): Promise<void> {
+  const metrics = await page.evaluate(() => ({
+    bodyScrollWidth: document.body.scrollWidth,
+    clientWidth: document.documentElement.clientWidth,
+    documentScrollWidth: document.documentElement.scrollWidth,
+  }));
+
+  expect(metrics.documentScrollWidth).toBeLessThanOrEqual(metrics.clientWidth + 2);
+  expect(metrics.bodyScrollWidth).toBeLessThanOrEqual(metrics.clientWidth + 2);
+}
+
+async function expectElementInsideViewport(page: Page, selector: string): Promise<void> {
+  const box = await page.locator(selector).boundingBox();
+  expect(box).not.toBeNull();
+  if (!box) return;
+
+  const viewport = page.viewportSize();
+  expect(viewport).not.toBeNull();
+  if (!viewport) return;
+
+  expect(box.x).toBeGreaterThanOrEqual(-2);
+  expect(box.x + box.width).toBeLessThanOrEqual(viewport.width + 2);
+}
 
 test.describe("visual fixtures", () => {
   for (const fixture of fixtures) {
@@ -40,6 +64,31 @@ test.describe("visual fixtures", () => {
       await expect(page.getByTestId("screen-surface")).toBeVisible();
       await expect(page.locator("body")).not.toHaveCSS("overflow-x", "scroll");
     }
+  });
+
+  test("phone landscape compact fixtures render without the guidance", async ({ page }) => {
+    for (const fixture of fixtures) {
+      await page.setViewportSize({ width: 844, height: 390 });
+      await page.goto(`/?fixture=${fixture}`);
+      await page.evaluate(() => document.fonts.ready);
+
+      await expect(page.getByText("이 활동은 가로 화면에 맞춰져 있어요.")).toBeHidden();
+      await expect(page.getByTestId("screen-surface")).toBeVisible();
+      await expectNoHorizontalScroll(page);
+    }
+  });
+
+  test("prompt fixture fits at the compact landscape minimum width", async ({ page }) => {
+    await page.setViewportSize({ width: 560, height: 375 });
+    await page.goto("/?fixture=prompt");
+    await page.evaluate(() => document.fonts.ready);
+
+    await expect(page.getByText("이 활동은 가로 화면에 맞춰져 있어요.")).toBeHidden();
+    await expect(page.getByTestId("screen-surface")).toBeVisible();
+    await expectNoHorizontalScroll(page);
+    await expectElementInsideViewport(page, ".promptFormPanel");
+    await expectElementInsideViewport(page, ".notebookSheet");
+    await expectElementInsideViewport(page, ".blueBacking");
   });
 
   test("prompt mode selector fits the canonical surface", async ({ page }) => {

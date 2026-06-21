@@ -60,7 +60,7 @@
 - [x] Dedicated detail report screen rebuilt as a student-facing learning map with clear headline, safety note, snapshot, mission, 5-axis cards, recommendations, cautions, and avoid-methods.
 - [x] Prompt screen removes tabs and the unclear strategy-guide tab; it keeps live-updating inputs, preview, result navigation, copy success state, copy fallback, save/delete/export, and local pencil asset.
 - [x] Prompt screen removes the hidden lower `상세 리포트 복사` floating button from the notebook area.
-- [x] Wide-only guidance under 900px.
+- [x] Wide-only guidance for phone portrait and extremely narrow screens; compact landscape support for 560–899px phone viewports.
 - [x] No backend, login, analytics, tracking, external AI call, or runtime external font request.
 - [x] Export uses a dedicated hidden summary card that includes growth point, conditional strength/balance labels, recommended strategies, and excludes free-form prompt inputs/memo.
 - [x] Toast messages auto-dismiss after 3 seconds and ignore stale timers.
@@ -71,10 +71,10 @@ Final automated metrics from `npm run test:visual`:
 
 | Screen | Reviewer score | SSIM | Mismatch | Status |
 |---|---:|---:|---:|---|
-| Start | 91 | 0.4116 | 0.1071 | Pass |
-| Question | 91 | 0.4637 | 0.0871 | Pass |
-| Result | 91 | 0.4948 | 0.0887 | Pass |
-| Prompt | 91 | 0.3057 | 0.1057 | Pass |
+| Start | 91 | 0.4208 | 0.1049 | Pass |
+| Question | 91 | 0.4863 | 0.0810 | Pass |
+| Result | 91 | 0.4969 | 0.0875 | Pass |
+| Prompt | 91 | 0.3257 | 0.1067 | Pass |
 
 Notes:
 
@@ -114,10 +114,10 @@ Notes:
 |---|---|
 | `npm run typecheck` | Pass |
 | `npm run lint` | Pass |
-| `npm run test` | Pass, 23 unit tests |
+| `npm run test` | Pass, 5 files / 28 tests |
 | `npm run logic:distribution` | Pass, all 8 types within 3-30% |
-| `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:visual` | Pass, 6 Chromium visual/viewport tests |
-| `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:e2e` | Pass, 14 Chromium E2E tests |
+| `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:visual` | Pass, 9 Chromium visual/viewport tests |
+| `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:e2e` | Pass, 17 Chromium E2E tests |
 | `npm run build` | Pass, production `dist/` generated |
 | `npm run test:e2e:webkit` | Blocked by host missing WebKit libraries |
 

@@ -28,7 +28,7 @@ Rebuilt the app as a production-quality static React/Vite/TypeScript web app for
 - Result: current-response safety language, custom SVG radar without misleading visible caption, conditional type summary and strength/balance cards, detail report entry, copy/save/export/reset.
 - Detail report: separate student-facing learning-map report with large title, current-response safety note, neutral answer-grounded evidence, strength/balance/growth snapshot, mission, 5-axis interpretation, strategy bundle, cautions, and avoid methods.
 - AI prompt: four prompt modes, prompt inputs, memo auto-inclusion, full question/answer context, no tabs, live-updating preview, answer evidence, external-AI privacy guidance, `실시간 갱신` state, copy success feedback, copy fallback, save/delete/export, and result-summary navigation.
-- Wide-only: under 900px shows guidance instead of a compromised mobile redesign.
+- Wide-only: phone portrait and extremely narrow screens show guidance; 560–899px phone landscape uses a compact wide-layout mode.
 
 ## 4. ImageGen Assets
 
@@ -43,9 +43,9 @@ Rebuilt the app as a production-quality static React/Vite/TypeScript web app for
 
 | Screen | Reviewer score | SSIM | Pixel mismatch | Screenshot |
 |---|---:|---:|---:|---|
-| Start | 91 | 0.4116 | 0.1071 | `artifacts/visual/start-1280x800.png` |
-| Question | 91 | 0.4637 | 0.0871 | `artifacts/visual/question-1280x800.png` |
-| Result | 91 | 0.4948 | 0.0887 | `artifacts/visual/result-1280x800.png` |
+| Start | 91 | 0.4208 | 0.1049 | `artifacts/visual/start-1280x800.png` |
+| Question | 91 | 0.4863 | 0.0810 | `artifacts/visual/question-1280x800.png` |
+| Result | 91 | 0.4969 | 0.0875 | `artifacts/visual/result-1280x800.png` |
 | Prompt | 91 | 0.3257 | 0.1067 | `artifacts/visual/prompt-1280x800.png` |
 | Detail | reviewed separately | n/a | n/a | `artifacts/visual/detail-1280x800.png` |
 
@@ -77,8 +77,8 @@ Not pixel-perfect. The reference is a scaled montage, and the product-required s
 | `npm run lint` | Pass |
 | `npm run test` | Pass, 5 files / 28 tests |
 | `npm run logic:distribution` | Pass, all 8 types within 3-30% |
-| `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:visual` | Pass, 7 Chromium tests |
-| `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:e2e` | Pass, 14 Chromium tests |
+| `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:visual` | Pass, 9 Chromium tests |
+| `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:e2e` | Pass, 17 Chromium tests |
 | `npm run build` | Pass |
 | `npm run test:e2e:webkit` | Blocked: host missing WebKit system libraries |
 
@@ -91,7 +91,11 @@ Not pixel-perfect. The reference is a scaled montage, and the product-required s
 | Chromium | 1366x768 | Pass | smoke test |
 | Chromium | 1440x900 | Pass | smoke test |
 | Chromium | 1920x1080 | Pass | smoke test |
-| Chromium | 820x1180 | Pass | wide-only guidance |
+| Chromium | 820x1180 | Pass | phone portrait wide-only guidance |
+| Chromium | 844x390 | Pass | compact phone landscape smoke |
+| Chromium | 667x375 | Pass | compact phone landscape smoke |
+| Chromium | 560x375 | Pass | compact landscape minimum prompt fit |
+| Chromium | 559x375 | Pass | below-minimum landscape guidance |
 | WebKit | 1280x800 | Blocked | missing `libgtk-4`, ICU, GStreamer, WebP, AVIF, and related host libraries |
 
 ## 9. Privacy Verification

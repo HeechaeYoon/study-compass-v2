@@ -157,7 +157,8 @@ The background must remain quiet. If the texture is obvious at first glance, it 
 ### Header responsive behavior
 
 - At 1024–1150px: main title 26px; right metadata 12px; subtitle can shorten to `자기주도학습 진단`.
-- At 900px or below: replace app with unsupported-width guidance.
+- At 560–899px landscape: use compact spacing, smaller header text, and vertical page scroll while preserving the wide composition.
+- At phone portrait or below 560px: replace app with unsupported-width guidance.
 
 ---
 
@@ -847,16 +848,21 @@ The result and prompt screens include content beyond the reference board. Keep t
 - Result grid remains two columns down to 1024
 - Prompt pencil may shrink 15–25%
 
-### Below 900px
+### Phone portrait and below 560px
 
 Render a dedicated guidance card:
 
 ```text
 이 활동은 가로 화면에 맞춰져 있어요.
-태블릿을 가로로 돌리거나 PC에서 다시 열어주세요.
+스마트폰이나 태블릿을 가로로 돌리거나 PC에서 다시 열어주세요.
 ```
 
-Do not attempt a full one-column mobile redesign for v1.
+### 560–899px landscape
+
+- Keep the wide composition rather than switching to a one-column mobile layout.
+- Use compact typography, padding, card height, and notebook/radar scale.
+- Allow vertical scrolling when the viewport height is short.
+- Do not allow horizontal page scroll.
 
 ---
 

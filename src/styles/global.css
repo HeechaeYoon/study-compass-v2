@@ -240,6 +240,10 @@ span {
   line-height: 1.35;
 }
 
+[data-screen-heading]:focus {
+  outline: none;
+}
+
 .field {
   display: grid;
   gap: 7px;
@@ -1828,7 +1832,7 @@ button:disabled {
   }
 }
 
-@media (max-width: 899px) {
+@media (max-width: 559px), (max-width: 899px) and (orientation: portrait) {
   .wideApp {
     display: none;
   }
@@ -1841,6 +1845,704 @@ button:disabled {
 @media (min-width: 900px) {
   .wideApp {
     display: block;
+  }
+}
+
+@media (min-width: 560px) and (max-width: 899px) and (orientation: landscape) {
+  :root {
+    --header-height: 48px;
+    --surface-max: 100%;
+  }
+
+  html,
+  body {
+    overflow-x: hidden;
+  }
+
+  .wideApp {
+    display: block;
+  }
+
+  .wideOnlyNotice {
+    display: none;
+  }
+
+  .appShell {
+    min-height: 100svh;
+    overflow-x: clip;
+  }
+
+  .appHeader {
+    height: var(--header-height);
+  }
+
+  .appHeaderInner {
+    padding: 0 10px;
+  }
+
+  .brandLockup {
+    min-width: 0;
+  }
+
+  .brandTitle {
+    font-size: 19px;
+    white-space: nowrap;
+  }
+
+  .brandUnderline {
+    width: 202px;
+    height: 11px;
+    margin-top: -3px;
+  }
+
+  .brandSubtitle {
+    display: none;
+  }
+
+  .headerMeta {
+    gap: 6px;
+    font-size: 10.5px;
+  }
+
+  .headerStar,
+  .metaDivider {
+    display: none;
+  }
+
+  .screenSurface {
+    width: calc(100vw - 14px);
+    height: auto;
+    min-height: calc(100svh - var(--header-height) - 12px);
+    margin: 6px auto;
+    overflow: visible;
+  }
+
+  .displayTitle,
+  .questionTitle {
+    font-size: 24px;
+    line-height: 1.22;
+  }
+
+  .buttonPrimary,
+  .buttonSecondary,
+  .buttonOutlinePrimary,
+  .buttonDanger {
+    min-height: 36px;
+    padding-inline: 10px;
+    gap: 6px;
+    font-size: 12px;
+  }
+
+  .input {
+    height: 36px;
+    padding-inline: 10px;
+    font-size: 12px;
+  }
+
+  .textarea {
+    min-height: 54px;
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+
+  .startSurface {
+    padding: 14px 12px 12px;
+  }
+
+  .startHero {
+    grid-template-columns: minmax(230px, 0.82fr) minmax(260px, 1fr);
+    gap: 8px;
+    height: auto;
+    align-items: start;
+  }
+
+  .heroCopy {
+    padding-top: 2px;
+  }
+
+  .heroBody {
+    margin-top: 12px;
+    font-size: 12.5px;
+    line-height: 1.5;
+  }
+
+  .textUnderline {
+    width: 188px;
+    bottom: -8px;
+  }
+
+  .startSafetyNote,
+  .nicknameField,
+  .heroButton,
+  .savedResultPanel {
+    width: min(100%, 286px);
+  }
+
+  .startSafetyNote {
+    margin-top: 10px;
+    padding: 8px 10px;
+    font-size: 11px;
+    line-height: 1.45;
+  }
+
+  .nicknameField {
+    margin-top: 10px;
+  }
+
+  .inputWithIcon .input {
+    height: 38px;
+  }
+
+  .inputWithIcon svg {
+    top: 10px;
+  }
+
+  .heroButton {
+    height: 40px;
+    margin-top: 8px;
+    font-size: 13px;
+  }
+
+  .savedResultPanel {
+    margin-top: 8px;
+    min-height: 46px;
+    padding: 8px 10px;
+  }
+
+  .startHeroArtwork {
+    width: 100%;
+    height: clamp(204px, 56svh, 292px);
+    margin: -6px 0 0;
+  }
+
+  .privacyStrip {
+    height: auto;
+    min-height: 44px;
+    margin-top: 8px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 6px;
+    padding: 9px 10px 7px;
+  }
+
+  .privacyLegend {
+    left: 10px;
+    font-size: 9.5px;
+  }
+
+  .privacyItem {
+    gap: 5px;
+    font-size: 10.5px;
+  }
+
+  .privacyItem svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  .questionSurface {
+    padding: 12px;
+    gap: 8px;
+  }
+
+  .questionProgress {
+    grid-template-columns: 48px minmax(0, 1fr) 78px;
+    gap: 10px;
+  }
+
+  .questionProgress strong {
+    font-size: 17px;
+  }
+
+  .questionProgress span {
+    font-size: 10.5px;
+  }
+
+  .progressTrack {
+    height: 6px;
+  }
+
+  .questionBody {
+    padding: 8px 0 2px;
+  }
+
+  .axisChip {
+    min-height: 22px;
+    padding-inline: 9px;
+    font-size: 10.5px;
+  }
+
+  .questionHeadingWrap {
+    margin-top: 8px;
+  }
+
+  .questionHeadingWrap .questionTitle {
+    width: min(100%, 600px);
+  }
+
+  .questionSpark {
+    display: none;
+  }
+
+  .answerGrid {
+    margin-top: 14px;
+    gap: 8px;
+  }
+
+  .answerGrid-5 {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  .answerGrid-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .answerCard {
+    min-height: 112px;
+    padding: 24px 7px 14px;
+    gap: 12px;
+  }
+
+  .answerText {
+    font-size: 11.5px;
+    line-height: 1.35;
+  }
+
+  .dotRow {
+    gap: 5px;
+  }
+
+  .dotRow i {
+    width: 7px;
+    height: 7px;
+  }
+
+  .answerCheck {
+    width: 18px;
+    height: 18px;
+    top: 6px;
+    right: 6px;
+  }
+
+  .questionFooter {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 8px;
+  }
+
+  .questionNavGroup {
+    gap: 6px;
+  }
+
+  .navButton {
+    height: 36px;
+    min-width: 78px;
+    padding-inline: 8px;
+    font-size: 11.5px;
+  }
+
+  .honestHint {
+    gap: 4px;
+    font-size: 10.5px;
+  }
+
+  .resultSurface {
+    padding: 12px;
+    gap: 8px;
+  }
+
+  .resultTop {
+    grid-template-columns: minmax(260px, 0.92fr) minmax(230px, 1fr);
+    gap: 8px;
+    min-height: 0;
+    align-items: center;
+  }
+
+  .resultNarrative {
+    padding: 0;
+  }
+
+  .resultEyebrow {
+    margin-bottom: 5px;
+    font-size: 11px;
+  }
+
+  .resultLead {
+    font-size: 15px;
+    line-height: 1.32;
+  }
+
+  .resultType {
+    font-size: 26px;
+  }
+
+  .typeUnderline {
+    width: 188px;
+    bottom: -10px;
+  }
+
+  .resultStar {
+    display: none;
+  }
+
+  .resultDescription,
+  .resultSafety {
+    width: auto;
+    font-size: 11.5px;
+    line-height: 1.45;
+  }
+
+  .resultDescription {
+    margin-top: 16px;
+  }
+
+  .resultSafety {
+    margin-top: 5px;
+  }
+
+  .growthCard {
+    width: 100%;
+    min-height: 82px;
+    margin-top: 8px;
+    padding: 10px 12px;
+  }
+
+  .growthCard h3 {
+    font-size: 13px;
+  }
+
+  .growthCard p,
+  .growthCard strong {
+    max-width: none;
+    font-size: 11px;
+    line-height: 1.35;
+  }
+
+  .growthDoodle {
+    display: none;
+  }
+
+  .radarPanel {
+    transform: none;
+  }
+
+  .radarChart {
+    width: min(100%, 276px);
+    height: auto;
+  }
+
+  .radarLabel {
+    font-size: 12px;
+  }
+
+  .summaryCards {
+    gap: 8px;
+  }
+
+  .summaryCard {
+    min-height: 58px;
+    padding: 9px 10px;
+    gap: 8px;
+  }
+
+  .summaryCard svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .summaryCard h3 {
+    font-size: 12px;
+  }
+
+  .summaryCard p {
+    margin-top: 3px;
+    font-size: 10.5px;
+    line-height: 1.3;
+  }
+
+  .resultActions {
+    gap: 5px;
+  }
+
+  .resultActions .buttonPrimary,
+  .resultActions .buttonSecondary {
+    min-height: 32px;
+    padding-inline: 9px;
+    font-size: 11px;
+  }
+
+  .detailSurface {
+    min-height: calc(100svh - var(--header-height) - 12px);
+    padding: 10px 12px 12px;
+    gap: 7px;
+  }
+
+  .detailHeader {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 8px;
+  }
+
+  .detailHeaderActions {
+    gap: 5px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .compactButton {
+    min-height: 32px;
+    padding-inline: 9px;
+    font-size: 11px;
+  }
+
+  .detailTitle {
+    font-size: 21px;
+  }
+
+  .detailLead,
+  .detailNotice {
+    font-size: 11px;
+    line-height: 1.35;
+  }
+
+  .detailNotice {
+    min-height: 32px;
+    padding: 6px 10px;
+  }
+
+  .detailSnapshot {
+    gap: 7px;
+  }
+
+  .detailSnapshot article {
+    min-height: 42px;
+    padding: 7px 9px;
+    gap: 7px;
+  }
+
+  .detailSnapshot strong,
+  .detailSnapshot span {
+    font-size: 11px;
+  }
+
+  .missionDetailCard {
+    grid-template-columns: 146px minmax(0, 1fr);
+    column-gap: 8px;
+  }
+
+  .detailGrid {
+    grid-template-columns: minmax(0, 1fr) minmax(230px, 0.9fr);
+    gap: 7px;
+  }
+
+  .detailCard {
+    padding: 8px 9px;
+  }
+
+  .detailCard h3 {
+    font-size: 12.5px;
+  }
+
+  .detailCard h4,
+  .missionDetailCard strong {
+    font-size: 11.5px;
+  }
+
+  .detailCard ul {
+    padding-left: 15px;
+    font-size: 11px;
+    line-height: 1.32;
+  }
+
+  .axisDetailList {
+    gap: 5px;
+  }
+
+  .axisDetailList article {
+    padding: 6px 7px;
+  }
+
+  .axisDetailList h4,
+  .axisDetailList p,
+  .missionDetailCard p {
+    font-size: 11px;
+    line-height: 1.32;
+  }
+
+  .promptSurface {
+    grid-template-columns: minmax(0, 0.92fr) minmax(0, 1fr);
+    gap: 10px;
+    padding: 10px 10px 12px;
+  }
+
+  .promptTopNav {
+    margin-bottom: 5px;
+  }
+
+  .liveUpdateBadge {
+    min-height: 24px;
+    padding-inline: 8px;
+    font-size: 10px;
+  }
+
+  .promptIntro {
+    padding-bottom: 5px;
+    font-size: 10.5px;
+    line-height: 1.35;
+  }
+
+  .promptModeSelector {
+    margin-top: 6px;
+    padding: 6px;
+    grid-template-columns: 72px minmax(0, 1fr);
+    gap: 6px;
+  }
+
+  .promptModeLabel {
+    font-size: 11px;
+  }
+
+  .promptModeHint {
+    font-size: 11px;
+  }
+
+  .promptModeOptions {
+    gap: 4px;
+  }
+
+  .promptModeButton {
+    min-height: 32px;
+    padding-inline: 4px;
+    font-size: 10.5px;
+  }
+
+  .promptFields {
+    margin-top: 6px;
+    gap: 5px 8px;
+  }
+
+  .promptFields .input {
+    height: 30px;
+    font-size: 11px;
+  }
+
+  .promptMemoField .textarea {
+    min-height: 32px;
+    max-height: 34px;
+    padding-block: 6px;
+    font-size: 11px;
+  }
+
+  .promptMemoHint {
+    font-size: 11px;
+  }
+
+  .promptUtility {
+    margin-top: 6px;
+    gap: 5px;
+    flex-wrap: wrap;
+  }
+
+  .promptUtility .buttonSecondary,
+  .promptUtility .buttonDanger {
+    min-height: 32px;
+    padding-inline: 9px;
+    font-size: 11px;
+  }
+
+  .blueBacking {
+    width: min(100%, 356px);
+    height: 330px;
+    transform: rotate(2.2deg) translate(6px, 8px);
+  }
+
+  .notebookSheet {
+    width: min(100%, 344px);
+    height: 326px;
+    padding: 28px 16px 16px 38px;
+  }
+
+  .binding {
+    left: 11px;
+    top: 18px;
+    gap: 12px;
+  }
+
+  .binding i {
+    width: 11px;
+    height: 11px;
+  }
+
+  .notebookHeader {
+    gap: 8px;
+  }
+
+  .notebookHeader h2 {
+    font-size: 14px;
+  }
+
+  .notebookMode {
+    min-height: 17px;
+    padding-inline: 6px;
+    font-size: 10.5px;
+  }
+
+  .notebookUnderline {
+    width: 126px;
+    height: 12px;
+  }
+
+  .copyButton {
+    min-height: 32px;
+    padding-inline: 8px;
+    font-size: 11px;
+  }
+
+  .promptPreview {
+    height: 182px;
+    margin-top: 12px;
+    font-size: 11px;
+    line-height: 1.45;
+  }
+
+  .notebookHint {
+    min-height: 42px;
+    margin-top: 8px;
+    padding: 6px 8px;
+    font-size: 11px;
+    line-height: 1.35;
+  }
+
+  .pencilAsset {
+    width: 150px;
+    right: -20px;
+    bottom: 4px;
+  }
+
+  .axisMiniNote {
+    right: 0;
+    top: -4px;
+    font-size: 9.5px;
+  }
+}
+
+@media (min-width: 560px) and (max-width: 680px) and (orientation: landscape) {
+  .promptSurface {
+    gap: 8px;
+    padding-inline: 8px;
+  }
+
+  .blueBacking {
+    transform: rotate(1.2deg) translate(0, 6px);
+  }
+
+  .notebookSheet {
+    transform: none;
+  }
+
+  .pencilAsset {
+    display: none;
+  }
+
+  .axisMiniNote {
+    display: none;
   }
 }
 

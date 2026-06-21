@@ -9,7 +9,7 @@ npm install
 npm run dev
 ```
 
-The app is designed for wide classroom screens. Under 900px width it shows guidance to switch to a landscape or wider display.
+The app is designed for wide classroom screens. Phone landscape viewports from 560px wide use a compact landscape mode; phone portrait and extremely narrow screens show guidance to rotate the device or use a wider display.
 
 ## Verification
 

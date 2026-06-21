@@ -35,15 +35,16 @@
 | Hero spacing refresh | Start | 91 | User corrected the intended reference to the borderless generated image and wanted less left whitespace. | Switched to `start-hero-map-v2.webp` candidate A, cropped the blank outer margin, reduced the copy/artwork gap, widened the artwork region, and kept the hard CSS frame removed. | `artifacts/visual/start-1280x800.png` |
 | UX cleanup 3 | Question/Prompt | 91 | Prompt had a hidden lower report-copy button; question flow lacked a visible return path for missed nickname entry. | Removed the hidden prompt button and added a left-side `처음으로` questionnaire action that returns to the start screen. | `tests/e2e/app.spec.ts` |
 | Learning logic polish | Result/Detail/Prompt | 91 | New evidence card pushed lower detail sections down; prompt spec and privacy copy needed to match the live UI. | Moved evidence into the detail grid flow, compressed detail spacing, kept no-tab prompt guidance, and recaptured visual fixtures. | `artifacts/visual/detail-1280x800.png` |
+| Compact landscape | Responsive | Pass | Phone landscape was blocked by the old under-900px guidance rule; 560px prompt fit was a clipping risk. | Added a 560–899px landscape compact mode, hid overflow-prone pencil decoration at the lower bound, and added 560px bounding-box coverage. | `tests/visual/visual.spec.ts` |
 
 ## Automated Metrics
 
 | Screen | SSIM | Pixel mismatch | Actual | Diff |
 |---|---:|---:|---|---|
-| Start | 0.4116 | 0.1071 | `artifacts/visual/start-surface.png` | `artifacts/visual/start-diff.png` |
-| Question | 0.4637 | 0.0871 | `artifacts/visual/question-surface.png` | `artifacts/visual/question-diff.png` |
-| Result | 0.4948 | 0.0887 | `artifacts/visual/result-surface.png` | `artifacts/visual/result-diff.png` |
-| Prompt | 0.3057 | 0.1057 | `artifacts/visual/prompt-surface.png` | `artifacts/visual/prompt-diff.png` |
+| Start | 0.4208 | 0.1049 | `artifacts/visual/start-surface.png` | `artifacts/visual/start-diff.png` |
+| Question | 0.4863 | 0.0810 | `artifacts/visual/question-surface.png` | `artifacts/visual/question-diff.png` |
+| Result | 0.4969 | 0.0875 | `artifacts/visual/result-surface.png` | `artifacts/visual/result-diff.png` |
+| Prompt | 0.3257 | 0.1067 | `artifacts/visual/prompt-surface.png` | `artifacts/visual/prompt-diff.png` |
 
 The SSIM values are advisory because the reference is a scaled montage with annotations. Pixel mismatch ratios remain within the documented advisory limit.
 

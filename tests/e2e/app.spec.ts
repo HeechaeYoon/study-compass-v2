@@ -37,6 +37,17 @@ function meaningfulPixelRatio(png: PNG): number {
   return meaningful / total;
 }
 
+async function expectNoHorizontalScroll(page: Page): Promise<void> {
+  const metrics = await page.evaluate(() => ({
+    bodyScrollWidth: document.body.scrollWidth,
+    clientWidth: document.documentElement.clientWidth,
+    documentScrollWidth: document.documentElement.scrollWidth,
+  }));
+
+  expect(metrics.documentScrollWidth).toBeLessThanOrEqual(metrics.clientWidth + 2);
+  expect(metrics.bodyScrollWidth).toBeLessThanOrEqual(metrics.clientWidth + 2);
+}
+
 test("standard flow works without nickname", async ({ page }) => {
   const externalRequests: string[] = [];
   page.on("request", (request) => {
@@ -301,8 +312,57 @@ test("image export downloads a safe summary filename", async ({ page }) => {
   await expect(page.getByRole("status")).toContainText("결과 이미지를 저장했어요");
 });
 
-test("wide-only guidance appears under 900px", async ({ page }) => {
+test("wide-only guidance appears on phone portrait", async ({ page }) => {
   await page.setViewportSize({ width: 820, height: 1180 });
   await page.goto("/");
   await expect(page.getByText("이 활동은 가로 화면에 맞춰져 있어요.")).toBeVisible();
+  await expect(
+    page.getByText("스마트폰이나 태블릿을 가로로 돌리거나 PC에서 다시 열어주세요."),
+  ).toBeVisible();
+});
+
+test("phone landscape renders the app instead of the guidance", async ({ page }) => {
+  for (const viewport of [
+    { width: 844, height: 390 },
+    { width: 667, height: 375 },
+    { width: 560, height: 375 },
+  ]) {
+    await page.setViewportSize(viewport);
+    await page.goto("/");
+
+    await expect(page.getByText("이 활동은 가로 화면에 맞춰져 있어요.")).toBeHidden();
+    await expect(
+      page.getByTestId("screen-surface").getByRole("heading", {
+        name: /나의 공부 스타일을/,
+      }),
+    ).toBeVisible();
+    await expectNoHorizontalScroll(page);
+  }
+});
+
+test("phone landscape below the compact minimum keeps the guidance", async ({ page }) => {
+  await page.setViewportSize({ width: 559, height: 375 });
+  await page.goto("/");
+
+  await expect(page.getByText("이 활동은 가로 화면에 맞춰져 있어요.")).toBeVisible();
+  await expect(page.getByTestId("screen-surface")).toBeHidden();
+});
+
+test("phone landscape can complete the questionnaire flow", async ({ page }) => {
+  await page.setViewportSize({ width: 844, height: 390 });
+  await page.goto("/");
+  await expect(
+    page.getByTestId("screen-surface").getByRole("heading", {
+      name: /나의 공부 스타일을/,
+    }),
+  ).toBeVisible();
+  await expectNoHorizontalScroll(page);
+
+  await page.getByRole("button", { name: "시작하기" }).click();
+  await answerAllQuestions(page);
+
+  await expect(
+    page.getByTestId("screen-surface").getByText(/현재 답변 기준으로는/),
+  ).toBeVisible();
+  await expectNoHorizontalScroll(page);
 });
