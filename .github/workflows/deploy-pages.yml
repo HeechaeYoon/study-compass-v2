@@ -50,6 +50,8 @@ jobs:
 
       - name: Production build
         run: npm run build
+        env:
+          MASTER_CODE: ${{ secrets.MASTER_CODE }}
 
       - name: Setup Pages
         uses: actions/configure-pages@v5

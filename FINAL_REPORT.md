@@ -82,10 +82,10 @@ Not pixel-perfect. The reference is a scaled montage, and the product-required s
 |---|---|
 | `npm run typecheck` | Pass |
 | `npm run lint` | Pass |
-| `npm run test` | Pass, 8 files / 44 tests |
+| `npm run test` | Pass, 9 files / 46 tests |
 | `npm run logic:distribution` | Pass, all 8 types within 3-30% |
 | `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:visual` | Pass, 11 Chromium tests including access fixture, 1280×800 captures, wide/landscape smoke, 390×844 portrait fixture captures, and 360×740 detail/prompt captures |
-| `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:e2e` | Pass, 24 Chromium tests including access gate/admin code generation, 390×844 and 360×740 portrait rendering, 359×740 guidance, 390×844 and 360×740 core flows, scroll reset, touch target, and delete privacy checks |
+| `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:e2e` | Pass, 25 Chromium tests including access gate/admin code generation, admin modal focus trap, 390×844 and 360×740 portrait rendering, 359×740 guidance, 390×844 and 360×740 core flows, scroll reset, touch target, and delete privacy checks |
 | `MASTER_CODE=development-master-code VITE_ENABLE_FIXTURES=true npm run build` | Pass |
 | `npm run test:e2e:webkit` | Blocked: host missing WebKit system libraries |
 

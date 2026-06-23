@@ -20,6 +20,21 @@ function formatDateTime(value: Date): string {
   }).format(value);
 }
 
+const focusableSelector = [
+  "button:not([disabled])",
+  "textarea:not([disabled])",
+  "input:not([disabled])",
+  "select:not([disabled])",
+  "a[href]",
+  '[tabindex]:not([tabindex="-1"])',
+].join(",");
+
+function getFocusableElements(container: HTMLElement): HTMLElement[] {
+  return Array.from(container.querySelectorAll<HTMLElement>(focusableSelector)).filter(
+    (element) => element.offsetParent !== null || element === document.activeElement,
+  );
+}
+
 export function AdminAccessModal({
   open,
   verifierDigest,
@@ -46,6 +61,15 @@ export function AdminAccessModal({
     setError(null);
     const previousActiveElement =
       document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const inertTargets = Array.from(
+      document.querySelectorAll<HTMLElement>(".wideApp, .wideOnlyNotice"),
+    );
+
+    inertTargets.forEach((target) => {
+      target.setAttribute("inert", "");
+      target.setAttribute("aria-hidden", "true");
+    });
+
     const frame = window.requestAnimationFrame(() => {
       masterInputRef.current?.focus({ preventScroll: true });
     });
@@ -53,6 +77,30 @@ export function AdminAccessModal({
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         onClose();
+        return;
+      }
+
+      if (event.key !== "Tab" || !dialogRef.current) return;
+
+      const focusableElements = getFocusableElements(dialogRef.current);
+      if (focusableElements.length === 0) {
+        event.preventDefault();
+        return;
+      }
+
+      const firstElement = focusableElements[0];
+      const lastElement = focusableElements[focusableElements.length - 1];
+      if (!firstElement || !lastElement) {
+        event.preventDefault();
+        return;
+      }
+
+      if (event.shiftKey && document.activeElement === firstElement) {
+        event.preventDefault();
+        lastElement.focus();
+      } else if (!event.shiftKey && document.activeElement === lastElement) {
+        event.preventDefault();
+        firstElement.focus();
       }
     };
 
@@ -60,6 +108,10 @@ export function AdminAccessModal({
     return () => {
       window.cancelAnimationFrame(frame);
       document.removeEventListener("keydown", onKeyDown);
+      inertTargets.forEach((target) => {
+        target.removeAttribute("inert");
+        target.removeAttribute("aria-hidden");
+      });
       if (previousActiveElement?.isConnected) {
         previousActiveElement.focus({ preventScroll: true });
       }
