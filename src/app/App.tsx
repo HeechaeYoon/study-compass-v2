@@ -120,6 +120,10 @@ export function App() {
   }, [clearAutoAdvance, state.currentQuestionIndex, state.screen]);
 
   useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  }, [state.currentQuestionIndex, state.screen]);
+
+  useEffect(() => {
     const frame = window.requestAnimationFrame(() => {
       const surface = document.querySelector('[data-testid="screen-surface"]');
       const heading = surface?.querySelector<HTMLElement>("[data-screen-heading]");

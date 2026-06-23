@@ -408,9 +408,9 @@ Mock Clipboard API failure and verify fallback.
 
 Mock localStorage exception and verify app remains usable.
 
-### E2E-06 Wide-only
+### E2E-06 Responsive phone support
 
-At 820×1180 portrait and below-560px landscape, show guidance and hide full app.
+At 390×844 and 360×740 portrait, show the app and allow the core flow. At 359px portrait and below-560px landscape, show guidance and hide the full app. Portrait transitions into result, detail, and prompt should start at the top of the new screen, and core touch targets should remain at least 44px tall.
 
 ---
 
@@ -483,13 +483,22 @@ No critical axe-core violations on core screens if automated accessibility testi
 - background provides outer whitespace
 - typography does not scale excessively
 
-### 820×1180 portrait
+### 390×844 and 360×740 portrait
 
-- wide-only guidance shown
+- app surface renders instead of narrow-screen guidance
+- start screen and questionnaire flow are usable
+- detail and prompt screens remain readable with vertical page scroll
+- result, detail, and prompt navigation resets to the top of the new screen
+- core result/detail/prompt controls remain at least 44px tall
+- no horizontal page scroll
+
+### 359×740 portrait
+
+- narrow-screen guidance shown because the viewport is below the portrait minimum width
 
 ### 844×390 and 667×375 landscape
 
-- app surface renders instead of wide-only guidance
+- app surface renders instead of narrow-screen guidance
 - start screen and questionnaire flow are usable
 - no horizontal page scroll
 
@@ -500,7 +509,7 @@ No critical axe-core violations on core screens if automated accessibility testi
 
 ### 559×375 landscape
 
-- wide-only guidance shown because the viewport is below the compact minimum width
+- narrow-screen guidance shown because the viewport is below the compact landscape minimum width
 
 ---
 

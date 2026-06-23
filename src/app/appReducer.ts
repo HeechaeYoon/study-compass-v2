@@ -82,6 +82,7 @@ export function appReducer(state: AppState, action: AppAction): AppState {
       return {
         ...state,
         screen: "start",
+        nickname: "",
         currentQuestionIndex: 0,
         answers: {},
         result: null,

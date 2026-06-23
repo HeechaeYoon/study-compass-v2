@@ -588,6 +588,9 @@ Minimum manual or automated smoke checks:
 | Chromium | 1440×900 | responsive smoke |
 | WebKit | 1280×800 | functional smoke |
 | Chromium | 1920×1080 | max-width check |
+| Chromium | 390×844 | phone portrait responsive smoke |
+| Chromium | 360×740 | minimum phone portrait smoke |
+| Chromium | 359×740 | below-minimum portrait guidance |
 
 ---
 

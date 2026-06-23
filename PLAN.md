@@ -60,7 +60,7 @@
 - [x] Dedicated detail report screen rebuilt as a student-facing learning map with clear headline, safety note, snapshot, mission, 5-axis cards, recommendations, cautions, and avoid-methods.
 - [x] Prompt screen removes tabs and the unclear strategy-guide tab; it keeps live-updating inputs, preview, result navigation, copy success state, copy fallback, save/delete/export, and local pencil asset.
 - [x] Prompt screen removes the hidden lower `상세 리포트 복사` floating button from the notebook area.
-- [x] Wide-only guidance for phone portrait and extremely narrow screens; compact landscape support for 560–899px phone viewports.
+- [x] Responsive phone portrait support for 360px+ viewports; narrow-screen guidance remains below 360px portrait and below 560px landscape; compact landscape support for 560–899px phone viewports.
 - [x] No backend, login, analytics, tracking, external AI call, or runtime external font request.
 - [x] Export uses a dedicated hidden summary card that includes growth point, conditional strength/balance labels, recommended strategies, and excludes free-form prompt inputs/memo.
 - [x] Toast messages auto-dismiss after 3 seconds and ignore stale timers.
@@ -116,8 +116,8 @@ Notes:
 | `npm run lint` | Pass |
 | `npm run test` | Pass, 5 files / 28 tests |
 | `npm run logic:distribution` | Pass, all 8 types within 3-30% |
-| `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:visual` | Pass, 9 Chromium visual/viewport tests |
-| `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:e2e` | Pass, 17 Chromium E2E tests |
+| `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:visual` | Pass, 10 Chromium visual/viewport tests |
+| `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:e2e` | Pass, 20 Chromium E2E tests |
 | `npm run build` | Pass, production `dist/` generated |
 | `npm run test:e2e:webkit` | Blocked by host missing WebKit libraries |
 
@@ -163,4 +163,15 @@ Notes:
 - [x] Added image-generation prompt modes for Gemini/ChatGPT infographic use without calling external AI from the app.
 - [x] Migrated saved results to schema version 2 while preserving a v1 load migration.
 - [x] Updated unit, E2E, visual, PRD, content, technical, visual, QA, and final-report docs for the new prompt behavior.
-- [x] Final validation: `npm run typecheck`, `npm run lint`, `npm run test`, `npm run build`, `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:e2e`, and `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:visual` passed.
+- [x] Final validation before phone portrait support: `npm run typecheck`, `npm run lint`, `npm run test`, `npm run build`, `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:e2e`, and `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:visual` passed.
+
+## 13. Phone Portrait Responsive Support
+
+- [x] Changed the responsive contract so tablet/PC wide viewports remain primary while 360px+ phone portrait viewports are usable as a secondary adaptive mode.
+- [x] Replaced phone-portrait blocking with portrait-specific CSS for Start, Question, Result, Detail, and Prompt screens.
+- [x] Kept narrow-screen guidance for 359px portrait and below-560px landscape with width-based copy: `화면이 너무 좁아요.`
+- [x] Added E2E coverage for 390×844 and 360×740 portrait app rendering, 359×740 guidance, and 390×844/360×740 core flows through result, detail, prompt copy, save, and delete.
+- [x] Added E2E regression checks for portrait screen-transition scroll reset, 44px+ touch targets, localStorage deletion, and nickname clearing after saved-result deletion.
+- [x] Added visual fixture smoke coverage for all fixture screens at 390×844 plus detail/prompt at 360×740 with no-horizontal-scroll checks and saved portrait screenshots.
+- [x] Updated PRD, decision log, visual spec, design system, technical spec, implementation plan, QA acceptance, visual review log, final report, and this plan for the new mobile scope.
+- [x] Final validation for phone portrait support: `npm run test`, `npm run typecheck`, `npm run lint`, `npm run build`, `npm run logic:distribution`, `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:e2e`, and `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:visual` passed.

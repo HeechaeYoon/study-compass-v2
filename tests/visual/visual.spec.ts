@@ -28,6 +28,19 @@ async function expectElementInsideViewport(page: Page, selector: string): Promis
   expect(box.x + box.width).toBeLessThanOrEqual(viewport.width + 2);
 }
 
+async function captureViewport(
+  page: Page,
+  fixture: string,
+  viewportName: string,
+): Promise<void> {
+  const outputDir = path.join(process.cwd(), "artifacts", "visual");
+  await mkdir(outputDir, { recursive: true });
+  await page.screenshot({
+    path: path.join(outputDir, `${fixture}-${viewportName}.png`),
+    fullPage: true,
+  });
+}
+
 test.describe("visual fixtures", () => {
   for (const fixture of fixtures) {
     test(`${fixture} fixture captures at 1280x800`, async ({ page }) => {
@@ -72,9 +85,48 @@ test.describe("visual fixtures", () => {
       await page.goto(`/?fixture=${fixture}`);
       await page.evaluate(() => document.fonts.ready);
 
-      await expect(page.getByText("이 활동은 가로 화면에 맞춰져 있어요.")).toBeHidden();
+      await expect(page.getByText("화면이 너무 좁아요.")).toBeHidden();
       await expect(page.getByTestId("screen-surface")).toBeVisible();
       await expectNoHorizontalScroll(page);
+    }
+  });
+
+  test("phone portrait fixtures render without horizontal overflow", async ({ page }) => {
+    for (const fixture of fixtures) {
+      await page.setViewportSize({ width: 390, height: 844 });
+      await page.goto(`/?fixture=${fixture}`);
+      await page.evaluate(() => document.fonts.ready);
+
+      await expect(page.getByText("화면이 너무 좁아요.")).toBeHidden();
+      await expect(page.getByTestId("screen-surface")).toBeVisible();
+      await expectNoHorizontalScroll(page);
+      if (fixture === "detail") {
+        await expect(
+          page.getByRole("heading", { name: "지금의 공부 길을 한눈에 보기" }),
+        ).toBeInViewport();
+      }
+      if (fixture === "prompt") {
+        await expect(page.getByText(/입력한 내용과 메모는/)).toBeInViewport();
+      }
+      await captureViewport(page, fixture, "390x844");
+    }
+
+    for (const fixture of ["detail", "prompt"] as const) {
+      await page.setViewportSize({ width: 360, height: 740 });
+      await page.goto(`/?fixture=${fixture}`);
+      await page.evaluate(() => document.fonts.ready);
+
+      await expect(page.getByText("화면이 너무 좁아요.")).toBeHidden();
+      await expect(page.getByTestId("screen-surface")).toBeVisible();
+      await expectNoHorizontalScroll(page);
+      if (fixture === "detail") {
+        await expect(
+          page.getByRole("heading", { name: "지금의 공부 길을 한눈에 보기" }),
+        ).toBeInViewport();
+      } else {
+        await expect(page.getByText(/입력한 내용과 메모는/)).toBeInViewport();
+      }
+      await captureViewport(page, fixture, "360x740");
     }
   });
 
@@ -83,7 +135,7 @@ test.describe("visual fixtures", () => {
     await page.goto("/?fixture=prompt");
     await page.evaluate(() => document.fonts.ready);
 
-    await expect(page.getByText("이 활동은 가로 화면에 맞춰져 있어요.")).toBeHidden();
+    await expect(page.getByText("화면이 너무 좁아요.")).toBeHidden();
     await expect(page.getByTestId("screen-surface")).toBeVisible();
     await expectNoHorizontalScroll(page);
     await expectElementInsideViewport(page, ".promptFormPanel");

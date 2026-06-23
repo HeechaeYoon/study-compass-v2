@@ -581,7 +581,7 @@ type DoodleProps = {
   }
 }
 
-@media (max-width: 559px), (max-width: 899px) and (orientation: portrait) {
+@media (max-width: 359px), (max-width: 559px) and (orientation: landscape) {
   .wideApp {
     display: none;
   }
@@ -598,6 +598,28 @@ type DoodleProps = {
 
   .wideOnlyNotice {
     display: none;
+  }
+}
+
+@media (min-width: 360px) and (max-width: 899px) and (orientation: portrait) {
+  :root {
+    --header-height: 58px;
+    --surface-max: 100%;
+  }
+
+  .wideApp {
+    display: block;
+  }
+
+  .wideOnlyNotice {
+    display: none;
+  }
+
+  .screenSurface {
+    width: calc(100vw - 20px);
+    height: auto;
+    min-height: calc(100svh - var(--header-height) - 20px);
+    overflow: visible;
   }
 }
 

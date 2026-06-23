@@ -158,7 +158,8 @@ The background must remain quiet. If the texture is obvious at first glance, it 
 
 - At 1024–1150px: main title 26px; right metadata 12px; subtitle can shorten to `자기주도학습 진단`.
 - At 560–899px landscape: use compact spacing, smaller header text, and vertical page scroll while preserving the wide composition.
-- At phone portrait or below 560px: replace app with unsupported-width guidance.
+- At 360px+ phone portrait: keep the same app flow but stack the composition into a readable one-column layout.
+- Below 360px portrait or below 560px landscape: replace app with unsupported-width guidance.
 
 ---
 
@@ -848,13 +849,23 @@ The result and prompt screens include content beyond the reference board. Keep t
 - Result grid remains two columns down to 1024
 - Prompt pencil may shrink 15–25%
 
-### Phone portrait and below 560px
+### 360px+ phone portrait
+
+- Preserve the wide design as the primary visual source; do not create a separate mobile-first product style.
+- Stack each screen into a single readable flow with no horizontal page scroll.
+- Start: copy, optional nickname, CTA, artwork, and privacy strip stack vertically.
+- Question: use touch-friendly cards; 5-option scenarios may become one-column, while 4-option Likert cards may use a compact two-column layout when width allows.
+- Result: narrative, radar, summary cards, and actions stack vertically.
+- Detail: report sections become single-column cards.
+- Prompt: form and preview stack; decorative notebook/pencil elements may simplify or hide when they compete with task completion.
+
+### Below 360px portrait and below 560px landscape
 
 Render a dedicated guidance card:
 
 ```text
-이 활동은 가로 화면에 맞춰져 있어요.
-스마트폰이나 태블릿을 가로로 돌리거나 PC에서 다시 열어주세요.
+화면이 너무 좁아요.
+조금 더 넓은 화면이나 가로 모드에서 다시 열어주세요.
 ```
 
 ### 560–899px landscape

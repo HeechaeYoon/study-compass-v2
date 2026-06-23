@@ -36,6 +36,7 @@
 | UX cleanup 3 | Question/Prompt | 91 | Prompt had a hidden lower report-copy button; question flow lacked a visible return path for missed nickname entry. | Removed the hidden prompt button and added a left-side `처음으로` questionnaire action that returns to the start screen. | `tests/e2e/app.spec.ts` |
 | Learning logic polish | Result/Detail/Prompt | 91 | New evidence card pushed lower detail sections down; prompt spec and privacy copy needed to match the live UI. | Moved evidence into the detail grid flow, compressed detail spacing, kept no-tab prompt guidance, and recaptured visual fixtures. | `artifacts/visual/detail-1280x800.png` |
 | Compact landscape | Responsive | Pass | Phone landscape was blocked by the old under-900px guidance rule; 560px prompt fit was a clipping risk. | Added a 560–899px landscape compact mode, hid overflow-prone pencil decoration at the lower bound, and added 560px bounding-box coverage. | `tests/visual/visual.spec.ts` |
+| Phone portrait | Responsive | Pass | 360px+ phone portrait was previously blocked by the guidance screen; review found inherited scroll and too-small touch targets at the minimum width. | Added portrait-specific layouts for Start, Question, Result, Detail, and Prompt, reset screen-transition scroll, kept core portrait controls at 44px+, captured 390×844 fixture screenshots plus 360×740 detail/prompt screenshots, and kept guidance below 360px portrait and below 560px landscape. | `artifacts/visual/start-390x844.png`, `artifacts/visual/detail-360x740.png` |
 
 ## Automated Metrics
 

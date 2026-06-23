@@ -48,6 +48,42 @@ async function expectNoHorizontalScroll(page: Page): Promise<void> {
   expect(metrics.bodyScrollWidth).toBeLessThanOrEqual(metrics.clientWidth + 2);
 }
 
+async function expectPageAtTop(page: Page): Promise<void> {
+  await expect
+    .poll(() => page.evaluate(() => Math.round(window.scrollY)))
+    .toBeLessThanOrEqual(1);
+}
+
+async function expectMinimumControlHeight(
+  page: Page,
+  selector: string,
+  minimumHeight = 44,
+): Promise<void> {
+  const heights = await page.locator(selector).evaluateAll((elements) =>
+    elements.map((element) => {
+      const htmlElement = element as HTMLElement;
+      return {
+        ariaHidden: htmlElement.getAttribute("aria-hidden"),
+        disabled:
+          htmlElement instanceof HTMLButtonElement ||
+          htmlElement instanceof HTMLInputElement ||
+          htmlElement instanceof HTMLTextAreaElement
+            ? htmlElement.disabled
+            : false,
+        height: htmlElement.getBoundingClientRect().height,
+      };
+    }),
+  );
+  const enabledHeights = heights
+    .filter((item) => !item.disabled && item.ariaHidden !== "true")
+    .map((item) => item.height);
+
+  expect(enabledHeights.length).toBeGreaterThan(0);
+  for (const height of enabledHeights) {
+    expect(height).toBeGreaterThanOrEqual(minimumHeight);
+  }
+}
+
 test("standard flow works without nickname", async ({ page }) => {
   const externalRequests: string[] = [];
   page.on("request", (request) => {
@@ -312,13 +348,32 @@ test("image export downloads a safe summary filename", async ({ page }) => {
   await expect(page.getByRole("status")).toContainText("결과 이미지를 저장했어요");
 });
 
-test("wide-only guidance appears on phone portrait", async ({ page }) => {
-  await page.setViewportSize({ width: 820, height: 1180 });
+test("phone portrait renders the app at supported widths", async ({ page }) => {
+  for (const viewport of [
+    { width: 390, height: 844 },
+    { width: 360, height: 740 },
+  ]) {
+    await page.setViewportSize(viewport);
+    await page.goto("/");
+
+    await expect(page.getByText("화면이 너무 좁아요.")).toBeHidden();
+    await expect(
+      page.getByTestId("screen-surface").getByRole("heading", {
+        name: /나의 공부 스타일을/,
+      }),
+    ).toBeVisible();
+    await expectNoHorizontalScroll(page);
+  }
+});
+
+test("phone portrait below the minimum width keeps the guidance", async ({ page }) => {
+  await page.setViewportSize({ width: 359, height: 740 });
   await page.goto("/");
-  await expect(page.getByText("이 활동은 가로 화면에 맞춰져 있어요.")).toBeVisible();
+  await expect(page.getByText("화면이 너무 좁아요.")).toBeVisible();
   await expect(
-    page.getByText("스마트폰이나 태블릿을 가로로 돌리거나 PC에서 다시 열어주세요."),
+    page.getByText("조금 더 넓은 화면이나 가로 모드에서 다시 열어주세요."),
   ).toBeVisible();
+  await expect(page.getByTestId("screen-surface")).toBeHidden();
 });
 
 test("phone landscape renders the app instead of the guidance", async ({ page }) => {
@@ -330,7 +385,7 @@ test("phone landscape renders the app instead of the guidance", async ({ page })
     await page.setViewportSize(viewport);
     await page.goto("/");
 
-    await expect(page.getByText("이 활동은 가로 화면에 맞춰져 있어요.")).toBeHidden();
+    await expect(page.getByText("화면이 너무 좁아요.")).toBeHidden();
     await expect(
       page.getByTestId("screen-surface").getByRole("heading", {
         name: /나의 공부 스타일을/,
@@ -344,7 +399,7 @@ test("phone landscape below the compact minimum keeps the guidance", async ({ pa
   await page.setViewportSize({ width: 559, height: 375 });
   await page.goto("/");
 
-  await expect(page.getByText("이 활동은 가로 화면에 맞춰져 있어요.")).toBeVisible();
+  await expect(page.getByText("화면이 너무 좁아요.")).toBeVisible();
   await expect(page.getByTestId("screen-surface")).toBeHidden();
 });
 
@@ -366,3 +421,63 @@ test("phone landscape can complete the questionnaire flow", async ({ page }) => 
   ).toBeVisible();
   await expectNoHorizontalScroll(page);
 });
+
+for (const viewport of [
+  { label: "390x844", width: 390, height: 844 },
+  { label: "360x740", width: 360, height: 740 },
+]) {
+  test(`phone portrait can complete the core learning flow at ${viewport.label}`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: viewport.width, height: viewport.height });
+    await page.goto("/");
+    await expect(
+      page.getByTestId("screen-surface").getByRole("heading", {
+        name: /나의 공부 스타일을/,
+      }),
+    ).toBeVisible();
+    await page.getByLabel(/닉네임을 입력/).fill(`모바일학생${viewport.width}`);
+    await expectNoHorizontalScroll(page);
+
+    await page.getByRole("button", { name: "시작하기" }).click();
+    await answerAllQuestions(page);
+    await expectMinimumControlHeight(page, ".resultActions button");
+    await expectNoHorizontalScroll(page);
+
+    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+    await page.getByRole("button", { name: /상세 리포트 보기/ }).click();
+    await expectPageAtTop(page);
+    await expect(
+      page.getByRole("heading", { name: "지금의 공부 길을 한눈에 보기" }),
+    ).toBeInViewport();
+    await expectMinimumControlHeight(page, ".detailHeader button");
+    await expectNoHorizontalScroll(page);
+
+    await page.getByRole("button", { name: /결과 요약/ }).click();
+    await expectPageAtTop(page);
+    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+    await page.getByRole("button", { name: /AI 프롬프트 만들기/ }).click();
+    await expectPageAtTop(page);
+    await expect(page.getByText(/입력한 내용과 메모는/)).toBeInViewport();
+    await expectMinimumControlHeight(
+      page,
+      ".promptTopNav button, .promptModeButton, .promptFields .input, .promptUtility button, .copyButton",
+    );
+
+    await page.getByLabel("과목").fill("수학");
+    await page.getByRole("button", { name: "복사하기" }).click();
+    await expect(page.getByRole("button", { name: "복사됨" })).toBeVisible();
+    await page.getByRole("button", { name: /결과 저장/ }).click();
+    await expect(page.getByRole("status")).toContainText("저장");
+    await page.getByRole("button", { name: /저장 결과 삭제/ }).click();
+    await page.getByRole("button", { name: "삭제하기" }).click();
+    await expect(page.getByRole("status")).toContainText("저장된 결과를 삭제했어요.");
+    await expect(page.getByLabel(/닉네임을 입력/)).toHaveValue("");
+    await expect
+      .poll(() =>
+        page.evaluate(() => window.localStorage.getItem("srl-coach-result-v1")),
+      )
+      .toBeNull();
+    await expectNoHorizontalScroll(page);
+  });
+}

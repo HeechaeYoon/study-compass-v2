@@ -163,7 +163,7 @@ Do not polish micro details before macro layout passes.
 - reset
 - confirmation modal
 - toast/status messages
-- wide-only notice
+- narrow-screen guidance and responsive phone portrait support
 
 ### Gate P4
 

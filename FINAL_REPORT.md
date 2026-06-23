@@ -28,7 +28,7 @@ Rebuilt the app as a production-quality static React/Vite/TypeScript web app for
 - Result: current-response safety language, custom SVG radar without misleading visible caption, conditional type summary and strength/balance cards, detail report entry, copy/save/export/reset.
 - Detail report: separate student-facing learning-map report with large title, current-response safety note, neutral answer-grounded evidence, strength/balance/growth snapshot, mission, 5-axis interpretation, strategy bundle, cautions, and avoid methods.
 - AI prompt: four prompt modes, prompt inputs, memo auto-inclusion, full question/answer context, no tabs, live-updating preview, answer evidence, external-AI privacy guidance, `실시간 갱신` state, copy success feedback, copy fallback, save/delete/export, and result-summary navigation.
-- Wide-only: phone portrait and extremely narrow screens show guidance; 560–899px phone landscape uses a compact wide-layout mode.
+- Responsive support: tablet/PC wide viewports remain primary; 360px+ phone portrait uses an adaptive stacked layout; 560–899px phone landscape uses a compact wide-layout mode; 359px portrait and below-560px landscape show narrow-screen guidance.
 
 ## 4. ImageGen Assets
 
@@ -77,8 +77,8 @@ Not pixel-perfect. The reference is a scaled montage, and the product-required s
 | `npm run lint` | Pass |
 | `npm run test` | Pass, 5 files / 28 tests |
 | `npm run logic:distribution` | Pass, all 8 types within 3-30% |
-| `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:visual` | Pass, 9 Chromium tests |
-| `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:e2e` | Pass, 17 Chromium tests |
+| `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:visual` | Pass, 10 Chromium tests including 1280×800 captures, wide/landscape smoke, 390×844 portrait fixture captures, and 360×740 detail/prompt captures |
+| `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:e2e` | Pass, 20 Chromium tests including 390×844 and 360×740 portrait rendering, 359×740 guidance, 390×844 and 360×740 core flows, scroll reset, touch target, and delete privacy checks |
 | `npm run build` | Pass |
 | `npm run test:e2e:webkit` | Blocked: host missing WebKit system libraries |
 
@@ -91,7 +91,9 @@ Not pixel-perfect. The reference is a scaled montage, and the product-required s
 | Chromium | 1366x768 | Pass | smoke test |
 | Chromium | 1440x900 | Pass | smoke test |
 | Chromium | 1920x1080 | Pass | smoke test |
-| Chromium | 820x1180 | Pass | phone portrait wide-only guidance |
+| Chromium | 390x844 | Pass | phone portrait responsive app flow |
+| Chromium | 360x740 | Pass | minimum phone portrait app support |
+| Chromium | 359x740 | Pass | below-minimum portrait guidance |
 | Chromium | 844x390 | Pass | compact phone landscape smoke |
 | Chromium | 667x375 | Pass | compact phone landscape smoke |
 | Chromium | 560x375 | Pass | compact landscape minimum prompt fit |
