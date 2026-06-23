@@ -122,4 +122,78 @@ describe("access storage", () => {
     expect(deleteAccessPass().ok).toBe(true);
     expect(storage.removeItem).toHaveBeenCalledWith(ACCESS_STORAGE_KEY);
   });
+
+  it("does not throw when localStorage operations throw", () => {
+    const quotaStorage = {
+      getItem: vi.fn(() => null),
+      setItem: vi.fn(() => {
+        throw new DOMException("quota", "QuotaExceededError");
+      }),
+      removeItem: vi.fn(),
+    } satisfies Pick<Storage, "getItem" | "setItem" | "removeItem">;
+    stubWindow(quotaStorage);
+
+    expect(() =>
+      saveAccessPass("DAISY-A1-260623-007-ABCDEFG234", new Date(2026, 5, 30)),
+    ).not.toThrow();
+    expect(
+      saveAccessPass("DAISY-A1-260623-007-ABCDEFG234", new Date(2026, 5, 30)),
+    ).toEqual({
+      ok: false,
+      error: "quota",
+    });
+
+    const readErrorStorage = {
+      getItem: vi.fn(() => {
+        throw new Error("blocked");
+      }),
+      setItem: vi.fn(),
+      removeItem: vi.fn(),
+    } satisfies Pick<Storage, "getItem" | "setItem" | "removeItem">;
+    stubWindow(readErrorStorage);
+
+    expect(() => loadAccessPass(new Date(2026, 5, 23))).not.toThrow();
+    expect(loadAccessPass(new Date(2026, 5, 23))).toEqual({
+      ok: false,
+      error: "unavailable",
+    });
+
+    const removeErrorStorage = {
+      getItem: vi.fn(() => null),
+      setItem: vi.fn(),
+      removeItem: vi.fn(() => {
+        throw new Error("blocked");
+      }),
+    } satisfies Pick<Storage, "getItem" | "setItem" | "removeItem">;
+    stubWindow(removeErrorStorage);
+
+    expect(() => deleteAccessPass()).not.toThrow();
+    expect(deleteAccessPass()).toEqual({
+      ok: false,
+      error: "unknown",
+    });
+  });
+
+  it("does not throw when the window.localStorage getter throws", () => {
+    vi.stubGlobal(
+      "window",
+      Object.defineProperty({}, "localStorage", {
+        get() {
+          throw new Error("blocked");
+        },
+      }),
+    );
+
+    expect(() => loadAccessPass()).not.toThrow();
+    expect(loadAccessPass()).toEqual({ ok: false, error: "unavailable" });
+    expect(() =>
+      saveAccessPass("DAISY-A1-260623-007-ABCDEFG234", new Date(2026, 5, 30)),
+    ).not.toThrow();
+    expect(saveAccessPass("DAISY-A1-260623-007-ABCDEFG234", new Date(2026, 5, 30))).toEqual({
+      ok: false,
+      error: "unavailable",
+    });
+    expect(() => deleteAccessPass()).not.toThrow();
+    expect(deleteAccessPass()).toEqual({ ok: false, error: "unavailable" });
+  });
 });
