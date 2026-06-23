@@ -8,6 +8,8 @@ Rebuilt the app as a production-quality static React/Vite/TypeScript web app for
 - Product status: complete static app with four core screens, detail report screen, generated local hero asset, and required flows
 - Deployment status: production `dist/` builds locally; GitHub Pages workflow added
 - Data policy: no backend, login, analytics, tracking, external AI call, or automatic save
+- Access policy: static classroom access-code gate with local validation; `MASTER_CODE` is supplied by environment and only a derived verifier is bundled
+- Ownership policy: exact visible/exported/report text is `© Daisy Teacher. All rights reserved. 무단 복제 및 재배포 금지`
 - Learning-logic status: audit-driven scoring and report pass completed; all 8 learning types are reachable in the response space, `strategy_designer` is no longer hidden by the balanced rule, and result copy now uses neutral answer-grounded evidence.
 
 ## 2. Architecture
@@ -20,10 +22,12 @@ Rebuilt the app as a production-quality static React/Vite/TypeScript web app for
   - `src/screens/*`: start, question, result, prompt
 - State flow: `App` + reducer; browser history stores only screen and question index, not answers or nickname.
 - Local-only behavior: result is stored in `localStorage` only when explicitly saved. Delete clears saved storage and visible session state.
+- Access-code behavior: valid access passes store only a code fingerprint and expiry in localStorage; no answers, nickname, memo, or prompt data are included.
 
 ## 3. Implemented Screens
 
 - Start: visual intro, required safety disclaimer, optional nickname, saved-result reload/delete, privacy strip, and user-confirmed borderless generated learning-map hero artwork.
+- Access gate: required first screen for non-fixture visits, invalid/expired-code feedback, local-only privacy note, and hidden Daisy ownership-mark admin entry.
 - Question: 16 questions, native radio cards, progress, pointer-only auto-advance after new selections, keyboard/reduced-motion manual pacing, previous/next fallback, browser Back preservation, Q06 5-card fixture.
 - Result: current-response safety language, custom SVG radar without misleading visible caption, conditional type summary and strength/balance cards, detail report entry, copy/save/export/reset.
 - Detail report: separate student-facing learning-map report with large title, current-response safety note, neutral answer-grounded evidence, strength/balance/growth snapshot, mission, 5-axis interpretation, strategy bundle, cautions, and avoid methods.
@@ -43,10 +47,11 @@ Rebuilt the app as a production-quality static React/Vite/TypeScript web app for
 
 | Screen | Reviewer score | SSIM | Pixel mismatch | Screenshot |
 |---|---:|---:|---:|---|
-| Start | 91 | 0.4208 | 0.1049 | `artifacts/visual/start-1280x800.png` |
-| Question | 91 | 0.4863 | 0.0810 | `artifacts/visual/question-1280x800.png` |
-| Result | 91 | 0.4969 | 0.0875 | `artifacts/visual/result-1280x800.png` |
-| Prompt | 91 | 0.3257 | 0.1067 | `artifacts/visual/prompt-1280x800.png` |
+| Start | 91 | 0.4132 | 0.1049 | `artifacts/visual/start-1280x800.png` |
+| Access | reviewed separately | n/a | n/a | `artifacts/visual/access-1280x800.png` |
+| Question | 91 | 0.4779 | 0.0810 | `artifacts/visual/question-1280x800.png` |
+| Result | 91 | 0.4953 | 0.0875 | `artifacts/visual/result-1280x800.png` |
+| Prompt | 91 | 0.3242 | 0.1068 | `artifacts/visual/prompt-1280x800.png` |
 | Detail | reviewed separately | n/a | n/a | `artifacts/visual/detail-1280x800.png` |
 
 Residual differences:
@@ -68,6 +73,8 @@ Not pixel-perfect. The reference is a scaled montage, and the product-required s
 - Image export: exports a dedicated result summary card including growth point, conditional strength/balance labels, and recommended strategies; excludes free-form memo and prompt inputs; PNG output is checked for non-empty content pixels.
 - Toast: status messages auto-dismiss after 3 seconds and stale timers do not clear newer messages.
 - Privacy: no app-level network path for answers, nickname, memo, result, or prompt.
+- Access codes: hidden admin modal verifies `MASTER_CODE`, generates 1-90 day codes, and supports copy/manual selection; access gate is a static-app deterrent rather than backend-grade authorization.
+- Copyright: visible mark and low-opacity watermark appear across screens; result PNG export and copied detailed report include the exact copyright text; AI prompt body does not append it.
 
 ## 7. Commands Run
 
@@ -75,11 +82,11 @@ Not pixel-perfect. The reference is a scaled montage, and the product-required s
 |---|---|
 | `npm run typecheck` | Pass |
 | `npm run lint` | Pass |
-| `npm run test` | Pass, 5 files / 28 tests |
+| `npm run test` | Pass, 8 files / 44 tests |
 | `npm run logic:distribution` | Pass, all 8 types within 3-30% |
-| `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:visual` | Pass, 10 Chromium tests including 1280×800 captures, wide/landscape smoke, 390×844 portrait fixture captures, and 360×740 detail/prompt captures |
-| `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:e2e` | Pass, 20 Chromium tests including 390×844 and 360×740 portrait rendering, 359×740 guidance, 390×844 and 360×740 core flows, scroll reset, touch target, and delete privacy checks |
-| `npm run build` | Pass |
+| `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:visual` | Pass, 11 Chromium tests including access fixture, 1280×800 captures, wide/landscape smoke, 390×844 portrait fixture captures, and 360×740 detail/prompt captures |
+| `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:e2e` | Pass, 24 Chromium tests including access gate/admin code generation, 390×844 and 360×740 portrait rendering, 359×740 guidance, 390×844 and 360×740 core flows, scroll reset, touch target, and delete privacy checks |
+| `MASTER_CODE=development-master-code VITE_ENABLE_FIXTURES=true npm run build` | Pass |
 | `npm run test:e2e:webkit` | Blocked: host missing WebKit system libraries |
 
 ## 8. Browser And Viewport Checks
@@ -107,6 +114,7 @@ Not pixel-perfect. The reference is a scaled montage, and the product-required s
 - E2E confirms answer/nickname data is not placed in the URL.
 - Fonts, generated images, and static assets are local to the app build.
 - Memo is never sent automatically; when the student copies a generated prompt, non-empty memo text is included in that copied text and the UI warns against names, contact details, and sensitive personal information.
+- Production builds require `MASTER_CODE`; local test builds use `development-master-code`. Bundle scans should be run with a real deployment secret before release to confirm the raw value is absent.
 
 ## 10. Independent Reviews
 
@@ -134,11 +142,16 @@ Fixed reviewer findings from the audit-driven pass: no-strength results no longe
 
 Added a second distribution calibration pass: response-space counting is now a shared domain helper and `logic:distribution` script, primary matching uses a ranked guardrail loop, and type profiles were recalibrated so all 8 types meet the 3% response-space floor without changing the 16-question structure.
 
+### Access-Code Reviewers
+
+Primitive spec review initially requested missing edge-case tests for localStorage exceptions and Vite env loading; added those tests and re-reviewed to approval. Primitive code-quality review approved the digest-only verifier, typed validation, and fingerprint-only storage within the static-app deterrent constraint. UI spec review found the pseudo-element watermark used a shortened string; fixed it to the exact full copyright text and added a computed-style visual regression check.
+
 ## 11. GitHub Pages
 
 - Vite base: `./`
 - Workflow: `.github/workflows/deploy-pages.yml`
 - Workflow uses `npm ci`, Chromium Playwright install, typecheck, lint, unit, e2e, visual, and production build before upload.
+- GitHub Pages production builds must provide `MASTER_CODE` through repository secrets or the build will fail.
 - Deployed URL is not available locally; GitHub Pages must be enabled in repository Settings after pushing.
 
 ## 12. Known Limitations
@@ -147,3 +160,4 @@ Added a second distribution calibration pass: response-space counting is now a s
 - Visual reproduction is close but not pixel-perfect because the reference is a montage, not a source design file.
 - WebKit/Safari smoke could not run on this host due missing system dependencies requiring sudo-level install.
 - Font assets remain the largest payload; runtime browsers should prefer WOFF2, and JS/CSS gzip sizes are small.
+- The access-code system is client-side and can be bypassed by a determined person inspecting or modifying the static bundle; it is intended to reduce casual sharing, not provide strong authentication.

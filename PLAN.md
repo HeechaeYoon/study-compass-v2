@@ -175,3 +175,20 @@ Notes:
 - [x] Added visual fixture smoke coverage for all fixture screens at 390×844 plus detail/prompt at 360×740 with no-horizontal-scroll checks and saved portrait screenshots.
 - [x] Updated PRD, decision log, visual spec, design system, technical spec, implementation plan, QA acceptance, visual review log, final report, and this plan for the new mobile scope.
 - [x] Final validation for phone portrait support: `npm run test`, `npm run typecheck`, `npm run lint`, `npm run build`, `npm run logic:distribution`, `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:e2e`, and `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:visual` passed.
+
+## 14. Daisy Ownership And Access Codes
+
+- [x] Added exact copyright text across the app: `© Daisy Teacher. All rights reserved. 무단 복제 및 재배포 금지`.
+- [x] Added subtle global ownership mark, low-opacity screen watermark, result-image footer, and copied detailed-report footer.
+- [x] Kept the AI prompt body free of the copyright footer.
+- [x] Added required student access gate before the start screen.
+- [x] Added hidden 7-activation admin entry on the ownership mark.
+- [x] Added admin modal with `MASTER_CODE` verification, 1-90 day code generation, valid-until display, copy, and manual selection.
+- [x] Added static access-code primitives: `DAISY-A1-YYMMDD-DDD-SIGNATURE`, local expiry validation, typed failure reasons, and fingerprint-only access-pass storage.
+- [x] Updated Vite config so production builds require unprefixed `MASTER_CODE` from shell or `.env`, inject only the derived verifier digest, and keep test/dev builds deterministic.
+- [x] Added `.env.example` and `.env` ignore rules.
+- [x] Added unit coverage for access-code generation/validation, access storage failure handling, Vite env loading, and detailed-report attribution.
+- [x] Added E2E coverage for access gate rejection, hidden admin code generation, access pass persistence, and existing flows with a test access pass.
+- [x] Added visual fixture coverage for `/?fixture=access` and exact pseudo-element watermark text.
+- [x] Validation for this pass: `npm run typecheck`, `npm run lint`, `npm run test`, `npm run logic:distribution`, `MASTER_CODE=development-master-code VITE_ENABLE_FIXTURES=true npm run build`, `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:e2e`, and `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:visual` passed.
+- [x] Independent primitive spec review, primitive code-quality review, and UI/access spec review completed; UI re-review fixed exact watermark text.

@@ -562,6 +562,14 @@ Provide a screen-reader summary:
 - Do not expose the student's prompt in console logs.
 - Remove debug logging before completion.
 
+### Access-code deterrent
+
+- Production builds require unprefixed `MASTER_CODE` from the shell or `.env` file.
+- `MASTER_CODE` is digested in `vite.config.ts`; only `__ACCESS_VERIFIER_DIGEST__` is injected into client code.
+- Student access codes use `DAISY-A1-YYMMDD-DDD-SIGNATURE`, validate locally, and store only `{ schemaVersion, codeFingerprint, expiresAt }` under `srl-coach-access-v1`.
+- The hidden admin modal is opened through repeated activation of the visible copyright mark.
+- This is a static-app classroom deterrent, not backend-grade authorization.
+
 ---
 
 ## 21. Performance budget

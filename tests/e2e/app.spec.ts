@@ -1,10 +1,51 @@
 import { readFileSync } from "node:fs";
 import { expect, test, type Page } from "@playwright/test";
 import { PNG } from "pngjs";
+import {
+  fingerprintAccessCode,
+  generateAccessCode,
+  getAccessExpiry,
+} from "../../src/domain/accessCode";
+import { DAISY_COPYRIGHT_TEXT } from "../../src/data/ownership";
 
 const expectedOrigin = new URL(
   process.env.PLAYWRIGHT_BASE_URL ?? "http://127.0.0.1:4173",
 ).origin;
+const DEV_VERIFIER_DIGEST =
+  "467934acc99f69b35a94c1c9a1f7b6345aee56695f78e4c5b80468f7477799ca";
+const ACCESS_STORAGE_KEY = "srl-coach-access-v1";
+
+async function grantAccess(page: Page): Promise<void> {
+  const code = generateAccessCode({
+    issuedAt: new Date(),
+    validDays: 90,
+    verifierDigest: DEV_VERIFIER_DIGEST,
+  });
+  const expiresAt = getAccessExpiry(code);
+  if (!expiresAt) throw new Error("test access code did not produce an expiry");
+
+  await page.addInitScript(
+    ({ key, fingerprint, expiry }) => {
+      window.localStorage.setItem(
+        key,
+        JSON.stringify({
+          schemaVersion: 1,
+          codeFingerprint: fingerprint,
+          expiresAt: expiry,
+        }),
+      );
+    },
+    {
+      key: ACCESS_STORAGE_KEY,
+      fingerprint: fingerprintAccessCode(code),
+      expiry: expiresAt.toISOString(),
+    },
+  );
+}
+
+test.beforeEach(async ({ page }) => {
+  await grantAccess(page);
+});
 
 async function answerAllQuestions(page: Page) {
   for (let index = 0; index < 16; index += 1) {
@@ -368,6 +409,7 @@ test("image export downloads a safe summary filename", async ({ page }) => {
   await expect(exportCard).toContainText("강점");
   await expect(exportCard).toContainText("균형");
   await expect(exportCard).toContainText("추천 전략");
+  await expect(exportCard).toContainText(DAISY_COPYRIGHT_TEXT);
   await expect(exportCard).not.toContainText("비밀과목 57ac");
   await expect(exportCard).not.toContainText("비밀메모 57ac");
 

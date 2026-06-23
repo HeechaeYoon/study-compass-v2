@@ -540,6 +540,18 @@ Suggested target:
 - Actions build uses lockfile
 - deployed version has no fixture mode unless intentionally enabled
 - privacy behavior remains unchanged in production
+- production build receives `MASTER_CODE` through environment/secret, not source code
+- built bundle does not contain the raw production master code
+
+## 14.1 Access-code and ownership acceptance
+
+- first non-fixture visit shows `수업 접속 코드` before the start screen
+- invalid and expired access codes are rejected with student-safe copy
+- hidden repeated activation of `© Daisy Teacher. All rights reserved. 무단 복제 및 재배포 금지` opens the admin modal
+- admin modal verifies the master code and generates 1-90 day codes
+- access pass stores only a code fingerprint and expiry
+- the copyright text appears on screen, in the low-opacity watermark, on exported result images, and in copied detailed reports
+- AI prompt body does not append the copyright text
 
 ---
 

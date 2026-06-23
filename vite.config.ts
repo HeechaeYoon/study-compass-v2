@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { defineConfig } from "vite";
+import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
 
 const MASTER_CODE_SALT = "study-compass-v2:";
@@ -15,6 +15,23 @@ type AccessVerifierDefineOptions = {
   mode: string;
   env?: Record<string, string | undefined>;
 };
+
+type AccessVerifierEnvOptions = {
+  mode: string;
+  cwd: string;
+  processEnv?: Record<string, string | undefined>;
+};
+
+export function loadAccessVerifierEnv({
+  mode,
+  cwd,
+  processEnv = process.env,
+}: AccessVerifierEnvOptions): Record<string, string | undefined> {
+  return {
+    ...loadEnv(mode, cwd, ""),
+    ...processEnv,
+  };
+}
 
 export function buildAccessVerifierDefine({
   command,
@@ -36,7 +53,11 @@ export function buildAccessVerifierDefine({
 export default defineConfig(({ command, mode }) => {
   return {
     base: "./",
-    define: buildAccessVerifierDefine({ command, mode }),
+    define: buildAccessVerifierDefine({
+      command,
+      mode,
+      env: loadAccessVerifierEnv({ mode, cwd: process.cwd() }),
+    }),
     plugins: [react()],
   };
 });

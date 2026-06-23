@@ -1,8 +1,13 @@
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { QUESTIONS, type AnswerValue } from "../data/questions";
 import { buildDetailedReport, createResult, createResultSummary } from "../domain/result";
+import { validateAccessCode } from "../domain/accessCode";
 import { copyText } from "../infrastructure/clipboard";
 import { exportSummaryCard } from "../infrastructure/imageExport";
+import {
+  loadAccessPass,
+  saveAccessPass,
+} from "../infrastructure/accessStorage";
 import {
   deleteResult,
   loadResult,
@@ -13,14 +18,17 @@ import { AppHeader } from "../components/AppHeader";
 import { ConfirmModal } from "../components/ConfirmModal";
 import { Toast } from "../components/Toast";
 import { WideOnlyNotice } from "../components/WideOnlyNotice";
+import { DaisyOwnershipMark } from "../components/DaisyOwnershipMark";
 import { appReducer } from "./appReducer";
-import { createFixtureState } from "./fixtures";
+import { createFixtureState, isFixtureEnabled } from "./fixtures";
 import { initialAppState } from "./appState";
 import { StartScreen } from "../screens/StartScreen";
 import { QuestionScreen } from "../screens/QuestionScreen";
 import { ResultExportCard, ResultScreen } from "../screens/ResultScreen";
 import { DetailReportScreen } from "../screens/DetailReportScreen";
 import { PromptScreen } from "../screens/PromptScreen";
+import { AccessGateScreen } from "../screens/AccessGateScreen";
+import { AdminAccessModal } from "../screens/AdminAccessModal";
 
 const assetBase = import.meta.env.BASE_URL;
 
@@ -71,7 +79,8 @@ function isAppHistoryState(value: unknown): value is AppHistoryState {
 }
 
 export function App() {
-  const fixture = new URLSearchParams(window.location.search).get("fixture");
+  const fixtureName = new URLSearchParams(window.location.search).get("fixture");
+  const fixture = isFixtureEnabled() ? fixtureName : null;
   const [state, dispatch] = useReducer(
     appReducer,
     fixture ? createFixtureState(fixture) : initialAppState,
@@ -79,6 +88,10 @@ export function App() {
   const [toast, setToast] = useState<ToastState | null>(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [manualCopyText, setManualCopyText] = useState<string | null>(null);
+  const [accessCodeInput, setAccessCodeInput] = useState("");
+  const [accessError, setAccessError] = useState<string | null>(null);
+  const [accessGranted, setAccessGranted] = useState(false);
+  const [adminModalOpen, setAdminModalOpen] = useState(false);
   const [autoAdvanceQuestionId, setAutoAdvanceQuestionId] = useState<string | null>(null);
   const exportRef = useRef<HTMLDivElement | null>(null);
   const autoAdvanceTimeoutRef = useRef<number | null>(null);
@@ -112,6 +125,14 @@ export function App() {
       dispatch({ type: "SET_SAVED_RESULT", value: loaded.value });
     }
   }, []);
+
+  useEffect(() => {
+    if (fixture) return;
+    const loaded = loadAccessPass();
+    if (loaded.ok && loaded.value) {
+      setAccessGranted(true);
+    }
+  }, [fixture]);
 
   useEffect(() => {
     if (!toast) return undefined;
@@ -273,6 +294,37 @@ export function App() {
     return handleCopy(promptText, "AI 프롬프트를 복사했어요.");
   }
 
+  async function handleCopyAccessCode(code: string): Promise<boolean> {
+    return handleCopy(code, "접속 코드를 복사했어요.");
+  }
+
+  function handleAccessSubmit(): void {
+    const validation = validateAccessCode(
+      accessCodeInput,
+      new Date(),
+      __ACCESS_VERIFIER_DIGEST__,
+    );
+
+    if (!validation.ok) {
+      setAccessError(
+        validation.reason === "expired"
+          ? "만료된 접속 코드예요. 선생님께 새 코드를 요청해주세요."
+          : "유효하지 않은 접속 코드예요. 선생님이 안내한 코드를 다시 확인해주세요.",
+      );
+      return;
+    }
+
+    const saved = saveAccessPass(validation.code, validation.expiresAt);
+    setAccessGranted(true);
+    setAccessCodeInput("");
+    setAccessError(null);
+    if (saved.ok) {
+      announce("접속 코드가 확인되었어요.");
+    } else {
+      announce("접속 코드가 확인되었어요. 이 탭에서 계속 사용할 수 있어요.");
+    }
+  }
+
   async function handleCopyReport(): Promise<void> {
     if (!state.result) return;
     await handleCopy(buildDetailedReport(state.result), "상세 리포트를 복사했어요.");
@@ -321,13 +373,25 @@ export function App() {
   }
 
   const currentQuestion = QUESTIONS[state.currentQuestionIndex] ?? QUESTIONS[0];
+  const shouldShowAccessGate = fixture === "access" || (!fixture && !accessGranted);
 
   return (
     <>
       <WideOnlyNotice />
       <div className="wideApp appShell" style={styleVars}>
         <AppHeader />
-        {state.screen === "start" ? (
+        {shouldShowAccessGate ? (
+          <AccessGateScreen
+            code={accessCodeInput}
+            error={accessError}
+            onCodeChange={(value) => {
+              setAccessCodeInput(value);
+              setAccessError(null);
+            }}
+            onSubmit={handleAccessSubmit}
+          />
+        ) : null}
+        {!shouldShowAccessGate && state.screen === "start" ? (
           <StartScreen
             nickname={state.nickname}
             heroImageSrc={assetPath("assets/start-hero-map-v2.webp")}
@@ -342,7 +406,7 @@ export function App() {
             onRequestDelete={() => setDeleteModalOpen(true)}
           />
         ) : null}
-        {state.screen === "question" && currentQuestion ? (
+        {!shouldShowAccessGate && state.screen === "question" && currentQuestion ? (
           <QuestionScreen
             question={currentQuestion}
             answer={state.answers[currentQuestion.id]}
@@ -361,7 +425,7 @@ export function App() {
             onNext={handleNext}
           />
         ) : null}
-        {state.screen === "result" && state.result ? (
+        {!shouldShowAccessGate && state.screen === "result" && state.result ? (
           <ResultScreen
             result={state.result}
             onOpenDetail={() => dispatch({ type: "OPEN_DETAIL" })}
@@ -372,7 +436,7 @@ export function App() {
             onRestart={() => dispatch({ type: "RESET" })}
           />
         ) : null}
-        {state.screen === "detail" && state.result ? (
+        {!shouldShowAccessGate && state.screen === "detail" && state.result ? (
           <DetailReportScreen
             result={state.result}
             onOpenResult={() => dispatch({ type: "OPEN_RESULT" })}
@@ -380,7 +444,7 @@ export function App() {
             onCopyReport={handleCopyReport}
           />
         ) : null}
-        {state.screen === "prompt" && state.result ? (
+        {!shouldShowAccessGate && state.screen === "prompt" && state.result ? (
           <PromptScreen
             result={state.result}
             inputs={state.promptInputs}
@@ -396,8 +460,15 @@ export function App() {
           />
         ) : null}
         {state.result ? <ResultExportCard ref={exportRef} result={state.result} /> : null}
+        <DaisyOwnershipMark onAdminRequest={() => setAdminModalOpen(true)} />
       </div>
       <Toast toast={toast} />
+      <AdminAccessModal
+        open={adminModalOpen}
+        verifierDigest={__ACCESS_VERIFIER_DIGEST__}
+        onClose={() => setAdminModalOpen(false)}
+        onCopyCode={handleCopyAccessCode}
+      />
       <ConfirmModal
         open={deleteModalOpen}
         title="저장된 결과를 삭제할까요?"

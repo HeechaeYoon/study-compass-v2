@@ -14,6 +14,7 @@ import {
   getAxisCopyForLabel,
 } from "../data/learningTypes";
 import { QUESTIONS, type AnswerMap, type Question } from "../data/questions";
+import { DAISY_COPYRIGHT_TEXT } from "../data/ownership";
 import {
   displayAxisScores,
   labelAxisScores,
@@ -312,5 +313,7 @@ export function buildDetailedReport(result: Result): string {
     `이번 성장 포인트: ${AXIS_NAMES[result.primaryGrowthAxis]}`,
     summary.primaryGrowthCopy,
     `다음 수업 성장 미션: ${summary.mission}`,
+    "",
+    DAISY_COPYRIGHT_TEXT,
   ].join("\n");
 }

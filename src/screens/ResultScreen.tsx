@@ -10,6 +10,7 @@ import {
   Trophy,
 } from "lucide-react";
 import { createResultSummary, type Result } from "../domain/result";
+import { DAISY_COPYRIGHT_TEXT } from "../data/ownership";
 import { Doodle } from "../components/Doodle";
 import { RadarChart } from "../components/RadarChart";
 
@@ -165,6 +166,7 @@ export const ResultExportCard = forwardRef<HTMLDivElement, { result: Result }>(
           />
         </div>
         <SummaryCards result={result} />
+        <p className="exportCopyright">{DAISY_COPYRIGHT_TEXT}</p>
       </section>
     );
   },

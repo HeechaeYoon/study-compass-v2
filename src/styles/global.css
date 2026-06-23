@@ -72,11 +72,36 @@ span {
 .appShell {
   min-height: 100vh;
   overflow-x: hidden;
+  padding-bottom: 30px;
   background:
     linear-gradient(rgba(247, 244, 238, 0.9), rgba(247, 244, 238, 0.9)),
     var(--paper-texture);
   background-repeat: repeat;
   background-size: auto, 320px 320px;
+}
+
+.daisyOwnershipMark {
+  position: fixed;
+  right: 18px;
+  bottom: 10px;
+  z-index: 30;
+  max-width: min(520px, calc(100vw - 36px));
+  padding: 4px 8px;
+  border: 1px solid rgba(16, 29, 75, 0.1);
+  border-radius: 999px;
+  background: rgba(255, 254, 252, 0.78);
+  color: rgba(48, 56, 79, 0.58);
+  box-shadow: 0 2px 8px rgba(30, 37, 60, 0.06);
+  font-size: 10px;
+  line-height: 1.35;
+  letter-spacing: 0;
+  text-align: center;
+  cursor: default;
+}
+
+.daisyOwnershipMark:focus-visible {
+  outline: 2px solid var(--primary-ring);
+  outline-offset: 2px;
 }
 
 .wideOnlyNotice {
@@ -209,6 +234,116 @@ span {
   box-shadow: var(--shadow-surface);
   overflow: hidden;
   animation: screenEnter 180ms var(--ease-standard);
+}
+
+.screenSurface::after {
+  content: "© Daisy Teacher. All rights reserved. 무단 복제 및 재배포 금지";
+  position: absolute;
+  right: 24px;
+  bottom: 18px;
+  z-index: 0;
+  color: rgba(16, 29, 75, 0.045);
+  font-family: var(--font-display);
+  font-size: clamp(34px, 4vw, 56px);
+  font-weight: 700;
+  pointer-events: none;
+  transform: rotate(-4deg);
+}
+
+.accessSurface {
+  display: grid;
+  place-items: center;
+  padding: 32px;
+}
+
+.accessCard {
+  position: relative;
+  z-index: 1;
+  width: min(560px, 100%);
+  padding: 38px 42px;
+  border: 1px solid rgba(53, 56, 70, 0.15);
+  border-radius: 10px;
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.96)),
+    var(--paper-texture);
+  box-shadow: var(--shadow-notebook);
+  text-align: center;
+}
+
+.accessIcon {
+  width: 62px;
+  height: 62px;
+  margin: 0 auto 18px;
+  border: 1px solid rgba(69, 89, 222, 0.18);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--primary-light);
+  color: var(--primary-dark);
+}
+
+.accessUnderline {
+  width: 220px;
+  height: 18px;
+  margin: -4px auto 0;
+  color: var(--primary);
+}
+
+.accessIntro {
+  width: min(420px, 100%);
+  margin: 16px auto 0;
+  color: var(--ink-soft);
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.accessForm {
+  margin: 24px auto 0;
+  display: grid;
+  gap: 12px;
+  text-align: left;
+}
+
+.accessCodeField .input {
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.accessSubmit {
+  width: 100%;
+  margin-top: 4px;
+}
+
+.accessError {
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid rgba(241, 109, 72, 0.28);
+  border-radius: 8px;
+  background: rgba(255, 241, 235, 0.82);
+  color: #9f3d25;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.accessPrivacyNote {
+  margin-top: 18px;
+  padding: 12px 14px;
+  border: 1px solid rgba(67, 201, 155, 0.22);
+  border-radius: 8px;
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  background: rgba(230, 247, 238, 0.72);
+  color: #38534c;
+  font-size: 12.5px;
+  line-height: 1.6;
+  text-align: left;
+}
+
+.accessPrivacyNote svg {
+  flex: 0 0 auto;
+  margin-top: 1px;
+  color: #2f9f78;
 }
 
 @keyframes screenEnter {
@@ -1074,6 +1209,16 @@ button:disabled {
   grid-column: 1 / -1;
 }
 
+.exportCopyright {
+  grid-column: 1 / -1;
+  align-self: end;
+  padding-top: 12px;
+  color: rgba(48, 56, 79, 0.68);
+  font-size: 16px;
+  line-height: 1.4;
+  text-align: center;
+}
+
 .exportGrowthCard {
   width: 430px;
   margin-top: 10px;
@@ -1748,6 +1893,70 @@ button:disabled {
   gap: 10px;
 }
 
+.adminAccessDialog {
+  position: relative;
+  width: min(500px, calc(100vw - 36px));
+}
+
+.adminCloseButton {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 36px;
+  height: 36px;
+  border: 1px solid rgba(53, 56, 70, 0.12);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.86);
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+
+.adminAccessForm {
+  margin-top: 18px;
+  display: grid;
+  grid-template-columns: 1fr 120px;
+  gap: 12px;
+}
+
+.adminAccessForm .buttonPrimary,
+.adminAccessForm .accessError {
+  grid-column: 1 / -1;
+}
+
+.generatedAccessCode {
+  margin-top: 18px;
+  padding: 14px;
+  border: 1px solid rgba(69, 89, 222, 0.2);
+  border-radius: 9px;
+  background: rgba(238, 241, 255, 0.78);
+}
+
+.generatedAccessCode p {
+  margin-top: 8px;
+  padding: 12px;
+  border: 1px dashed rgba(49, 72, 212, 0.35);
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.8);
+  color: var(--ink);
+  font-size: 15px;
+  font-weight: 750;
+  letter-spacing: 0.04em;
+  text-align: center;
+  user-select: all;
+  word-break: break-all;
+}
+
+.generatedAccessCode small {
+  display: block;
+  margin-top: 8px;
+  color: var(--text-muted);
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: center;
+}
+
 .manualCopy {
   width: 100%;
   min-height: 180px;
@@ -1869,6 +2078,7 @@ button:disabled {
 
   .appShell {
     min-height: 100svh;
+    padding-bottom: 36px;
     overflow-x: clip;
   }
 
@@ -1918,6 +2128,51 @@ button:disabled {
     min-height: calc(100svh - var(--header-height) - 20px);
     margin: 10px auto;
     overflow: visible;
+  }
+
+  .screenSurface::after {
+    right: 12px;
+    bottom: 12px;
+    font-size: 30px;
+  }
+
+  .daisyOwnershipMark {
+    right: 10px;
+    bottom: 8px;
+    max-width: calc(100vw - 20px);
+    padding: 4px 7px;
+    font-size: 9px;
+  }
+
+  .accessSurface {
+    padding: 22px 16px;
+  }
+
+  .accessCard {
+    padding: 26px 18px;
+  }
+
+  .accessIcon {
+    width: 54px;
+    height: 54px;
+    margin-bottom: 14px;
+  }
+
+  .accessIntro {
+    font-size: 13.5px;
+  }
+
+  .accessForm {
+    margin-top: 18px;
+  }
+
+  .adminAccessForm {
+    grid-template-columns: 1fr;
+  }
+
+  .generatedAccessCode .modalActions {
+    display: grid;
+    grid-template-columns: 1fr;
   }
 
   .displayTitle,
@@ -2558,6 +2813,7 @@ button:disabled {
 
   .appShell {
     min-height: 100svh;
+    padding-bottom: 28px;
     overflow-x: clip;
   }
 
@@ -2604,6 +2860,52 @@ button:disabled {
     min-height: calc(100svh - var(--header-height) - 12px);
     margin: 6px auto;
     overflow: visible;
+  }
+
+  .screenSurface::after {
+    right: 14px;
+    bottom: 10px;
+    font-size: 30px;
+  }
+
+  .daisyOwnershipMark {
+    right: 8px;
+    bottom: 6px;
+    max-width: calc(100vw - 16px);
+    font-size: 8.5px;
+  }
+
+  .accessSurface {
+    padding: 14px;
+  }
+
+  .accessCard {
+    width: min(560px, 100%);
+    padding: 18px 24px;
+  }
+
+  .accessIcon {
+    width: 44px;
+    height: 44px;
+    margin-bottom: 10px;
+  }
+
+  .accessIntro {
+    margin-top: 8px;
+    font-size: 12px;
+    line-height: 1.45;
+  }
+
+  .accessForm {
+    margin-top: 12px;
+    gap: 8px;
+  }
+
+  .accessPrivacyNote {
+    margin-top: 10px;
+    padding: 8px 10px;
+    font-size: 10.5px;
+    line-height: 1.4;
   }
 
   .displayTitle,

@@ -3,6 +3,9 @@ import path from "node:path";
 import { expect, test, type Page } from "@playwright/test";
 
 const fixtures = ["start", "question", "result", "prompt", "detail"] as const;
+const allFixtures = ["access", ...fixtures] as const;
+const COPYRIGHT_TEXT =
+  "© Daisy Teacher. All rights reserved. 무단 복제 및 재배포 금지";
 
 async function expectNoHorizontalScroll(page: Page): Promise<void> {
   const metrics = await page.evaluate(() => ({
@@ -42,7 +45,7 @@ async function captureViewport(
 }
 
 test.describe("visual fixtures", () => {
-  for (const fixture of fixtures) {
+  for (const fixture of allFixtures) {
     test(`${fixture} fixture captures at 1280x800`, async ({ page }) => {
       await page.setViewportSize({ width: 1280, height: 800 });
       await page.goto(`/?fixture=${fixture}`);
@@ -52,6 +55,11 @@ test.describe("visual fixtures", () => {
       await page.evaluate(() => document.fonts.ready);
       const surface = page.getByTestId("screen-surface");
       await expect(surface).toBeVisible();
+      await expect(page.getByText(COPYRIGHT_TEXT).first()).toBeVisible();
+      const watermarkContent = await surface.evaluate((element) =>
+        window.getComputedStyle(element, "::after").content,
+      );
+      expect(watermarkContent).toBe(JSON.stringify(COPYRIGHT_TEXT));
       const outputDir = path.join(process.cwd(), "artifacts", "visual");
       await mkdir(outputDir, { recursive: true });
       await page.screenshot({
@@ -80,7 +88,7 @@ test.describe("visual fixtures", () => {
   });
 
   test("phone landscape compact fixtures render without the guidance", async ({ page }) => {
-    for (const fixture of fixtures) {
+    for (const fixture of allFixtures) {
       await page.setViewportSize({ width: 844, height: 390 });
       await page.goto(`/?fixture=${fixture}`);
       await page.evaluate(() => document.fonts.ready);
@@ -92,7 +100,7 @@ test.describe("visual fixtures", () => {
   });
 
   test("phone portrait fixtures render without horizontal overflow", async ({ page }) => {
-    for (const fixture of fixtures) {
+    for (const fixture of allFixtures) {
       await page.setViewportSize({ width: 390, height: 844 });
       await page.goto(`/?fixture=${fixture}`);
       await page.evaluate(() => document.fonts.ready);

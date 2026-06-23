@@ -1,11 +1,15 @@
 /// <reference types="node" />
 
 import { createHash } from "node:crypto";
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import {
   ACCESS_VERIFIER_DEFINE_KEY,
   DEVELOPMENT_MASTER_CODE,
   buildAccessVerifierDefine,
+  loadAccessVerifierEnv,
 } from "../../vite.config";
 
 function expectedDigest(masterCode: string): string {
@@ -61,5 +65,34 @@ describe("vite access verifier config", () => {
         env: { MASTER_CODE: "" },
       }),
     ).toThrow("MASTER_CODE must be set for production builds.");
+  });
+
+  it("loads unprefixed MASTER_CODE from env files for production builds", () => {
+    const cwd = mkdtempSync(join(tmpdir(), "study-compass-env-"));
+    try {
+      writeFileSync(
+        join(cwd, ".env.production"),
+        "MASTER_CODE=file-master-code\nVITE_MASTER_CODE=wrong-prefixed-code\n",
+      );
+
+      const env = loadAccessVerifierEnv({
+        mode: "production",
+        cwd,
+        processEnv: {},
+      });
+
+      const define = buildAccessVerifierDefine({
+        command: "build",
+        mode: "production",
+        env,
+      });
+      expect(JSON.parse(define[ACCESS_VERIFIER_DEFINE_KEY])).toBe(
+        expectedDigest("file-master-code"),
+      );
+      expect(JSON.stringify(define)).not.toContain("file-master-code");
+      expect(JSON.stringify(define)).not.toContain("wrong-prefixed-code");
+    } finally {
+      rmSync(cwd, { recursive: true, force: true });
+    }
   });
 });
