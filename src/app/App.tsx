@@ -32,6 +32,16 @@ function prefersReducedMotion(): boolean {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
+function isTextEntryElement(element: Element | null): boolean {
+  if (!(element instanceof HTMLElement)) return false;
+  if (element.isContentEditable) return true;
+  return (
+    element instanceof HTMLInputElement ||
+    element instanceof HTMLTextAreaElement ||
+    element instanceof HTMLSelectElement
+  );
+}
+
 type ToastState = {
   id: number;
   message: string;
@@ -120,11 +130,13 @@ export function App() {
   }, [clearAutoAdvance, state.currentQuestionIndex, state.screen]);
 
   useEffect(() => {
+    if (isTextEntryElement(document.activeElement)) return;
     window.scrollTo({ top: 0, left: 0, behavior: "auto" });
   }, [state.currentQuestionIndex, state.screen]);
 
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => {
+      if (isTextEntryElement(document.activeElement)) return;
       const surface = document.querySelector('[data-testid="screen-surface"]');
       const heading = surface?.querySelector<HTMLElement>("[data-screen-heading]");
       heading?.focus({ preventScroll: true });

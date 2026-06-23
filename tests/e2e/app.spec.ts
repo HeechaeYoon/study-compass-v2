@@ -166,6 +166,45 @@ test("question home button returns to start so nickname can be added", async ({ 
   );
 });
 
+test("nickname input keeps focus when tapped before screen heading focus completes", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.addInitScript(() => {
+    const queuedFrames: FrameRequestCallback[] = [];
+    window.requestAnimationFrame = (callback: FrameRequestCallback): number => {
+      queuedFrames.push(callback);
+      return queuedFrames.length;
+    };
+    window.cancelAnimationFrame = () => undefined;
+    (
+      window as Window & {
+        __flushQueuedFrames?: () => void;
+      }
+    ).__flushQueuedFrames = () => {
+      const pendingFrames = queuedFrames.splice(0);
+      for (const callback of pendingFrames) {
+        callback(window.performance.now());
+      }
+    };
+  });
+
+  await page.goto("/");
+  const nicknameInput = page.getByLabel(/닉네임을 입력/);
+  await nicknameInput.focus();
+  await page.evaluate(() => {
+    (
+      window as Window & {
+        __flushQueuedFrames?: () => void;
+      }
+    ).__flushQueuedFrames?.();
+  });
+
+  await expect(nicknameInput).toBeFocused();
+  await nicknameInput.fill("모바일 입력");
+  await expect(nicknameInput).toHaveValue("모바일 입력");
+});
+
 test("keyboard and reduced-motion users keep manual questionnaire pacing", async ({ page }) => {
   await page.goto("/");
   await page.getByRole("button", { name: "시작하기" }).click();
