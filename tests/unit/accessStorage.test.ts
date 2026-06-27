@@ -7,8 +7,10 @@ import {
   saveAccessPass,
 } from "../../src/infrastructure/accessStorage";
 
-const DEV_VERIFIER_DIGEST =
-  "467934acc99f69b35a94c1c9a1f7b6345aee56695f78e4c5b80468f7477799ca";
+const CODE_SEED_A =
+  "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+const CODE_SEED_B =
+  "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
 
 function makeStorage() {
   const values = new Map<string, string>();
@@ -36,17 +38,18 @@ describe("access storage", () => {
     const code = generateAccessCode({
       issuedAt: new Date(2026, 5, 23, 9, 0),
       validDays: 7,
-      verifierDigest: DEV_VERIFIER_DIGEST,
+      codeSeedDigest: CODE_SEED_A,
     });
     const expiresAt = new Date(2026, 5, 30, 0, 0, 0);
 
-    expect(saveAccessPass(code, expiresAt).ok).toBe(true);
+    expect(saveAccessPass(code, expiresAt, CODE_SEED_A).ok).toBe(true);
 
     const stored = storage.setItem.mock.calls[0]?.[1];
     expect(stored).toBeDefined();
     const parsed = JSON.parse(stored ?? "{}") as Record<string, unknown>;
     expect(Object.keys(parsed).sort()).toEqual([
       "codeFingerprint",
+      "codeSeedFingerprint",
       "expiresAt",
       "schemaVersion",
     ]);
@@ -57,15 +60,16 @@ describe("access storage", () => {
       expiresAt: expiresAt.toISOString(),
     });
     expect(parsed.codeFingerprint).toMatch(/^[a-f0-9]{64}$/);
+    expect(parsed.codeSeedFingerprint).toMatch(/^[a-f0-9]{64}$/);
   });
 
   it("loads a valid unexpired access pass", () => {
     const storage = makeStorage();
     stubWindow(storage);
     const expiresAt = new Date(2026, 5, 30, 0, 0, 0);
-    saveAccessPass("DAISY-A1-260623-007-ABCDEFG234", expiresAt);
+    saveAccessPass("QLTY9F", expiresAt, CODE_SEED_A);
 
-    expect(loadAccessPass(new Date(2026, 5, 29, 23, 59, 59))).toMatchObject({
+    expect(loadAccessPass(new Date(2026, 5, 29, 23, 59, 59), CODE_SEED_A)).toMatchObject({
       ok: true,
       value: {
         schemaVersion: 1,
@@ -77,12 +81,25 @@ describe("access storage", () => {
   it("ignores expired access passes without throwing", () => {
     const storage = makeStorage();
     stubWindow(storage);
-    saveAccessPass("DAISY-A1-260623-001-ABCDEFG234", new Date(2026, 5, 24, 0, 0, 0));
+    saveAccessPass("QLTY9F", new Date(2026, 5, 24, 0, 0, 0), CODE_SEED_A);
 
-    expect(loadAccessPass(new Date(2026, 5, 24, 0, 0, 0))).toEqual({
+    expect(loadAccessPass(new Date(2026, 5, 24, 0, 0, 0), CODE_SEED_A)).toEqual({
       ok: true,
       value: null,
     });
+  });
+
+  it("ignores access passes created for a previous access-code revision", () => {
+    const storage = makeStorage();
+    stubWindow(storage);
+    const expiresAt = new Date(2026, 5, 30, 0, 0, 0);
+    saveAccessPass("QLTY9F", expiresAt, CODE_SEED_A);
+
+    expect(loadAccessPass(new Date(2026, 5, 29, 12, 0, 0), CODE_SEED_B)).toEqual({
+      ok: true,
+      value: null,
+    });
+    expect(storage.removeItem).toHaveBeenCalledWith(ACCESS_STORAGE_KEY);
   });
 
   it("handles malformed stored values safely", () => {
@@ -90,7 +107,7 @@ describe("access storage", () => {
     storage.setItem(ACCESS_STORAGE_KEY, "{bad json");
     stubWindow(storage);
 
-    expect(loadAccessPass(new Date(2026, 5, 23, 12, 0))).toEqual({
+    expect(loadAccessPass(new Date(2026, 5, 23, 12, 0), CODE_SEED_A)).toEqual({
       ok: false,
       error: "invalid",
     });
@@ -99,11 +116,12 @@ describe("access storage", () => {
       ACCESS_STORAGE_KEY,
       JSON.stringify({
         schemaVersion: 1,
-        code: "DAISY-A1-260623-007-ABCDEFG234",
+        code: "QLTY9F",
+        codeSeedFingerprint: "a".repeat(64),
         expiresAt: "2026-06-30T00:00:00.000Z",
       }),
     );
-    expect(loadAccessPass(new Date(2026, 5, 23, 12, 0))).toEqual({
+    expect(loadAccessPass(new Date(2026, 5, 23, 12, 0), CODE_SEED_A)).toEqual({
       ok: false,
       error: "invalid",
     });
@@ -111,8 +129,8 @@ describe("access storage", () => {
 
   it("reports unavailable storage and deletes safely", () => {
     vi.stubGlobal("window", {});
-    expect(loadAccessPass()).toEqual({ ok: false, error: "unavailable" });
-    expect(saveAccessPass("DAISY-A1-260623-007-ABCDEFG234", new Date())).toEqual({
+    expect(loadAccessPass(new Date(), CODE_SEED_A)).toEqual({ ok: false, error: "unavailable" });
+    expect(saveAccessPass("QLTY9F", new Date(), CODE_SEED_A)).toEqual({
       ok: false,
       error: "unavailable",
     });
@@ -134,10 +152,10 @@ describe("access storage", () => {
     stubWindow(quotaStorage);
 
     expect(() =>
-      saveAccessPass("DAISY-A1-260623-007-ABCDEFG234", new Date(2026, 5, 30)),
+      saveAccessPass("QLTY9F", new Date(2026, 5, 30), CODE_SEED_A),
     ).not.toThrow();
     expect(
-      saveAccessPass("DAISY-A1-260623-007-ABCDEFG234", new Date(2026, 5, 30)),
+      saveAccessPass("QLTY9F", new Date(2026, 5, 30), CODE_SEED_A),
     ).toEqual({
       ok: false,
       error: "quota",
@@ -152,8 +170,8 @@ describe("access storage", () => {
     } satisfies Pick<Storage, "getItem" | "setItem" | "removeItem">;
     stubWindow(readErrorStorage);
 
-    expect(() => loadAccessPass(new Date(2026, 5, 23))).not.toThrow();
-    expect(loadAccessPass(new Date(2026, 5, 23))).toEqual({
+    expect(() => loadAccessPass(new Date(2026, 5, 23), CODE_SEED_A)).not.toThrow();
+    expect(loadAccessPass(new Date(2026, 5, 23), CODE_SEED_A)).toEqual({
       ok: false,
       error: "unavailable",
     });
@@ -184,12 +202,12 @@ describe("access storage", () => {
       }),
     );
 
-    expect(() => loadAccessPass()).not.toThrow();
-    expect(loadAccessPass()).toEqual({ ok: false, error: "unavailable" });
+    expect(() => loadAccessPass(new Date(), CODE_SEED_A)).not.toThrow();
+    expect(loadAccessPass(new Date(), CODE_SEED_A)).toEqual({ ok: false, error: "unavailable" });
     expect(() =>
-      saveAccessPass("DAISY-A1-260623-007-ABCDEFG234", new Date(2026, 5, 30)),
+      saveAccessPass("QLTY9F", new Date(2026, 5, 30), CODE_SEED_A),
     ).not.toThrow();
-    expect(saveAccessPass("DAISY-A1-260623-007-ABCDEFG234", new Date(2026, 5, 30))).toEqual({
+    expect(saveAccessPass("QLTY9F", new Date(2026, 5, 30), CODE_SEED_A)).toEqual({
       ok: false,
       error: "unavailable",
     });

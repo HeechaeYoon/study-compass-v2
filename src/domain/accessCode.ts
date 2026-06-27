@@ -1,10 +1,9 @@
-export const ACCESS_CODE_PREFIX = "DAISY-A1";
-
-const CODE_FAMILY = "DAISY";
-const CODE_VERSION = "A1";
 const MASTER_CODE_SALT = "study-compass-v2:";
-const SIGNATURE_LENGTH = 10;
-const SIGNATURE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+export const ACCESS_CODE_LENGTH = 6;
+export const ACCESS_SESSION_TOKEN_LENGTH = 8;
+const MAX_VALID_DAYS = 90;
+const LOOKBACK_DAYS = MAX_VALID_DAYS * 2;
+const ACCESS_CODE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 const SHA256_INITIAL_HASH = [
   0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c,
   0x1f83d9ab, 0x5be0cd19,
@@ -25,10 +24,6 @@ const SHA256_ROUND_CONSTANTS = [
 
 export type AccessCodeValidationReason =
   | "malformed"
-  | "invalid-prefix"
-  | "invalid-version"
-  | "invalid-date"
-  | "invalid-valid-days"
   | "signature-mismatch"
   | "expired";
 
@@ -51,58 +46,89 @@ export type AccessCodeValidationResult =
 export type GenerateAccessCodeOptions = {
   issuedAt: Date;
   validDays: number;
-  verifierDigest: string;
+  codeSeedDigest: string;
 };
 
 export function normalizeAccessCode(input: string): string {
-  return input.trim().replace(/\s+/g, "").replace(/[–—−]/g, "-").toUpperCase();
+  return input.trim().replace(/[\s\-–—−]/g, "").toUpperCase();
+}
+
+export function normalizeAccessSessionId(input: string | null | undefined): string | null {
+  const value = normalizeAccessCode(input ?? "");
+  if (value.length !== ACCESS_SESSION_TOKEN_LENGTH) return null;
+  if (!Array.from(value).every((character) => ACCESS_CODE_ALPHABET.includes(character))) {
+    return null;
+  }
+  return value;
+}
+
+export function createAccessSessionToken(): string {
+  const bytes = new Uint8Array(ACCESS_SESSION_TOKEN_LENGTH);
+  if (globalThis.crypto?.getRandomValues) {
+    globalThis.crypto.getRandomValues(bytes);
+  } else {
+    for (let index = 0; index < bytes.length; index += 1) {
+      bytes[index] = Math.floor(Math.random() * 256);
+    }
+  }
+  return Array.from(bytes)
+    .map((byte) => ACCESS_CODE_ALPHABET[byte % ACCESS_CODE_ALPHABET.length] ?? "A")
+    .join("");
+}
+
+export function deriveAccessCodeSeed(baseSeedDigest: string, sessionId: string | null): string {
+  const normalizedSession = normalizeAccessSessionId(sessionId);
+  const normalizedBaseSeed = baseSeedDigest.toLowerCase();
+  if (!normalizedSession) return normalizedBaseSeed;
+  return sha256Hex(`access-session:${normalizedBaseSeed}:${normalizedSession}`);
 }
 
 export function generateAccessCode({
   issuedAt,
   validDays,
-  verifierDigest,
+  codeSeedDigest,
 }: GenerateAccessCodeOptions): string {
   assertValidIssuedAt(issuedAt);
   assertValidDays(validDays);
 
-  const datePart = formatDatePart(issuedAt);
-  const dayPart = validDays.toString().padStart(3, "0");
-  const payload = `${ACCESS_CODE_PREFIX}-${datePart}-${dayPart}`;
-  return `${payload}-${createSignature(payload, verifierDigest)}`;
+  return createShortCode(createAccessPayload(startOfLocalDay(issuedAt), validDays), codeSeedDigest);
 }
 
 export function validateAccessCode(
   codeInput: string,
   now: Date,
-  verifierDigest: string,
+  codeSeedDigest: string,
 ): AccessCodeValidationResult {
   const code = normalizeAccessCode(codeInput);
-  const parsed = parseAccessCode(code);
-  if (!parsed.ok) return parsed;
-
-  const expectedSignature = createSignature(parsed.payload, verifierDigest);
-  if (!safeEqual(parsed.signature, expectedSignature)) {
-    return { ok: false, reason: "signature-mismatch", code };
+  if (!isShortAccessCode(code)) {
+    return { ok: false, reason: "malformed", code };
   }
 
-  if (now.getTime() >= parsed.expiresAt.getTime()) {
-    return { ok: false, reason: "expired", code, expiresAt: parsed.expiresAt };
-  }
+  const match = findAccessCodeMatch(code, now, codeSeedDigest);
+  if (!match) return { ok: false, reason: "signature-mismatch", code };
+  if (!match.active) return { ok: false, reason: "expired", code, expiresAt: match.expiresAt };
 
   return {
     ok: true,
-    code,
-    issuedAt: parsed.issuedAt,
-    validDays: parsed.validDays,
-    expiresAt: parsed.expiresAt,
+    code: match.code,
+    issuedAt: match.issuedAt,
+    validDays: match.validDays,
+    expiresAt: match.expiresAt,
     fingerprint: fingerprintAccessCode(code),
   };
 }
 
-export function getAccessExpiry(codeInput: string): Date | null {
-  const parsed = parseAccessCode(normalizeAccessCode(codeInput));
-  return parsed.ok ? new Date(parsed.expiresAt.getTime()) : null;
+export function getAccessExpiry(
+  codeInput: string,
+  now: Date,
+  codeSeedDigest: string,
+): Date | null {
+  const result = validateAccessCode(codeInput, now, codeSeedDigest);
+  if (result.ok) return new Date(result.expiresAt.getTime());
+  if (result.reason === "expired" && result.expiresAt) {
+    return new Date(result.expiresAt.getTime());
+  }
+  return null;
 }
 
 export function verifyMasterCode(masterCode: string, verifierDigest: string): boolean {
@@ -113,56 +139,17 @@ export function fingerprintAccessCode(codeInput: string): string {
   return sha256Hex(normalizeAccessCode(codeInput));
 }
 
-type ParsedAccessCode =
-  | {
-      ok: true;
-      payload: string;
-      signature: string;
-      issuedAt: Date;
-      validDays: number;
-      expiresAt: Date;
-    }
-  | {
-      ok: false;
-      reason: AccessCodeValidationReason;
-      code: string;
-      expiresAt?: Date;
-    };
-
-function parseAccessCode(code: string): ParsedAccessCode {
-  const parts = code.split("-");
-  if (parts.length !== 5) return { ok: false, reason: "malformed", code };
-
-  const [family, version, datePart, dayPart, signature] = parts;
-  if (family !== CODE_FAMILY) return { ok: false, reason: "invalid-prefix", code };
-  if (version !== CODE_VERSION) return { ok: false, reason: "invalid-version", code };
-  if (!datePart || !/^\d{6}$/.test(datePart)) {
-    return { ok: false, reason: "invalid-date", code };
-  }
-  if (!dayPart || !/^\d{3}$/.test(dayPart)) {
-    return { ok: false, reason: "invalid-valid-days", code };
-  }
-  if (!signature || !/^[A-Z2-9]{10}$/.test(signature)) {
-    return { ok: false, reason: "malformed", code };
-  }
-
-  const issuedAt = parseDatePart(datePart);
-  if (!issuedAt) return { ok: false, reason: "invalid-date", code };
-
-  const validDays = Number(dayPart);
-  if (!isValidDayCount(validDays)) {
-    return { ok: false, reason: "invalid-valid-days", code };
-  }
-
-  return {
-    ok: true,
-    payload: `${ACCESS_CODE_PREFIX}-${datePart}-${dayPart}`,
-    signature,
-    issuedAt,
-    validDays,
-    expiresAt: getExpiryFromIssuedDate(issuedAt, validDays),
-  };
+export function fingerprintAccessCodeSeed(codeSeedDigest: string): string {
+  return sha256Hex(`access-code-seed:${codeSeedDigest.toLowerCase()}`);
 }
+
+type AccessCodeMatch = {
+  active: boolean;
+  code: string;
+  issuedAt: Date;
+  validDays: number;
+  expiresAt: Date;
+};
 
 function assertValidIssuedAt(value: Date): void {
   if (!Number.isFinite(value.getTime())) {
@@ -177,7 +164,90 @@ function assertValidDays(value: number): void {
 }
 
 function isValidDayCount(value: number): boolean {
-  return Number.isInteger(value) && value >= 1 && value <= 90;
+  return Number.isInteger(value) && value >= 1 && value <= MAX_VALID_DAYS;
+}
+
+function isShortAccessCode(value: string): boolean {
+  return (
+    value.length === ACCESS_CODE_LENGTH &&
+    Array.from(value).every((character) => ACCESS_CODE_ALPHABET.includes(character))
+  );
+}
+
+function findAccessCodeMatch(
+  code: string,
+  now: Date,
+  codeSeedDigest: string,
+): AccessCodeMatch | null {
+  if (!Number.isFinite(now.getTime())) return null;
+
+  const today = startOfLocalDay(now);
+  let activeMatch: AccessCodeMatch | null = null;
+  let expiredMatch: AccessCodeMatch | null = null;
+
+  for (let dayOffset = 0; dayOffset <= LOOKBACK_DAYS; dayOffset += 1) {
+    const issuedAt = addLocalDays(today, -dayOffset);
+
+    for (let validDays = 1; validDays <= MAX_VALID_DAYS; validDays += 1) {
+      const candidateCode = createShortCode(
+        createAccessPayload(issuedAt, validDays),
+        codeSeedDigest,
+      );
+      if (!safeEqual(candidateCode, code)) continue;
+
+      const expiresAt = getExpiryFromIssuedDate(issuedAt, validDays);
+      const match: AccessCodeMatch = {
+        active: now.getTime() < expiresAt.getTime(),
+        code: candidateCode,
+        issuedAt,
+        validDays,
+        expiresAt,
+      };
+
+      if (match.active) {
+        activeMatch = pickPreferredActiveMatch(activeMatch, match);
+      } else {
+        expiredMatch = pickPreferredExpiredMatch(expiredMatch, match);
+      }
+    }
+  }
+
+  return activeMatch ?? expiredMatch;
+}
+
+function pickPreferredActiveMatch(
+  current: AccessCodeMatch | null,
+  candidate: AccessCodeMatch,
+): AccessCodeMatch {
+  if (!current) return candidate;
+  if (candidate.issuedAt.getTime() > current.issuedAt.getTime()) return candidate;
+  if (
+    candidate.issuedAt.getTime() === current.issuedAt.getTime() &&
+    candidate.expiresAt.getTime() > current.expiresAt.getTime()
+  ) {
+    return candidate;
+  }
+  return current;
+}
+
+function pickPreferredExpiredMatch(
+  current: AccessCodeMatch | null,
+  candidate: AccessCodeMatch,
+): AccessCodeMatch {
+  if (!current) return candidate;
+  return candidate.expiresAt.getTime() > current.expiresAt.getTime() ? candidate : current;
+}
+
+function startOfLocalDay(value: Date): Date {
+  return new Date(value.getFullYear(), value.getMonth(), value.getDate());
+}
+
+function addLocalDays(value: Date, days: number): Date {
+  return new Date(value.getFullYear(), value.getMonth(), value.getDate() + days);
+}
+
+function createAccessPayload(issuedAt: Date, validDays: number): string {
+  return `${formatDatePart(issuedAt)}:${validDays.toString().padStart(3, "0")}`;
 }
 
 function formatDatePart(date: Date): string {
@@ -187,27 +257,12 @@ function formatDatePart(date: Date): string {
   return `${year}${month}${day}`;
 }
 
-function parseDatePart(value: string): Date | null {
-  const year = 2000 + Number(value.slice(0, 2));
-  const month = Number(value.slice(2, 4));
-  const day = Number(value.slice(4, 6));
-  const date = new Date(year, month - 1, day);
-  if (
-    date.getFullYear() !== year ||
-    date.getMonth() !== month - 1 ||
-    date.getDate() !== day
-  ) {
-    return null;
-  }
-  return date;
-}
-
 function getExpiryFromIssuedDate(issuedAt: Date, validDays: number): Date {
   return new Date(issuedAt.getFullYear(), issuedAt.getMonth(), issuedAt.getDate() + validDays);
 }
 
-function createSignature(payload: string, verifierDigest: string): string {
-  return base32LikeFromHex(sha256Hex(`${payload}:${verifierDigest.toLowerCase()}`));
+function createShortCode(payload: string, codeSeedDigest: string): string {
+  return base32LikeFromHex(sha256Hex(`${payload}:${codeSeedDigest.toLowerCase()}`));
 }
 
 function base32LikeFromHex(hex: string): string {
@@ -220,13 +275,13 @@ function base32LikeFromHex(hex: string): string {
     value = (value << 8) | byte;
     bitCount += 8;
 
-    while (bitCount >= 5 && output.length < SIGNATURE_LENGTH) {
+    while (bitCount >= 5 && output.length < ACCESS_CODE_LENGTH) {
       const index = (value >>> (bitCount - 5)) & 31;
-      output += SIGNATURE_ALPHABET[index] ?? "A";
+      output += ACCESS_CODE_ALPHABET[index] ?? "A";
       bitCount -= 5;
     }
 
-    if (output.length >= SIGNATURE_LENGTH) break;
+    if (output.length >= ACCESS_CODE_LENGTH) break;
   }
 
   return output;

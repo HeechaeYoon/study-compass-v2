@@ -183,12 +183,25 @@ Notes:
 - [x] Kept the AI prompt body free of the copyright footer.
 - [x] Added required student access gate before the start screen.
 - [x] Added hidden 7-activation admin entry on the ownership mark.
-- [x] Added admin modal with `MASTER_CODE` verification, 1-90 day code generation, valid-until display, copy, and manual selection.
-- [x] Added static access-code primitives: `DAISY-A1-YYMMDD-DDD-SIGNATURE`, local expiry validation, typed failure reasons, and fingerprint-only access-pass storage.
-- [x] Updated Vite config so production builds require unprefixed `MASTER_CODE` from shell or `.env`, inject only the derived verifier digest, and keep test/dev builds deterministic.
+- [x] Added admin modal with `MASTER_CODE` verification, 6-character 1-90 day code generation, valid-until display, copy, and manual selection.
+- [x] Added static access-code primitives: 6-character uppercase classroom codes, local expiry validation by recomputing recent candidates, typed failure reasons, and fingerprint-only access-pass storage.
+- [x] Updated Vite config so production builds require unprefixed `MASTER_CODE` from shell or `.env`, inject only derived access-control digests, and keep test/dev builds deterministic.
 - [x] Added `.env.example` and `.env` ignore rules.
+- [x] Added redeploy-based access-code invalidation with `ACCESS_CODE_REVISION`, separate code seed digest injection, and stored access-pass revision fingerprints.
+- [x] Added static session-link invalidation: admin-created `?session=` links derive a separate code seed, so a new session link rejects earlier session codes and saved access passes.
+- [x] Changed admin access-code validity default to 1 day and labeled the field as `유효 기간 (일 단위)`.
+- [x] Added admin QR support for session classroom links, including link/code bundle copy, QR image clipboard copy, QR PNG save, and link-copy fallback.
 - [x] Added unit coverage for access-code generation/validation, access storage failure handling, Vite env loading, and detailed-report attribution.
-- [x] Added E2E coverage for access gate rejection, hidden admin code generation, access pass persistence, and existing flows with a test access pass.
+- [x] Added E2E coverage for access gate rejection, hidden admin code generation, access pass persistence, revision-mismatched pass rejection, and existing flows with a test access pass.
 - [x] Added visual fixture coverage for `/?fixture=access` and exact pseudo-element watermark text.
-- [x] Validation for this pass: `npm run typecheck`, `npm run lint`, `npm run test`, `npm run logic:distribution`, `MASTER_CODE=development-master-code VITE_ENABLE_FIXTURES=true npm run build`, `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:e2e`, and `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:visual` passed.
+- [x] Validation for the first access-code pass: `npm run typecheck`, `npm run lint`, `npm run test`, `npm run logic:distribution`, `MASTER_CODE=development-master-code VITE_ENABLE_FIXTURES=true npm run build`, `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:e2e`, and `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:visual` passed.
+- [x] Validation for the revision invalidation pass: targeted access/unit config tests, `npm run typecheck`, `npm run lint`, `npm run test`, `npm run logic:distribution`, `MASTER_CODE=development-master-code ACCESS_CODE_REVISION=development-access-code-revision VITE_ENABLE_FIXTURES=true npm run build`, dist raw-value scan, `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:e2e`, and `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:visual` passed.
+- [x] Validation for the session link and QR pass: targeted unit/access E2E, `npm run typecheck`, `npm run lint`, `npm run test`, `npm run logic:distribution`, `MASTER_CODE=development-master-code ACCESS_CODE_REVISION=development-access-code-revision VITE_ENABLE_FIXTURES=true npm run build`, dist/source privacy scans, `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:e2e`, and `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:visual` passed.
 - [x] Independent primitive spec review, primitive code-quality review, and UI/access spec review completed; UI re-review fixed exact watermark text.
+
+## 15. Research Basis Documentation
+
+- [x] Added `docs/RESEARCH_BASIS.md` as a concise public-facing explanation of the questionnaire basis, 5-axis scoring, 8 coaching-profile matching, guardrails, and response-space distribution check.
+- [x] Fact-checked cited claims through web lookup and subagent review; sources are limited to verified international SRL references plus two verified KCI middle-school studies.
+- [x] Kept the wording explicit that the app is not a psychological test, standardized diagnosis, fixed trait label, rank, or validated academic typology.
+- [x] Added a README link so the basis document can later be reused from an in-app information page.

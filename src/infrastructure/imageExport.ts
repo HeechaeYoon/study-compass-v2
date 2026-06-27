@@ -10,6 +10,17 @@ function sanitizeTypeName(value: string): string {
   return value.replace(/[^가-힣a-zA-Z0-9_-]/g, "");
 }
 
+export function downloadBlob(blob: Blob, filename: string): void {
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.download = filename;
+  link.href = url;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}
+
 export async function exportSummaryCard(
   element: HTMLElement | null,
   typeName: string,

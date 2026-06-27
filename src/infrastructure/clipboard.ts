@@ -2,6 +2,10 @@ export type CopyResult =
   | { ok: true; method: "clipboard" | "execCommand" }
   | { ok: false; manualText: string };
 
+export type CopyImageResult =
+  | { ok: true; method: "clipboard-image" }
+  | { ok: false; error: "unsupported" | "unknown" };
+
 function copyWithExecCommand(text: string): boolean {
   const textarea = document.createElement("textarea");
   textarea.value = text;
@@ -39,4 +43,25 @@ export async function copyText(text: string): Promise<CopyResult> {
   }
 
   return { ok: false, manualText: text };
+}
+
+export async function copyImageBlob(blob: Blob): Promise<CopyImageResult> {
+  if (
+    !navigator.clipboard?.write ||
+    typeof ClipboardItem === "undefined" ||
+    blob.type !== "image/png"
+  ) {
+    return { ok: false, error: "unsupported" };
+  }
+
+  try {
+    await navigator.clipboard.write([
+      new ClipboardItem({
+        "image/png": blob,
+      }),
+    ]);
+    return { ok: true, method: "clipboard-image" };
+  } catch {
+    return { ok: false, error: "unknown" };
+  }
 }

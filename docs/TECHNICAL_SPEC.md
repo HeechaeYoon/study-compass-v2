@@ -566,7 +566,10 @@ Provide a screen-reader summary:
 
 - Production builds require unprefixed `MASTER_CODE` from the shell or `.env` file.
 - `MASTER_CODE` is digested in `vite.config.ts`; only `__ACCESS_VERIFIER_DIGEST__` is injected into client code.
-- Student access codes use `DAISY-A1-YYMMDD-DDD-SIGNATURE`, validate locally, and store only `{ schemaVersion, codeFingerprint, expiresAt }` under `srl-coach-access-v1`.
+- `ACCESS_CODE_REVISION` is digested separately as `__ACCESS_CODE_SEED_DIGEST__`; changing it and redeploying invalidates previously generated classroom codes without changing the master code.
+- When the URL has a valid `session` parameter, the app derives an effective code seed from `__ACCESS_CODE_SEED_DIGEST__` plus that session. Admin generation creates a new 8-character session link, a 6-character code for that session, and a QR code containing only the session link.
+- Student access codes are 6-character uppercase classroom codes generated from the code seed digest, local issue date, and 1-90 day validity window. They validate locally by recomputing recent candidate codes and store only `{ schemaVersion, codeFingerprint, codeSeedFingerprint, expiresAt }` under `srl-coach-access-v1`.
+- Stored access passes are ignored and removed when their `codeSeedFingerprint` does not match the current deployment/session seed.
 - The hidden admin modal is opened through repeated activation of the visible copyright mark.
 - This is a static-app classroom deterrent, not backend-grade authorization.
 

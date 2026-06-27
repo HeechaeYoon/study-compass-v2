@@ -37,6 +37,10 @@ Fixture routes are available only in dev or fixture-enabled builds:
 
 Student answers, nickname, memo, result, and generated prompt stay in the browser. A result is written to `localStorage` only when the student explicitly saves it, and delete removes the saved result and memo from this app's storage key.
 
+## Research Basis
+
+The questionnaire and coaching-profile logic are summarized in [`docs/RESEARCH_BASIS.md`](docs/RESEARCH_BASIS.md).
+
 ## Deployment
 
 The Vite base is `./`, so the production build works on GitHub Pages repository subpaths such as:

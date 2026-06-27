@@ -43,7 +43,7 @@ export function AccessGateScreen({
                 className="input"
                 value={code}
                 onChange={(event) => onCodeChange(event.target.value)}
-                placeholder="예) DAISY-A1-260623-007-ABCD2345EF"
+                placeholder="예) QLTY9F"
                 autoComplete="off"
                 inputMode="text"
               />

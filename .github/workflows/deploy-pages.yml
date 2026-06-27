@@ -52,6 +52,7 @@ jobs:
         run: npm run build
         env:
           MASTER_CODE: ${{ secrets.MASTER_CODE }}
+          ACCESS_CODE_REVISION: ${{ vars.ACCESS_CODE_REVISION }}
 
       - name: Setup Pages
         uses: actions/configure-pages@v5

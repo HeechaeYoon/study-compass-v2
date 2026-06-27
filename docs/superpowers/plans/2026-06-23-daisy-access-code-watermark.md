@@ -4,7 +4,7 @@
 
 **Goal:** Add subtle Daisy ownership/watermark protection and a static-app classroom access-code system with a hidden admin generator.
 
-**Architecture:** Keep the app client-only. Use build-time `MASTER_CODE` only in `vite.config.ts` to inject a derived verifier, never the raw code. Admin and student access-code logic lives outside React; UI components only call typed domain/storage APIs.
+**Architecture:** Keep the app client-only. Use build-time `MASTER_CODE` only for a derived admin verifier and `ACCESS_CODE_REVISION` for a separate classroom-code seed digest, never raw values. Admin and student access-code logic lives outside React; UI components only call typed domain/storage APIs.
 
 **Tech Stack:** React, Vite, TypeScript, plain CSS, Vitest, Playwright, browser `crypto.subtle`.
 
@@ -25,11 +25,11 @@
 
 ## Tasks
 
-- [ ] Add `.env` ignores and tracked `.env.example` with `MASTER_CODE=replace-with-private-master-code`.
-- [ ] Update `vite.config.ts` to read unprefixed `MASTER_CODE`, compute `SHA-256("study-compass-v2:" + MASTER_CODE)`, inject `__ACCESS_VERIFIER_DIGEST__`, and fail production builds when missing.
+- [ ] Add `.env` ignores and tracked `.env.example` with `MASTER_CODE=replace-with-private-master-code` and `ACCESS_CODE_REVISION=1`.
+- [ ] Update `vite.config.ts` to read unprefixed `MASTER_CODE`, compute `SHA-256("study-compass-v2:" + MASTER_CODE)`, inject `__ACCESS_VERIFIER_DIGEST__`, read `ACCESS_CODE_REVISION` as a separate code seed digest, and fail production builds when the master code is missing.
 - [ ] Add `src/vite-env.d.ts` declarations for injected constants.
 - [ ] Write failing unit tests for access-code behavior: uppercase normalization, invalid prefix, signature mismatch, valid 1-day/7-day code, expiry at local midnight after valid days, and day range `1-90`.
-- [ ] Implement `src/domain/accessCode.ts` with code format `DAISY-A1-YYMMDD-DDD-SIGNATURE`, where signature is a short base32 digest from payload plus verifier digest.
+- [ ] Implement `src/domain/accessCode.ts` with 6-character uppercase classroom codes derived from issue date, validity days, and code seed digest.
 - [ ] Write failing unit tests for access storage: valid pass loads, expired pass is ignored, malformed JSON is rejected, unavailable localStorage returns `"unavailable"`.
 - [ ] Implement `src/infrastructure/accessStorage.ts` with key `srl-coach-access-v1`; store only schema version, access-code fingerprint, and expiry timestamp.
 - [ ] Create `AccessGateScreen` with heading `수업 접속 코드`, code input, submit button, invalid/expired message, and privacy note that no answers are sent to a server.
@@ -43,7 +43,7 @@
 - [ ] Update visual tests to capture access gate and assert ownership mark/watermark does not overlap core content at `1280x800`, `390x844`, and compact landscape.
 - [ ] Update docs and reports to state this is a static classroom deterrent, not backend-grade authorization.
 - [ ] Run verification: `npm run typecheck`, `npm run lint`, `npm run test`, `npm run logic:distribution`, `npm run build`, `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:e2e`, `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:visual`.
-- [ ] Before committing implementation, search `dist` and source for the raw `MASTER_CODE` value and confirm it is absent.
+- [ ] Before committing implementation, search `dist` and source for the raw `MASTER_CODE` and `ACCESS_CODE_REVISION` values and confirm they are absent.
 
 ## Assumptions
 

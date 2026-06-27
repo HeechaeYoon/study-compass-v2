@@ -8,7 +8,7 @@ Rebuilt the app as a production-quality static React/Vite/TypeScript web app for
 - Product status: complete static app with four core screens, detail report screen, generated local hero asset, and required flows
 - Deployment status: production `dist/` builds locally; GitHub Pages workflow added
 - Data policy: no backend, login, analytics, tracking, external AI call, or automatic save
-- Access policy: static classroom access-code gate with local validation; `MASTER_CODE` is supplied by environment and only a derived verifier is bundled
+- Access policy: static classroom access-code gate with local validation; `MASTER_CODE` and `ACCESS_CODE_REVISION` are supplied by environment and only derived digests are bundled; admin-created session links derive a per-link code seed.
 - Ownership policy: exact visible/exported/report text is `© Daisy Teacher. All rights reserved. 무단 복제 및 재배포 금지`
 - Learning-logic status: audit-driven scoring and report pass completed; all 8 learning types are reachable in the response space, `strategy_designer` is no longer hidden by the balanced rule, and result copy now uses neutral answer-grounded evidence.
 
@@ -22,7 +22,7 @@ Rebuilt the app as a production-quality static React/Vite/TypeScript web app for
   - `src/screens/*`: start, question, result, prompt
 - State flow: `App` + reducer; browser history stores only screen and question index, not answers or nickname.
 - Local-only behavior: result is stored in `localStorage` only when explicitly saved. Delete clears saved storage and visible session state.
-- Access-code behavior: valid access passes store only a code fingerprint and expiry in localStorage; no answers, nickname, memo, or prompt data are included.
+- Access-code behavior: valid access passes store only code and deployment/session fingerprints plus expiry in localStorage; no answers, nickname, memo, or prompt data are included.
 
 ## 3. Implemented Screens
 
@@ -73,7 +73,7 @@ Not pixel-perfect. The reference is a scaled montage, and the product-required s
 - Image export: exports a dedicated result summary card including growth point, conditional strength/balance labels, and recommended strategies; excludes free-form memo and prompt inputs; PNG output is checked for non-empty content pixels.
 - Toast: status messages auto-dismiss after 3 seconds and stale timers do not clear newer messages.
 - Privacy: no app-level network path for answers, nickname, memo, result, or prompt.
-- Access codes: hidden admin modal verifies `MASTER_CODE`, generates 1-90 day codes, and supports copy/manual selection; access gate is a static-app deterrent rather than backend-grade authorization.
+- Access codes: hidden admin modal verifies `MASTER_CODE`, defaults validity to 1 day, labels validity as day units, generates session classroom links plus 6-character 1-90 day codes, and renders/copies a QR image for the session link. New session links reject previous session codes and saved access passes; changing `ACCESS_CODE_REVISION` and redeploying remains the deployment-wide invalidation path.
 - Copyright: visible mark and low-opacity watermark appear across screens; result PNG export and copied detailed report include the exact copyright text; AI prompt body does not append it.
 
 ## 7. Commands Run
@@ -82,11 +82,12 @@ Not pixel-perfect. The reference is a scaled montage, and the product-required s
 |---|---|
 | `npm run typecheck` | Pass |
 | `npm run lint` | Pass |
-| `npm run test` | Pass, 9 files / 46 tests |
+| `npm run test` | Pass, 9 files / 50 tests |
 | `npm run logic:distribution` | Pass, all 8 types within 3-30% |
 | `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:visual` | Pass, 11 Chromium tests including access fixture, 1280×800 captures, wide/landscape smoke, 390×844 portrait fixture captures, and 360×740 detail/prompt captures |
-| `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:e2e` | Pass, 25 Chromium tests including access gate/admin code generation, admin modal focus trap, 390×844 and 360×740 portrait rendering, 359×740 guidance, 390×844 and 360×740 core flows, scroll reset, touch target, and delete privacy checks |
-| `MASTER_CODE=development-master-code VITE_ENABLE_FIXTURES=true npm run build` | Pass |
+| `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:e2e` | Pass, 30 Chromium tests including access gate/admin session link generation, QR image copy/fallback, revision/session-mismatched access pass rejection, admin modal focus trap, 390×844 and 360×740 portrait rendering, 359×740 guidance, 390×844 and 360×740 core flows, scroll reset, touch target, and delete privacy checks |
+| `MASTER_CODE=development-master-code ACCESS_CODE_REVISION=development-access-code-revision VITE_ENABLE_FIXTURES=true npm run build` | Pass |
+| `rg -n "development-master-code\|development-access-code-revision\|replace-with-private-master-code\|replace-to-revoke\|ACCESS_CODE_REVISION\|DAISY-A1" dist` | Pass, no matches |
 | `npm run test:e2e:webkit` | Blocked: host missing WebKit system libraries |
 
 ## 8. Browser And Viewport Checks
@@ -114,7 +115,8 @@ Not pixel-perfect. The reference is a scaled montage, and the product-required s
 - E2E confirms answer/nickname data is not placed in the URL.
 - Fonts, generated images, and static assets are local to the app build.
 - Memo is never sent automatically; when the student copies a generated prompt, non-empty memo text is included in that copied text and the UI warns against names, contact details, and sensitive personal information.
-- Production builds require `MASTER_CODE`; local test builds use `development-master-code`. Bundle scans should be run with a real deployment secret before release to confirm the raw value is absent.
+- Access-pass storage contains only code/revision/session fingerprints and expiry; revision/session-mismatched passes are removed and return to the access gate.
+- Production builds require `MASTER_CODE`; `ACCESS_CODE_REVISION` should be set as a deployment variable when revocation control is needed. Local test builds use deterministic development values. Bundle scans should be run with real deployment values before release to confirm raw values are absent.
 
 ## 10. Independent Reviews
 
@@ -151,7 +153,7 @@ Primitive spec review initially requested missing edge-case tests for localStora
 - Vite base: `./`
 - Workflow: `.github/workflows/deploy-pages.yml`
 - Workflow uses `npm ci`, Chromium Playwright install, typecheck, lint, unit, e2e, visual, and production build before upload.
-- GitHub Pages production builds must provide `MASTER_CODE` through repository secrets or the build will fail.
+- GitHub Pages production builds must provide `MASTER_CODE` through repository secrets or the build will fail; `ACCESS_CODE_REVISION` is read from repository variables and should be changed before redeploying when previous classroom codes need to be discarded.
 - Deployed URL is not available locally; GitHub Pages must be enabled in repository Settings after pushing.
 
 ## 12. Known Limitations
@@ -161,3 +163,4 @@ Primitive spec review initially requested missing edge-case tests for localStora
 - WebKit/Safari smoke could not run on this host due missing system dependencies requiring sudo-level install.
 - Font assets remain the largest payload; runtime browsers should prefer WOFF2, and JS/CSS gzip sizes are small.
 - The access-code system is client-side and can be bypassed by a determined person inspecting or modifying the static bundle; it is intended to reduce casual sharing, not provide strong authentication.
+- Admin-created session links invalidate previous codes only for students who use the new link; they do not remotely block an already shared old link. Deployment-wide invalidation still requires changing `ACCESS_CODE_REVISION` and redeploying the static app.

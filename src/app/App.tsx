@@ -1,9 +1,13 @@
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { QUESTIONS, type AnswerValue } from "../data/questions";
 import { buildDetailedReport, createResult, createResultSummary } from "../domain/result";
-import { validateAccessCode } from "../domain/accessCode";
-import { copyText } from "../infrastructure/clipboard";
-import { exportSummaryCard } from "../infrastructure/imageExport";
+import {
+  deriveAccessCodeSeed,
+  normalizeAccessSessionId,
+  validateAccessCode,
+} from "../domain/accessCode";
+import { copyImageBlob, copyText } from "../infrastructure/clipboard";
+import { downloadBlob, exportSummaryCard } from "../infrastructure/imageExport";
 import {
   loadAccessPass,
   saveAccessPass,
@@ -78,6 +82,17 @@ function isAppHistoryState(value: unknown): value is AppHistoryState {
   );
 }
 
+function getAccessSessionFromLocation(): string | null {
+  return normalizeAccessSessionId(new URLSearchParams(window.location.search).get("session"));
+}
+
+function createSessionUrl(sessionId: string): string {
+  const url = new URL(window.location.href);
+  url.searchParams.delete("fixture");
+  url.searchParams.set("session", sessionId);
+  return url.toString();
+}
+
 export function App() {
   const fixtureName = new URLSearchParams(window.location.search).get("fixture");
   const fixture = isFixtureEnabled() ? fixtureName : null;
@@ -110,6 +125,10 @@ export function App() {
     }
   }, []);
 
+  const closeAdminModal = useCallback(() => {
+    setAdminModalOpen(false);
+  }, []);
+
   const styleVars: CssVars = {
     "--paper-texture": `url("${assetPath("assets/paper-texture.webp")}")`,
   };
@@ -117,6 +136,11 @@ export function App() {
   const resultSummary = useMemo(
     () => (state.result ? createResultSummary(state.result) : null),
     [state.result],
+  );
+  const accessSessionId = useMemo(() => getAccessSessionFromLocation(), []);
+  const effectiveAccessCodeSeed = useMemo(
+    () => deriveAccessCodeSeed(__ACCESS_CODE_SEED_DIGEST__, accessSessionId),
+    [accessSessionId],
   );
 
   useEffect(() => {
@@ -128,11 +152,11 @@ export function App() {
 
   useEffect(() => {
     if (fixture) return;
-    const loaded = loadAccessPass();
+    const loaded = loadAccessPass(new Date(), effectiveAccessCodeSeed);
     if (loaded.ok && loaded.value) {
       setAccessGranted(true);
     }
-  }, [fixture]);
+  }, [effectiveAccessCodeSeed, fixture]);
 
   useEffect(() => {
     if (!toast) return undefined;
@@ -298,11 +322,34 @@ export function App() {
     return handleCopy(code, "접속 코드를 복사했어요.");
   }
 
+  async function handleCopyAccessLink(link: string): Promise<boolean> {
+    return handleCopy(link, "수업 링크를 복사했어요.");
+  }
+
+  async function handleCopyAccessBundle(text: string): Promise<boolean> {
+    return handleCopy(text, "수업 링크와 접속 코드를 복사했어요.");
+  }
+
+  async function handleCopyQrImage(blob: Blob, fallbackLink: string): Promise<boolean> {
+    const copied = await copyImageBlob(blob);
+    if (copied.ok) {
+      announce("QR 이미지를 복사했어요.");
+      return true;
+    }
+    return handleCopy(fallbackLink, "QR 이미지 복사가 어려워 링크를 복사했어요.");
+  }
+
+  function handleDownloadQrImage(blob: Blob): void {
+    const date = new Date().toISOString().slice(0, 10);
+    downloadBlob(blob, `수업링크_QR_${date}.png`);
+    announce("QR 이미지를 저장했어요.");
+  }
+
   function handleAccessSubmit(): void {
     const validation = validateAccessCode(
       accessCodeInput,
       new Date(),
-      __ACCESS_VERIFIER_DIGEST__,
+      effectiveAccessCodeSeed,
     );
 
     if (!validation.ok) {
@@ -314,7 +361,11 @@ export function App() {
       return;
     }
 
-    const saved = saveAccessPass(validation.code, validation.expiresAt);
+    const saved = saveAccessPass(
+      validation.code,
+      validation.expiresAt,
+      effectiveAccessCodeSeed,
+    );
     setAccessGranted(true);
     setAccessCodeInput("");
     setAccessError(null);
@@ -466,8 +517,14 @@ export function App() {
       <AdminAccessModal
         open={adminModalOpen}
         verifierDigest={__ACCESS_VERIFIER_DIGEST__}
-        onClose={() => setAdminModalOpen(false)}
+        baseCodeSeedDigest={__ACCESS_CODE_SEED_DIGEST__}
+        onCreateSessionLink={createSessionUrl}
+        onClose={closeAdminModal}
         onCopyCode={handleCopyAccessCode}
+        onCopyLink={handleCopyAccessLink}
+        onCopyBundle={handleCopyAccessBundle}
+        onCopyQrImage={handleCopyQrImage}
+        onDownloadQrImage={handleDownloadQrImage}
       />
       <ConfirmModal
         open={deleteModalOpen}

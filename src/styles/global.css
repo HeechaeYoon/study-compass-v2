@@ -397,6 +397,12 @@ span {
   font-weight: 500;
 }
 
+.fieldHint {
+  color: var(--text-muted);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
 .input,
 .textarea {
   width: 100%;
@@ -1895,7 +1901,9 @@ button:disabled {
 
 .adminAccessDialog {
   position: relative;
-  width: min(500px, calc(100vw - 36px));
+  width: min(620px, calc(100vw - 36px));
+  max-height: calc(100vh - 36px);
+  overflow: auto;
 }
 
 .adminCloseButton {
@@ -1916,7 +1924,7 @@ button:disabled {
 .adminAccessForm {
   margin-top: 18px;
   display: grid;
-  grid-template-columns: 1fr 120px;
+  grid-template-columns: 1fr 150px;
   gap: 12px;
 }
 
@@ -1948,6 +1956,13 @@ button:disabled {
   word-break: break-all;
 }
 
+.generatedAccessCode .generatedAccessLink {
+  font-size: 12px;
+  font-weight: 650;
+  letter-spacing: 0;
+  text-align: left;
+}
+
 .generatedAccessCode small {
   display: block;
   margin-top: 8px;
@@ -1955,6 +1970,41 @@ button:disabled {
   font-size: 12px;
   line-height: 1.5;
   text-align: center;
+}
+
+.accessQrPanel {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid rgba(53, 56, 70, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.accessQrCanvas {
+  width: 118px;
+  height: 118px;
+  border-radius: 6px;
+  background: #ffffff;
+}
+
+.accessQrPanel span {
+  color: var(--text-muted);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.adminSessionActions {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.adminSessionActions .buttonPrimary,
+.adminSessionActions .buttonSecondary {
+  min-height: 42px;
 }
 
 .manualCopy {
@@ -2173,6 +2223,17 @@ button:disabled {
   .generatedAccessCode .modalActions {
     display: grid;
     grid-template-columns: 1fr;
+  }
+
+  .accessQrPanel {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+  }
+
+  .adminSessionActions .buttonPrimary,
+  .adminSessionActions .buttonSecondary {
+    width: 100%;
   }
 
   .displayTitle,

@@ -1,10 +1,14 @@
-import { fingerprintAccessCode } from "../domain/accessCode";
+import {
+  fingerprintAccessCode,
+  fingerprintAccessCodeSeed,
+} from "../domain/accessCode";
 
 export const ACCESS_STORAGE_KEY = "srl-coach-access-v1";
 
 export type AccessPass = {
   schemaVersion: 1;
   codeFingerprint: string;
+  codeSeedFingerprint: string;
   expiresAt: string;
 };
 
@@ -31,11 +35,17 @@ function isStoredAccessPass(value: unknown): value is AccessPass {
   if (typeof value.codeFingerprint !== "string" || !/^[a-f0-9]{64}$/.test(value.codeFingerprint)) {
     return false;
   }
+  if (
+    typeof value.codeSeedFingerprint !== "string" ||
+    !/^[a-f0-9]{64}$/.test(value.codeSeedFingerprint)
+  ) {
+    return false;
+  }
   if (typeof value.expiresAt !== "string" || !Number.isFinite(Date.parse(value.expiresAt))) {
     return false;
   }
   return Object.keys(value).every((key) =>
-    ["schemaVersion", "codeFingerprint", "expiresAt"].includes(key),
+    ["schemaVersion", "codeFingerprint", "codeSeedFingerprint", "expiresAt"].includes(key),
   );
 }
 
@@ -46,7 +56,11 @@ function isQuotaError(error: unknown): boolean {
   );
 }
 
-export function saveAccessPass(code: string, expiresAt: Date): AccessStorageResult<void> {
+export function saveAccessPass(
+  code: string,
+  expiresAt: Date,
+  codeSeedDigest: string,
+): AccessStorageResult<void> {
   const storage = getStorage();
   if (!storage) return { ok: false, error: "unavailable" };
   if (!Number.isFinite(expiresAt.getTime())) return { ok: false, error: "invalid" };
@@ -54,6 +68,7 @@ export function saveAccessPass(code: string, expiresAt: Date): AccessStorageResu
   const value: AccessPass = {
     schemaVersion: 1,
     codeFingerprint: fingerprintAccessCode(code),
+    codeSeedFingerprint: fingerprintAccessCodeSeed(codeSeedDigest),
     expiresAt: expiresAt.toISOString(),
   };
 
@@ -66,7 +81,10 @@ export function saveAccessPass(code: string, expiresAt: Date): AccessStorageResu
   }
 }
 
-export function loadAccessPass(now = new Date()): AccessStorageResult<AccessPass | null> {
+export function loadAccessPass(
+  now: Date,
+  codeSeedDigest: string,
+): AccessStorageResult<AccessPass | null> {
   const storage = getStorage();
   if (!storage) return { ok: false, error: "unavailable" };
 
@@ -87,6 +105,15 @@ export function loadAccessPass(now = new Date()): AccessStorageResult<AccessPass
   }
 
   if (!isStoredAccessPass(parsed)) return { ok: false, error: "invalid" };
+
+  if (parsed.codeSeedFingerprint !== fingerprintAccessCodeSeed(codeSeedDigest)) {
+    try {
+      storage.removeItem(ACCESS_STORAGE_KEY);
+    } catch {
+      // Revision mismatches fail closed; cleanup is best-effort.
+    }
+    return { ok: true, value: null };
+  }
 
   if (Date.parse(parsed.expiresAt) <= now.getTime()) {
     try {
