@@ -217,3 +217,11 @@ Notes:
 - [x] Upgraded `vitest` and added explicit `vite-node` so `npm audit --audit-level=moderate` reports 0 vulnerabilities while preserving the distribution script.
 - [x] Verified this pass with `npm run typecheck`, `npm run lint`, `npm run test`, `npm run logic:distribution`, `MASTER_CODE=development-master-code ACCESS_CODE_REVISION=development-access-code-revision npm run build`, and `npm audit --audit-level=moderate`.
 - [x] Rechecked remote repo metadata and workflow status: description, website, topics, secret, variable, and latest Pages run are now present/passing; added the missing `playwright` topic.
+
+## 17. OSS Reuse And Pilot Feedback Follow-up
+
+- [x] Created branch `chore/oss-reuse-and-feedback` from current `main`.
+- [x] Addressed issue #2 by making `src/data/ownership.ts` the single source for classroom ownership copy, including the visible mark, watermark, export footer, and copied detailed-report footer.
+- [x] Addressed issue #3 by adding `docs/PILOT_FEEDBACK_TEMPLATE.md` for non-identifying educator pilot notes.
+- [x] Updated README, contributing docs, and manifest to document fork branding and non-identifying feedback workflows.
+- [x] Verified locally with `git diff --check`, `npm run typecheck`, `npm run lint`, `npm run test`, `npm run logic:distribution`, `MASTER_CODE=development-master-code ACCESS_CODE_REVISION=development-access-code-revision npm run build`, `npm audit --audit-level=moderate`, `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:e2e`, and `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:visual`.

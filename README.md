@@ -91,10 +91,11 @@ The workflow uses Node 24, installs from `package-lock.json` with `npm ci`, runs
 
 - See [`CONTRIBUTING.md`](CONTRIBUTING.md) for contribution rules and local verification.
 - See [`SECURITY.md`](SECURITY.md) for responsible disclosure and student-data handling.
+- See [`docs/PILOT_FEEDBACK_TEMPLATE.md`](docs/PILOT_FEEDBACK_TEMPLATE.md) for non-identifying educator pilot feedback.
 - See [`docs/CODEX_FOR_OSS_APPLICATION.md`](docs/CODEX_FOR_OSS_APPLICATION.md) for the Codex for OSS application strategy and draft answers.
 
 Useful maintainer work for Codex includes issue triage, PR review, visual-regression debugging, accessibility/privacy review, release-note drafting, and generation of synthetic test cases. Real student data must never be sent to external tools.
 
 ## License
 
-The source code is licensed under the [MIT License](LICENSE). The deployed classroom copy currently includes Daisy ownership text to discourage casual redistribution of a specific classroom link; forks should replace classroom-specific branding and ownership text.
+The source code is licensed under the [MIT License](LICENSE). The deployed classroom copy currently includes Daisy ownership text to discourage casual redistribution of a specific classroom link. Forks should replace classroom-specific branding and ownership text in [`src/data/ownership.ts`](src/data/ownership.ts); that single source feeds the visible ownership mark, screen watermark, result image footer, and copied detailed-report footer.
