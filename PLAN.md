@@ -225,3 +225,4 @@ Notes:
 - [x] Addressed issue #3 by adding `docs/PILOT_FEEDBACK_TEMPLATE.md` for non-identifying educator pilot notes.
 - [x] Updated README, contributing docs, and manifest to document fork branding and non-identifying feedback workflows.
 - [x] Verified locally with `git diff --check`, `npm run typecheck`, `npm run lint`, `npm run test`, `npm run logic:distribution`, `MASTER_CODE=development-master-code ACCESS_CODE_REVISION=development-access-code-revision npm run build`, `npm audit --audit-level=moderate`, `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:e2e`, and `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:visual`.
+- [x] Updated the Pages workflow so pull requests run the full build/test/visual gate without attempting a protected GitHub Pages deployment from feature branches.
