@@ -246,3 +246,9 @@ Notes:
 - [x] Replaced remaining public README headings that could read like application-positioning copy with product/classroom language: `Project overview`, `Classroom goals`, `Contributing and maintenance`, and `How the project is maintained`.
 - [x] Reworded the project-goals bullets to describe classroom behavior and verification directly instead of foregrounding open-source impact.
 - [x] Verified locally with `git diff --check`, `npm run typecheck`, `npm run lint`, `npm run test`, `MASTER_CODE=development-master-code ACCESS_CODE_REVISION=development-access-code-revision npm run build`, and `npm audit --audit-level=moderate`.
+
+## 21. README Korean Note
+
+- [x] Kept `README.md` English-first for international OSS readers.
+- [x] Added a short Korean 안내 section near the top for Korean teachers/students, emphasizing local-only student data and current-response coaching language.
+- [x] Verified locally with `git diff --check`, `npm run typecheck`, `npm run lint`, `npm run test`, `MASTER_CODE=development-master-code ACCESS_CODE_REVISION=development-access-code-revision npm run build`, and `npm audit --audit-level=moderate`.
