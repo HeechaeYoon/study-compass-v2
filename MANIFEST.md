@@ -27,7 +27,6 @@
 - `docs/VISUAL_REVIEW_LOG.md` — implementation evidence template
 - `docs/SPEC_SELF_REVIEW.md` — review of this documentation package
 - `docs/FINAL_REPORT_TEMPLATE.md` — required completion report structure
-- `docs/CODEX_FOR_OSS_APPLICATION.md` — Codex for OSS application strategy and draft form answers
 - `docs/PILOT_FEEDBACK_TEMPLATE.md` — non-identifying educator pilot feedback template
 
 ## Prompts

@@ -12,19 +12,19 @@ The app helps students answer 16 short questions, understand their current learn
 - **Data model:** local-only browser state; no backend, analytics, tracking, or runtime AI API call
 - **Deployment:** GitHub Pages with repository-subpath support
 - **Quality gates:** typecheck, lint, unit tests, E2E tests, visual fixtures, production build, and npm audit
-- **OSS maintenance:** issues, PR template, security policy, contribution guide, releases, and branch protection
+- **Maintenance:** issues, PR template, security policy, contribution guide, releases, and branch protection
 
-## Why this matters as open source
+## Why this project exists
 
 Many classroom AI tools require accounts, server-side data collection, analytics, or direct AI API calls. Study Compass V2 demonstrates a different pattern: a static, local-only classroom app that helps students prepare safer AI prompts without transmitting their answers by default.
 
-The project is early-stage, but it is designed as a reusable reference for privacy-first educational web apps in Korean classrooms.
+The project is designed as a reusable reference for privacy-first educational web apps in Korean classrooms.
 
 - **Student-data privacy by design:** answers, nickname, memo, result, and generated prompt remain in the browser.
 - **Transparent learning logic:** questions, scoring, profile matching, limitations, and research basis are documented.
 - **Classroom-ready static deployment:** the app runs on GitHub Pages and supports repository subpaths.
 - **Maintainer-friendly verification:** unit tests, E2E tests, visual fixtures, viewport checks, and deployment workflow are included.
-- **Reusable OSS pattern:** educators can study or adapt the approach for local-only AI-literacy classroom tools.
+- **Reusable classroom pattern:** educators can study or adapt the approach for local-only AI-literacy classroom tools.
 
 This is not a psychological test, grade, rank, or fixed personality label. Results are described as current-response coaching information.
 
@@ -106,9 +106,8 @@ The workflow uses Node 24, installs from `package-lock.json` with `npm ci`, runs
 - See [`CONTRIBUTING.md`](CONTRIBUTING.md) for contribution rules and local verification.
 - See [`SECURITY.md`](SECURITY.md) for responsible disclosure and student-data handling.
 - See [`docs/PILOT_FEEDBACK_TEMPLATE.md`](docs/PILOT_FEEDBACK_TEMPLATE.md) for non-identifying educator pilot feedback.
-- See [`docs/CODEX_FOR_OSS_APPLICATION.md`](docs/CODEX_FOR_OSS_APPLICATION.md) for the Codex for OSS application strategy and draft answers.
 
-## Maintainer workflow and Codex fit
+## Maintenance workflow
 
 The repository is maintained with:
 
@@ -119,7 +118,7 @@ The repository is maintained with:
 - GitHub Actions for typecheck, lint, unit tests, E2E tests, visual tests, production build, and Pages deployment
 - issue and PR templates, a security policy, a contribution guide, and release notes
 
-Useful Codex-assisted maintenance work includes issue triage, PR review, privacy/security regression checks, visual-diff investigation, accessibility review, synthetic test generation, and release-note drafting. Real student data must never be sent to external tools.
+Useful maintainer work includes issue triage, PR review, privacy/security regression checks, visual-diff investigation, accessibility review, synthetic test generation, and release-note drafting. Real student data must never be sent to external tools.
 
 ## License
 
