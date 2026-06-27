@@ -206,14 +206,13 @@ Notes:
 - [x] Kept the wording explicit that the app is not a psychological test, standardized diagnosis, fixed trait label, rank, or validated academic typology.
 - [x] Added a README link so the basis document can later be reused from an in-app information page.
 
-## 16. Codex for OSS Application Readiness
+## 16. Repository Readiness Pass
 
-- [x] Checked the OpenAI Codex for OSS form fields and selection criteria.
-- [x] Checked public repository metadata: repo is public, but currently has early adoption metrics and no remote license/description/topics until these local changes are committed and pushed.
+- [x] Checked public repository metadata and external-readiness signals.
+- [x] Confirmed the repo is public, but started with early adoption metrics and no remote license/description/topics until these local changes were committed and pushed.
 - [x] Identified and rechecked a submission blocker: the GitHub Pages workflow was failing because repository secret `MASTER_CODE` was missing; after the user configured `MASTER_CODE` and `ACCESS_CODE_REVISION`, the rerun passed.
 - [x] Added OSS-readiness files: `LICENSE`, `CONTRIBUTING.md`, `SECURITY.md`, `CODE_OF_CONDUCT.md`, issue templates, and PR template.
 - [x] Updated `README.md`, `package.json`, and `MANIFEST.md` with OSS maintenance and license metadata.
-- [x] Added `docs/CODEX_FOR_OSS_APPLICATION.md` with selection strategy, pre-submit checklist, and ready-to-paste form answers.
 - [x] Upgraded `vitest` and added explicit `vite-node` so `npm audit --audit-level=moderate` reports 0 vulnerabilities while preserving the distribution script.
 - [x] Verified this pass with `npm run typecheck`, `npm run lint`, `npm run test`, `npm run logic:distribution`, `MASTER_CODE=development-master-code ACCESS_CODE_REVISION=development-access-code-revision npm run build`, and `npm audit --audit-level=moderate`.
 - [x] Rechecked remote repo metadata and workflow status: description, website, topics, secret, variable, and latest Pages run are now present/passing; added the missing `playwright` topic.
@@ -227,10 +226,17 @@ Notes:
 - [x] Verified locally with `git diff --check`, `npm run typecheck`, `npm run lint`, `npm run test`, `npm run logic:distribution`, `MASTER_CODE=development-master-code ACCESS_CODE_REVISION=development-access-code-revision npm run build`, `npm audit --audit-level=moderate`, `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:e2e`, and `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:visual`.
 - [x] Updated the Pages workflow so pull requests run the full build/test/visual gate without attempting a protected GitHub Pages deployment from feature branches.
 
-## 18. README Application Landing Polish
+## 18. README Public Overview Polish
 
 - [x] Created branch `docs/readme-polish` from current `main`.
-- [x] Added an `At a glance` section with live app, audience, stack, data model, deployment, quality gates, and OSS maintenance signals.
-- [x] Reframed the project-value section as an open-source privacy-first classroom app pattern.
-- [x] Added a `Maintainer workflow and Codex fit` section tying tests, visual fixtures, CI, templates, security policy, and release notes to concrete Codex-assisted maintenance work.
+- [x] Added an `At a glance` section with live app, audience, stack, data model, deployment, quality gates, and maintenance signals.
+- [x] Reframed the project-value section as a privacy-first classroom app pattern.
+- [x] Added a `Maintenance workflow` section tying tests, visual fixtures, CI, templates, security policy, and release notes to concrete maintainer work.
+- [x] Verified locally with `git diff --check`, `npm run typecheck`, `npm run lint`, `npm run test`, and `MASTER_CODE=development-master-code ACCESS_CODE_REVISION=development-access-code-revision npm run build`.
+
+## 19. Natural README Tone Follow-up
+
+- [x] Replaced application-style README headings with product/project language.
+- [x] Removed public README references to application-specific draft material.
+- [x] Removed the application-draft document from the public documentation set.
 - [x] Verified locally with `git diff --check`, `npm run typecheck`, `npm run lint`, `npm run test`, and `MASTER_CODE=development-master-code ACCESS_CODE_REVISION=development-access-code-revision npm run build`.
