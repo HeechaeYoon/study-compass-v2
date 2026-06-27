@@ -4,6 +4,12 @@ Study Compass V2 is a privacy-first Korean middle-school self-directed-learning 
 
 The app helps students answer 16 short questions, understand their current learning-strategy pattern across five axes, and copy a locally generated prompt for a later AI-chatbot activity without silently sending student data anywhere.
 
+## 한국어 안내
+
+Study Compass V2는 한국 중학생의 자기주도학습 수업에서 사용할 수 있도록 만든 정적 웹앱입니다. 학생 응답, 닉네임, 메모, 결과, 생성된 프롬프트는 기본적으로 브라우저 안에만 남고 서버로 전송되지 않습니다.
+
+수업에서 사용할 때는 학생에게 결과가 현재 응답 기반의 학습 코칭 정보이며, 심리검사·성적·고정된 유형이 아니라고 안내해 주세요.
+
 ## Project overview
 
 - **Live app:** <https://heechaeyoon.github.io/study-compass-v2/>
