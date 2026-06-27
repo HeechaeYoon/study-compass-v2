@@ -205,3 +205,15 @@ Notes:
 - [x] Fact-checked cited claims through web lookup and subagent review; sources are limited to verified international SRL references plus two verified KCI middle-school studies.
 - [x] Kept the wording explicit that the app is not a psychological test, standardized diagnosis, fixed trait label, rank, or validated academic typology.
 - [x] Added a README link so the basis document can later be reused from an in-app information page.
+
+## 16. Codex for OSS Application Readiness
+
+- [x] Checked the OpenAI Codex for OSS form fields and selection criteria.
+- [x] Checked public repository metadata: repo is public, but currently has early adoption metrics and no remote license/description/topics until these local changes are committed and pushed.
+- [x] Identified and rechecked a submission blocker: the GitHub Pages workflow was failing because repository secret `MASTER_CODE` was missing; after the user configured `MASTER_CODE` and `ACCESS_CODE_REVISION`, the rerun passed.
+- [x] Added OSS-readiness files: `LICENSE`, `CONTRIBUTING.md`, `SECURITY.md`, `CODE_OF_CONDUCT.md`, issue templates, and PR template.
+- [x] Updated `README.md`, `package.json`, and `MANIFEST.md` with OSS maintenance and license metadata.
+- [x] Added `docs/CODEX_FOR_OSS_APPLICATION.md` with selection strategy, pre-submit checklist, and ready-to-paste form answers.
+- [x] Upgraded `vitest` and added explicit `vite-node` so `npm audit --audit-level=moderate` reports 0 vulnerabilities while preserving the distribution script.
+- [x] Verified this pass with `npm run typecheck`, `npm run lint`, `npm run test`, `npm run logic:distribution`, `MASTER_CODE=development-master-code ACCESS_CODE_REVISION=development-access-code-revision npm run build`, and `npm audit --audit-level=moderate`.
+- [x] Rechecked remote repo metadata and workflow status: description, website, topics, secret, variable, and latest Pages run are now present/passing; added the missing `playwright` topic.

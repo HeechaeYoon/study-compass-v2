@@ -1,15 +1,39 @@
 # Study Compass V2
 
-Korean middle-school self-directed-learning class web app. It is a static React/Vite app: no backend, login, analytics, tracking, database, or external AI call.
+Study Compass V2 is a privacy-first Korean middle-school self-directed-learning classroom web app. It is a static React/Vite/TypeScript app: no backend, login, analytics, tracking, database, or runtime external AI call.
 
-## Run Locally
+The app helps students answer 16 short questions, understand their current learning-strategy pattern across five axes, and copy a locally generated prompt for a later AI-chatbot activity without silently sending student data anywhere.
+
+## Why this project matters
+
+- **Student-data privacy by design:** answers, nickname, memo, result, and generated prompt remain in the browser.
+- **Transparent learning logic:** questions, scoring, profile matching, limitations, and research basis are documented.
+- **Classroom-ready static deployment:** the app runs on GitHub Pages and supports repository subpaths.
+- **Maintainer-friendly verification:** unit tests, E2E tests, visual fixtures, viewport checks, and deployment workflow are included.
+- **Reusable OSS pattern:** educators can study or adapt the approach for local-only AI-literacy classroom tools.
+
+This is not a psychological test, grade, rank, or fixed personality label. Results are described as current-response coaching information.
+
+## Features
+
+- Access gate for classroom sessions with local-only verification.
+- 16-question self-directed-learning strategy questionnaire.
+- Five-axis result summary with custom SVG radar chart.
+- Detailed student-facing report with strengths, balance, and growth point language.
+- Four AI prompt modes for study planning, concept learning, and image-prompt use.
+- Explicit local save/delete flow; no automatic result persistence.
+- Clipboard fallback and image export fallback.
+- Responsive support for wide classroom screens and 360px+ phone portrait screens.
+- Local fonts and generated assets; no runtime Google Fonts request.
+
+## Run locally
 
 ```bash
 npm install
 npm run dev
 ```
 
-The app is designed for wide classroom screens. Phone landscape viewports from 560px wide use a compact landscape mode; phone portrait and extremely narrow screens show guidance to rotate the device or use a wider display.
+The app is designed primarily for wide classroom screens. Phone landscape viewports from 560px wide use a compact landscape mode; phone portrait viewports from 360px wide use an adaptive one-column mode; smaller viewports show guidance.
 
 ## Verification
 
@@ -17,27 +41,31 @@ The app is designed for wide classroom screens. Phone landscape viewports from 5
 npm run typecheck
 npm run lint
 npm run test
+npm run logic:distribution
 npm run test:e2e
 npm run test:visual
-npm run build
+MASTER_CODE=replace-with-private-master-code npm run build
 ```
 
 `test:e2e` and `test:visual` use Chromium. `test:e2e:webkit` is available for environments with WebKit system dependencies installed.
 
-## Fixture Screens
+## Fixture screens
 
 Fixture routes are available only in dev or fixture-enabled builds:
 
+- `/?fixture=access`
 - `/?fixture=start`
 - `/?fixture=question`
 - `/?fixture=result`
 - `/?fixture=prompt`
 
-## Data Policy
+## Data policy
 
 Student answers, nickname, memo, result, and generated prompt stay in the browser. A result is written to `localStorage` only when the student explicitly saves it, and delete removes the saved result and memo from this app's storage key.
 
-## Research Basis
+The app does not call an AI API. When students copy a generated prompt into another AI tool, they make that transfer themselves and are warned not to include sensitive personal information.
+
+## Research basis
 
 The questionnaire and coaching-profile logic are summarized in [`docs/RESEARCH_BASIS.md`](docs/RESEARCH_BASIS.md).
 
@@ -53,6 +81,20 @@ Deployment is handled by `.github/workflows/deploy-pages.yml`.
 
 1. In GitHub, open `Settings > Pages`.
 2. Set `Build and deployment > Source` to `GitHub Actions`.
-3. Push to `main`, or run the `Deploy Pages` workflow manually from the `Actions` tab.
+3. Add repository secret `MASTER_CODE` for the hidden classroom-admin modal.
+4. Optionally add repository variable `ACCESS_CODE_REVISION`; change it before redeploying to invalidate previous classroom codes.
+5. Push to `main`, or run the `Deploy Pages` workflow manually from the `Actions` tab.
 
 The workflow uses Node 24, installs from `package-lock.json` with `npm ci`, runs typecheck, lint, unit tests, Chromium E2E tests, visual tests, and then uploads `dist/` to GitHub Pages.
+
+## Open-source maintenance
+
+- See [`CONTRIBUTING.md`](CONTRIBUTING.md) for contribution rules and local verification.
+- See [`SECURITY.md`](SECURITY.md) for responsible disclosure and student-data handling.
+- See [`docs/CODEX_FOR_OSS_APPLICATION.md`](docs/CODEX_FOR_OSS_APPLICATION.md) for the Codex for OSS application strategy and draft answers.
+
+Useful maintainer work for Codex includes issue triage, PR review, visual-regression debugging, accessibility/privacy review, release-note drafting, and generation of synthetic test cases. Real student data must never be sent to external tools.
+
+## License
+
+The source code is licensed under the [MIT License](LICENSE). The deployed classroom copy currently includes Daisy ownership text to discourage casual redistribution of a specific classroom link; forks should replace classroom-specific branding and ownership text.

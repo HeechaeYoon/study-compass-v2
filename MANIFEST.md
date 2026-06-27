@@ -6,6 +6,11 @@
 - `AGENTS.md` — repository-level Codex rules
 - `PRD.md` — product requirements
 - `PLAN.md` — execution checklist
+- `README.md` — public project overview, setup, verification, deployment, and OSS maintenance links
+- `LICENSE` — MIT source-code license
+- `CONTRIBUTING.md` — contribution rules and PR verification checklist
+- `SECURITY.md` — responsible disclosure and student-data handling policy
+- `CODE_OF_CONDUCT.md` — project conduct expectations
 
 ## Detailed specs
 
@@ -22,6 +27,7 @@
 - `docs/VISUAL_REVIEW_LOG.md` — implementation evidence template
 - `docs/SPEC_SELF_REVIEW.md` — review of this documentation package
 - `docs/FINAL_REPORT_TEMPLATE.md` — required completion report structure
+- `docs/CODEX_FOR_OSS_APPLICATION.md` — Codex for OSS application strategy and draft form answers
 
 ## Prompts
 

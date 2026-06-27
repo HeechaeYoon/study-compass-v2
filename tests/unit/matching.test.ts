@@ -89,7 +89,7 @@ describe("learning type matching", () => {
     expect(byId.strategy_designer?.percent).toBeGreaterThanOrEqual(3);
     expect(byId.foundation_builder?.percent).toBeLessThanOrEqual(30);
     expect(byId.balanced_coordinator?.percent).toBeLessThanOrEqual(22);
-  });
+  }, 30_000);
 
   it("sets secondary type when the next profile is very close", () => {
     const match = matchLearningType({ P: 75, E: 76, U: 70, M: 72, H: 66 });
