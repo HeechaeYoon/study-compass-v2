@@ -240,3 +240,8 @@ Notes:
 - [x] Removed public README references to application-specific draft material.
 - [x] Removed the application-draft document from the public documentation set.
 - [x] Verified locally with `git diff --check`, `npm run typecheck`, `npm run lint`, `npm run test`, and `MASTER_CODE=development-master-code ACCESS_CODE_REVISION=development-access-code-revision npm run build`.
+
+## 20. README Product-Language Tightening
+
+- [x] Replaced remaining public README headings that could read like outward-facing pitch copy with product/classroom language: `Project overview`, `Classroom goals`, `Contributing and maintenance`, and `How the project is maintained`.
+- [x] Reworded the project-goals bullets to describe classroom behavior and verification directly instead of foregrounding meta-level project value.

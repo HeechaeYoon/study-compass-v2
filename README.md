@@ -4,7 +4,7 @@ Study Compass V2 is a privacy-first Korean middle-school self-directed-learning 
 
 The app helps students answer 16 short questions, understand their current learning-strategy pattern across five axes, and copy a locally generated prompt for a later AI-chatbot activity without silently sending student data anywhere.
 
-## At a glance
+## Project overview
 
 - **Live app:** <https://heechaeyoon.github.io/study-compass-v2/>
 - **Audience:** Korean middle-school self-directed-learning classes
@@ -14,17 +14,17 @@ The app helps students answer 16 short questions, understand their current learn
 - **Quality gates:** typecheck, lint, unit tests, E2E tests, visual fixtures, production build, and npm audit
 - **Maintenance:** issues, PR template, security policy, contribution guide, releases, and branch protection
 
-## Why this project exists
+## Classroom goals
 
 Many classroom AI tools require accounts, server-side data collection, analytics, or direct AI API calls. Study Compass V2 demonstrates a different pattern: a static, local-only classroom app that helps students prepare safer AI prompts without transmitting their answers by default.
 
-The project is designed as a reusable reference for privacy-first educational web apps in Korean classrooms.
+The goal is to keep the classroom workflow understandable, inspectable, and easy to adapt without adding a student-data pipeline.
 
-- **Student-data privacy by design:** answers, nickname, memo, result, and generated prompt remain in the browser.
-- **Transparent learning logic:** questions, scoring, profile matching, limitations, and research basis are documented.
-- **Classroom-ready static deployment:** the app runs on GitHub Pages and supports repository subpaths.
-- **Maintainer-friendly verification:** unit tests, E2E tests, visual fixtures, viewport checks, and deployment workflow are included.
-- **Reusable classroom pattern:** educators can study or adapt the approach for local-only AI-literacy classroom tools.
+- **Keep student data local:** answers, nickname, memo, result, and generated prompt remain in the browser.
+- **Make the learning logic inspectable:** questions, scoring, profile matching, limitations, and research basis are documented.
+- **Run from a simple static link:** the app works on GitHub Pages and supports repository subpaths.
+- **Keep changes easy to check:** unit tests, E2E tests, visual fixtures, viewport checks, and deployment workflow are included.
+- **Leave room for teacher adaptation:** educators can study or adapt the approach for local-only AI-literacy classroom activities.
 
 This is not a psychological test, grade, rank, or fixed personality label. Results are described as current-response coaching information.
 
@@ -101,13 +101,13 @@ Deployment is handled by `.github/workflows/deploy-pages.yml`.
 
 The workflow uses Node 24, installs from `package-lock.json` with `npm ci`, runs typecheck, lint, unit tests, Chromium E2E tests, visual tests, and then uploads `dist/` to GitHub Pages.
 
-## Open-source maintenance
+## Contributing and maintenance
 
 - See [`CONTRIBUTING.md`](CONTRIBUTING.md) for contribution rules and local verification.
 - See [`SECURITY.md`](SECURITY.md) for responsible disclosure and student-data handling.
 - See [`docs/PILOT_FEEDBACK_TEMPLATE.md`](docs/PILOT_FEEDBACK_TEMPLATE.md) for non-identifying educator pilot feedback.
 
-## Maintenance workflow
+## How the project is maintained
 
 The repository is maintained with:
 
