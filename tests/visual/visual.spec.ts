@@ -1,11 +1,11 @@
 import { mkdir } from "node:fs/promises";
 import path from "node:path";
 import { expect, test, type Page } from "@playwright/test";
+import { DAISY_COPYRIGHT_TEXT } from "../../src/data/ownership";
 
 const fixtures = ["start", "question", "result", "prompt", "detail"] as const;
 const allFixtures = ["access", ...fixtures] as const;
-const COPYRIGHT_TEXT =
-  "© Daisy Teacher. All rights reserved. 무단 복제 및 재배포 금지";
+const COPYRIGHT_TEXT = DAISY_COPYRIGHT_TEXT;
 
 async function expectNoHorizontalScroll(page: Page): Promise<void> {
   const metrics = await page.evaluate(() => ({

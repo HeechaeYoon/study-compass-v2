@@ -33,6 +33,7 @@ import { DetailReportScreen } from "../screens/DetailReportScreen";
 import { PromptScreen } from "../screens/PromptScreen";
 import { AccessGateScreen } from "../screens/AccessGateScreen";
 import { AdminAccessModal } from "../screens/AdminAccessModal";
+import { CLASSROOM_OWNERSHIP_TEXT } from "../data/ownership";
 
 const assetBase = import.meta.env.BASE_URL;
 
@@ -67,7 +68,12 @@ type AppHistoryState = {
 
 type CssVars = React.CSSProperties & {
   "--paper-texture": string;
+  "--classroom-ownership-watermark": string;
 };
+
+function toCssStringLiteral(value: string): string {
+  return `"${value.replace(/\\/g, "\\\\").replace(/"/g, '\\"')}"`;
+}
 
 function isAppHistoryState(value: unknown): value is AppHistoryState {
   if (typeof value !== "object" || value === null) return false;
@@ -131,6 +137,7 @@ export function App() {
 
   const styleVars: CssVars = {
     "--paper-texture": `url("${assetPath("assets/paper-texture.webp")}")`,
+    "--classroom-ownership-watermark": toCssStringLiteral(CLASSROOM_OWNERSHIP_TEXT),
   };
 
   const resultSummary = useMemo(

@@ -1,7 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
+import { DAISY_COPYRIGHT_TEXT } from "../../src/data/ownership";
 
-const COPYRIGHT_TEXT =
-  "© Daisy Teacher. All rights reserved. 무단 복제 및 재배포 금지";
+const COPYRIGHT_TEXT = DAISY_COPYRIGHT_TEXT;
 const TEST_MASTER_CODE = "development-master-code";
 const ACCESS_STORAGE_KEY = "srl-coach-access-v1";
 const SESSION_CODE_PATTERN = /^[A-HJ-NP-Z2-9]{6}$/;

@@ -61,4 +61,17 @@ If a browser dependency is unavailable, note the exact blocker in the PR.
 
 ## Branding and classroom ownership text
 
-The source code is MIT licensed. The deployed classroom copy currently shows Daisy ownership text to discourage casual redistribution of a specific classroom link. Forks that adapt the project for another teacher or organization should replace that classroom ownership copy and any branding-specific assets.
+The source code is MIT licensed. The deployed classroom copy currently shows Daisy ownership text to discourage casual redistribution of a specific classroom link. Forks that adapt the project for another teacher or organization should replace classroom-specific branding and ownership copy in `src/data/ownership.ts`.
+
+That file is the single source for:
+
+- the subtle global ownership mark
+- the low-opacity screen watermark
+- the result-image footer
+- the copied detailed-report footer
+
+The AI prompt body intentionally does not append the ownership text. Preserve that behavior for forks.
+
+## Educator pilot feedback
+
+Use [`docs/PILOT_FEEDBACK_TEMPLATE.md`](docs/PILOT_FEEDBACK_TEMPLATE.md) for classroom or educator pilot notes. Pilot notes and GitHub issues must use aggregated observations, synthetic examples, or generalized wording only. Do not paste real student answers, nicknames, memos, screenshots with personal information, or copied prompts.
