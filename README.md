@@ -4,7 +4,21 @@ Study Compass V2 is a privacy-first Korean middle-school self-directed-learning 
 
 The app helps students answer 16 short questions, understand their current learning-strategy pattern across five axes, and copy a locally generated prompt for a later AI-chatbot activity without silently sending student data anywhere.
 
-## Why this project matters
+## At a glance
+
+- **Live app:** <https://heechaeyoon.github.io/study-compass-v2/>
+- **Audience:** Korean middle-school self-directed-learning classes
+- **Stack:** React, Vite, TypeScript, plain CSS, Vitest, Playwright
+- **Data model:** local-only browser state; no backend, analytics, tracking, or runtime AI API call
+- **Deployment:** GitHub Pages with repository-subpath support
+- **Quality gates:** typecheck, lint, unit tests, E2E tests, visual fixtures, production build, and npm audit
+- **OSS maintenance:** issues, PR template, security policy, contribution guide, releases, and branch protection
+
+## Why this matters as open source
+
+Many classroom AI tools require accounts, server-side data collection, analytics, or direct AI API calls. Study Compass V2 demonstrates a different pattern: a static, local-only classroom app that helps students prepare safer AI prompts without transmitting their answers by default.
+
+The project is early-stage, but it is designed as a reusable reference for privacy-first educational web apps in Korean classrooms.
 
 - **Student-data privacy by design:** answers, nickname, memo, result, and generated prompt remain in the browser.
 - **Transparent learning logic:** questions, scoring, profile matching, limitations, and research basis are documented.
@@ -94,7 +108,18 @@ The workflow uses Node 24, installs from `package-lock.json` with `npm ci`, runs
 - See [`docs/PILOT_FEEDBACK_TEMPLATE.md`](docs/PILOT_FEEDBACK_TEMPLATE.md) for non-identifying educator pilot feedback.
 - See [`docs/CODEX_FOR_OSS_APPLICATION.md`](docs/CODEX_FOR_OSS_APPLICATION.md) for the Codex for OSS application strategy and draft answers.
 
-Useful maintainer work for Codex includes issue triage, PR review, visual-regression debugging, accessibility/privacy review, release-note drafting, and generation of synthetic test cases. Real student data must never be sent to external tools.
+## Maintainer workflow and Codex fit
+
+The repository is maintained with:
+
+- typed domain logic for scoring, result generation, prompt generation, storage, clipboard, and export behavior
+- Vitest unit tests for scoring, matching, prompt generation, storage, access-code logic, and deployment config
+- Playwright Chromium E2E tests for the core classroom flow, access gate, copy fallback, save/delete, responsive layouts, and image export
+- Playwright visual fixture captures at the canonical classroom viewport and supported compact viewports
+- GitHub Actions for typecheck, lint, unit tests, E2E tests, visual tests, production build, and Pages deployment
+- issue and PR templates, a security policy, a contribution guide, and release notes
+
+Useful Codex-assisted maintenance work includes issue triage, PR review, privacy/security regression checks, visual-diff investigation, accessibility review, synthetic test generation, and release-note drafting. Real student data must never be sent to external tools.
 
 ## License
 

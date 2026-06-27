@@ -226,3 +226,11 @@ Notes:
 - [x] Updated README, contributing docs, and manifest to document fork branding and non-identifying feedback workflows.
 - [x] Verified locally with `git diff --check`, `npm run typecheck`, `npm run lint`, `npm run test`, `npm run logic:distribution`, `MASTER_CODE=development-master-code ACCESS_CODE_REVISION=development-access-code-revision npm run build`, `npm audit --audit-level=moderate`, `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:e2e`, and `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:visual`.
 - [x] Updated the Pages workflow so pull requests run the full build/test/visual gate without attempting a protected GitHub Pages deployment from feature branches.
+
+## 18. README Application Landing Polish
+
+- [x] Created branch `docs/readme-polish` from current `main`.
+- [x] Added an `At a glance` section with live app, audience, stack, data model, deployment, quality gates, and OSS maintenance signals.
+- [x] Reframed the project-value section as an open-source privacy-first classroom app pattern.
+- [x] Added a `Maintainer workflow and Codex fit` section tying tests, visual fixtures, CI, templates, security policy, and release notes to concrete Codex-assisted maintenance work.
+- [x] Verified locally with `git diff --check`, `npm run typecheck`, `npm run lint`, `npm run test`, and `MASTER_CODE=development-master-code ACCESS_CODE_REVISION=development-access-code-revision npm run build`.
