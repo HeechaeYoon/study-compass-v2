@@ -243,5 +243,6 @@ Notes:
 
 ## 20. README Product-Language Tightening
 
-- [x] Replaced remaining public README headings that could read like outward-facing pitch copy with product/classroom language: `Project overview`, `Classroom goals`, `Contributing and maintenance`, and `How the project is maintained`.
-- [x] Reworded the project-goals bullets to describe classroom behavior and verification directly instead of foregrounding meta-level project value.
+- [x] Replaced remaining public README headings that could read like application-positioning copy with product/classroom language: `Project overview`, `Classroom goals`, `Contributing and maintenance`, and `How the project is maintained`.
+- [x] Reworded the project-goals bullets to describe classroom behavior and verification directly instead of foregrounding open-source impact.
+- [x] Verified locally with `git diff --check`, `npm run typecheck`, `npm run lint`, `npm run test`, `MASTER_CODE=development-master-code ACCESS_CODE_REVISION=development-access-code-revision npm run build`, and `npm audit --audit-level=moderate`.
