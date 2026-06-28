@@ -103,19 +103,19 @@ export function PromptScreen({
           </button>
           <span className="liveUpdateBadge">
             <RefreshCw aria-hidden="true" size={14} />
-            실시간 갱신
+            로컬 미리보기
           </span>
         </div>
         <p className="promptIntro">
-          입력한 내용과 메모는 오른쪽 미리보기에만 반영되며 아직 AI로 보내지지
-          않아요. 복사해 붙여넣을 때는 이름, 연락처, 민감한 개인정보를 빼주세요.
+          이 화면은 프롬프트를 로컬에서만 미리 만들어요. 복사해 AI 도구에
+          붙여넣기 전 이름, 연락처, 민감한 개인정보를 빼주세요.
         </p>
         <section className="promptModeSelector" aria-labelledby="prompt-mode-label">
           <div>
             <p id="prompt-mode-label" className="promptModeLabel">
               만들 프롬프트
             </p>
-            <p className="promptModeHint">목적을 바꾸면 미리보기도 바로 바뀌어요.</p>
+            <p className="promptModeHint">목적에 맞춰 미리보기가 바뀌어요.</p>
           </div>
           <div className="promptModeOptions" role="group" aria-label="프롬프트 종류">
             {PROMPT_MODE_CONFIGS.map((config) => (
@@ -154,8 +154,7 @@ export function PromptScreen({
               placeholder="결과가 나와 조금 다르게 느껴진다면 여기에 적어보세요."
             />
             <span className="promptMemoHint">
-              메모를 입력하면 프롬프트에 함께 반영돼요. 민감한 개인정보는 적지
-              않는 것이 좋아요.
+              메모는 프롬프트에 반영돼요. 개인정보는 적지 않는 것이 좋아요.
             </span>
           </label>
         </div>

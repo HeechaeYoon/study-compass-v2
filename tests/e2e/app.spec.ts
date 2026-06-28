@@ -10,9 +10,10 @@ import {
 } from "../../src/domain/accessCode";
 import { DAISY_COPYRIGHT_TEXT } from "../../src/data/ownership";
 
-const expectedOrigin = new URL(
-  process.env.PLAYWRIGHT_BASE_URL ?? "http://127.0.0.1:4173",
-).origin;
+const expectedBaseURL =
+  process.env.PLAYWRIGHT_BASE_URL ??
+  `http://127.0.0.1:${process.env.PLAYWRIGHT_PORT ?? "4173"}`;
+const expectedOrigin = new URL(expectedBaseURL).origin;
 const DEV_CODE_SEED_DIGEST = createHash("sha256")
   .update("study-compass-v2:access-code:development-access-code-revision")
   .digest("hex");
@@ -128,6 +129,34 @@ async function expectMinimumControlHeight(
   for (const height of enabledHeights) {
     expect(height).toBeGreaterThanOrEqual(minimumHeight);
   }
+}
+
+async function installClipboardTextCapture(page: Page): Promise<void> {
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, "clipboard", {
+      configurable: true,
+      value: {
+        writeText: async (text: string) => {
+          (
+            window as Window & {
+              __clipboardText?: string;
+            }
+          ).__clipboardText = text;
+        },
+      },
+    });
+  });
+}
+
+async function readCapturedClipboardText(page: Page): Promise<string> {
+  return page.evaluate(
+    () =>
+      (
+        window as Window & {
+          __clipboardText?: string;
+        }
+      ).__clipboardText ?? "",
+  );
 }
 
 test("standard flow works without nickname", async ({ page }) => {
@@ -283,7 +312,7 @@ test("detail report opens as a readable screen and returns to summary", async ({
 
 test("memo is included automatically and prompt modes switch preview purpose", async ({ page }) => {
   await page.goto("/?fixture=prompt");
-  await expect(page.getByText(/아직 AI로 보내지지 않아요/)).toBeVisible();
+  await expect(page.getByText(/로컬에서만 미리 만들어요/)).toBeVisible();
   await expect(page.getByText(/민감한 개인정보를 빼주세요/)).toBeVisible();
   await expect(page.getByRole("button", { name: /프롬프트 생성하기/ })).toHaveCount(0);
   await expect(page.getByRole("button", { name: /상세 리포트 복사/ })).toHaveCount(0);
@@ -319,6 +348,28 @@ test("prompt preview updates live and copy button confirms success", async ({ pa
   });
   await page.getByRole("button", { name: /결과 요약으로/ }).click();
   await expect(page.getByRole("button", { name: /AI 프롬프트 만들기/ })).toBeVisible();
+});
+
+test("clipboard text omits classroom ownership while visible export ownership remains", async ({
+  page,
+}) => {
+  await installClipboardTextCapture(page);
+
+  await page.goto("/?fixture=result");
+  await expect(page.getByText(DAISY_COPYRIGHT_TEXT).first()).toBeVisible();
+  await expect(page.locator("[data-export-card]")).toContainText(DAISY_COPYRIGHT_TEXT);
+  await page.getByRole("button", { name: /상세 리포트 복사/ }).click();
+  await expect.poll(() => readCapturedClipboardText(page)).toContain("현재 답변 기준");
+  const reportCopy = await readCapturedClipboardText(page);
+  expect(reportCopy).not.toContain(DAISY_COPYRIGHT_TEXT);
+  expect(reportCopy).not.toContain("All rights reserved. 무단 복제 및 재배포 금지");
+
+  await page.goto("/?fixture=prompt");
+  await page.getByRole("button", { name: "복사하기" }).click();
+  await expect.poll(() => readCapturedClipboardText(page)).toContain("AI 챗봇");
+  const promptCopy = await readCapturedClipboardText(page);
+  expect(promptCopy).not.toContain(DAISY_COPYRIGHT_TEXT);
+  expect(promptCopy).not.toContain("All rights reserved. 무단 복제 및 재배포 금지");
 });
 
 test("prompt utilities fit inside the canonical surface", async ({ page }) => {
@@ -369,9 +420,60 @@ test("manual copy fallback appears when clipboard methods fail", async ({ page }
 
   await page.goto("/?fixture=prompt");
   await page.getByRole("button", { name: "복사하기" }).click();
-  await expect(page.getByRole("dialog", { name: "수동으로 복사하기" })).toBeVisible();
+  const manualCopyDialog = page.getByRole("dialog", { name: "수동으로 복사하기" });
+  const manualCopyTextBox = page.getByRole("textbox", { name: "수동 복사 텍스트" });
+  await expect(manualCopyDialog).toBeVisible();
   await expect(page.getByRole("button", { name: "복사됨" })).toHaveCount(0);
-  await expect(page.locator("#manual-copy-text")).toContainText("현재 답변 기준");
+  await expect(manualCopyTextBox).toContainText("현재 답변 기준");
+  await expect(manualCopyTextBox).not.toContainText(DAISY_COPYRIGHT_TEXT);
+  await page.getByRole("button", { name: "전체 선택" }).click();
+  await expect(manualCopyTextBox).toBeFocused();
+  await expect(manualCopyDialog).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(manualCopyDialog).toBeHidden();
+
+  await page.getByRole("button", { name: "복사하기" }).click();
+  await expect(manualCopyDialog).toBeVisible();
+  await page.getByRole("button", { name: "닫기" }).click();
+
+  await page.goto("/?fixture=result");
+  await page.getByRole("button", { name: /상세 리포트 복사/ }).click();
+  await expect(page.getByRole("dialog", { name: "수동으로 복사하기" })).toBeVisible();
+  await expect(manualCopyTextBox).toContainText("왜 이렇게 봤나요?");
+  await expect(manualCopyTextBox).not.toContainText(DAISY_COPYRIGHT_TEXT);
+  await expect(manualCopyTextBox).not.toContainText(
+    "All rights reserved. 무단 복제 및 재배포 금지",
+  );
+});
+
+test("primary classroom controls keep 44px touch targets on tablet and compact landscape", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto("/?fixture=result");
+  await expectMinimumControlHeight(page, ".resultActions button");
+
+  await page.goto("/?fixture=detail");
+  await expectMinimumControlHeight(page, ".detailHeader button");
+
+  await page.goto("/?fixture=prompt");
+  await expectMinimumControlHeight(
+    page,
+    ".promptTopNav button, .promptModeButton, .promptFields .input, .promptUtility button, .copyButton",
+  );
+
+  await page.setViewportSize({ width: 844, height: 390 });
+  await page.goto("/?fixture=result");
+  await expectMinimumControlHeight(page, ".resultActions button");
+
+  await page.goto("/?fixture=detail");
+  await expectMinimumControlHeight(page, ".detailHeader button");
+
+  await page.goto("/?fixture=prompt");
+  await expectMinimumControlHeight(
+    page,
+    ".promptTopNav button, .promptModeButton, .promptFields .input, .promptUtility button, .copyButton",
+  );
 });
 
 test("radar has no misleading visible scale legend", async ({ page }) => {
@@ -544,7 +646,7 @@ for (const viewport of [
     await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
     await page.getByRole("button", { name: /AI 프롬프트 만들기/ }).click();
     await expectPageAtTop(page);
-    await expect(page.getByText(/입력한 내용과 메모는/)).toBeInViewport();
+    await expect(page.getByText(/로컬에서만 미리 만들어요/)).toBeInViewport();
     await expectMinimumControlHeight(
       page,
       ".promptTopNav button, .promptModeButton, .promptFields .input, .promptUtility button, .copyButton",

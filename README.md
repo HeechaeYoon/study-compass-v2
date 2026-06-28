@@ -4,11 +4,13 @@ Study Compass V2 is a privacy-first Korean middle-school self-directed-learning 
 
 The app helps students answer 16 short questions, understand their current learning-strategy pattern across five axes, and copy a locally generated prompt for a later AI-chatbot activity without silently sending student data anywhere.
 
-## 한국어 안내
+## 한국어 설명
 
-Study Compass V2는 한국 중학생의 자기주도학습 수업에서 사용할 수 있도록 만든 정적 웹앱입니다. 학생 응답, 닉네임, 메모, 결과, 생성된 프롬프트는 기본적으로 브라우저 안에만 남고 서버로 전송되지 않습니다.
+Study Compass V2는 한국 중학생의 자기주도학습 수업에서 사용할 수 있도록 만든 정적 웹앱입니다. 학생은 16개의 짧은 문항에 답하고, 현재 응답을 바탕으로 5가지 학습전략 축의 패턴과 강점·균형·성장 포인트를 확인할 수 있습니다.
 
-수업에서 사용할 때는 학생에게 결과가 현재 응답 기반의 학습 코칭 정보이며, 심리검사·성적·고정된 유형이 아니라고 안내해 주세요.
+이 앱은 학생 데이터를 서버로 보내지 않는 수업 도구를 목표로 합니다. 학생 응답, 닉네임, 메모, 결과, 생성된 프롬프트는 기본적으로 브라우저 안에만 남으며, 로그인·분석 도구·추적 코드·외부 AI API 호출을 사용하지 않습니다.
+
+AI 활동은 앱 안에서 자동으로 실행되지 않습니다. 대신 학생이 자신의 학습 상황을 설명하는 프롬프트를 로컬에서 만들고, 필요한 경우 스스로 다른 AI 도구에 복사해 사용하는 방식입니다. 수업에서 사용할 때는 결과가 심리검사·성적·고정된 유형이 아니라 현재 응답 기반의 학습 코칭 정보라고 안내해 주세요.
 
 ## Project overview
 
@@ -17,7 +19,7 @@ Study Compass V2는 한국 중학생의 자기주도학습 수업에서 사용�
 - **Stack:** React, Vite, TypeScript, plain CSS, Vitest, Playwright
 - **Data model:** local-only browser state; no backend, analytics, tracking, or runtime AI API call
 - **Deployment:** GitHub Pages with repository-subpath support
-- **Quality gates:** typecheck, lint, unit tests, E2E tests, visual fixtures, production build, and npm audit
+- **Quality gates:** typecheck, lint, unit tests, E2E tests, visual fixtures, privacy/secret scan, production build, and npm audit
 - **Maintenance:** issues, PR template, security policy, contribution guide, releases, and branch protection
 
 ## Classroom goals
@@ -64,10 +66,20 @@ npm run test
 npm run logic:distribution
 npm run test:e2e
 npm run test:visual
-MASTER_CODE=replace-with-private-master-code npm run build
+MASTER_CODE=replace-with-private-master-code ACCESS_CODE_REVISION=replace-to-revoke npm run build
+MASTER_CODE=replace-with-private-master-code ACCESS_CODE_REVISION=replace-to-revoke npm run privacy:scan
 ```
 
-`test:e2e` and `test:visual` use Chromium. `test:e2e:webkit` is available for environments with WebKit system dependencies installed.
+`test:e2e` and `test:visual` use Chromium. Field classroom devices are currently expected to be Galaxy Tab / Android Chromium-class tablets, so WebKit/Safari is not a required acceptance gate for this maintenance scope. `test:e2e:webkit` remains available as an optional future compatibility check for environments with WebKit system dependencies installed.
+
+If the default preview port is already in use, run the browser checks against an external preview:
+
+```bash
+MASTER_CODE=development-master-code ACCESS_CODE_REVISION=development-access-code-revision VITE_ENABLE_FIXTURES=true npm run build
+npm run preview -- --host 127.0.0.1 --port 4174 --strictPort
+PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:e2e
+PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:visual
+```
 
 ## Fixture screens
 
@@ -102,10 +114,10 @@ Deployment is handled by `.github/workflows/deploy-pages.yml`.
 1. In GitHub, open `Settings > Pages`.
 2. Set `Build and deployment > Source` to `GitHub Actions`.
 3. Add repository secret `MASTER_CODE` for the hidden classroom-admin modal.
-4. Optionally add repository variable `ACCESS_CODE_REVISION`; change it before redeploying to invalidate previous classroom codes.
+4. Add repository variable `ACCESS_CODE_REVISION`; change it before redeploying to invalidate previous classroom codes. Production builds fail when either value is missing.
 5. Push to `main`, or run the `Deploy Pages` workflow manually from the `Actions` tab.
 
-The workflow uses Node 24, installs from `package-lock.json` with `npm ci`, runs typecheck, lint, unit tests, Chromium E2E tests, visual tests, and then uploads `dist/` to GitHub Pages.
+The workflow uses Node 24, installs from `package-lock.json` with `npm ci`, runs typecheck, lint, unit tests, Chromium E2E tests, visual tests, production build, and privacy/secret scan before uploading `dist/` to GitHub Pages.
 
 ## Contributing and maintenance
 
@@ -121,11 +133,11 @@ The repository is maintained with:
 - Vitest unit tests for scoring, matching, prompt generation, storage, access-code logic, and deployment config
 - Playwright Chromium E2E tests for the core classroom flow, access gate, copy fallback, save/delete, responsive layouts, and image export
 - Playwright visual fixture captures at the canonical classroom viewport and supported compact viewports
-- GitHub Actions for typecheck, lint, unit tests, E2E tests, visual tests, production build, and Pages deployment
+- GitHub Actions for typecheck, lint, unit tests, E2E tests, visual tests, production build, privacy/secret scan, and Pages deployment
 - issue and PR templates, a security policy, a contribution guide, and release notes
 
 Useful maintainer work includes issue triage, PR review, privacy/security regression checks, visual-diff investigation, accessibility review, synthetic test generation, and release-note drafting. Real student data must never be sent to external tools.
 
 ## License
 
-The source code is licensed under the [MIT License](LICENSE). The deployed classroom copy currently includes Daisy ownership text to discourage casual redistribution of a specific classroom link. Forks should replace classroom-specific branding and ownership text in [`src/data/ownership.ts`](src/data/ownership.ts); that single source feeds the visible ownership mark, screen watermark, result image footer, and copied detailed-report footer.
+The source code is licensed under the [MIT License](LICENSE). The deployed classroom copy currently includes Daisy ownership text to discourage casual redistribution of a specific classroom link. Forks should replace classroom-specific branding and ownership text in [`src/data/ownership.ts`](src/data/ownership.ts); that single source feeds the visible ownership mark, screen watermark, and result image footer. Clipboard text payloads intentionally omit the ownership/copyright footer.

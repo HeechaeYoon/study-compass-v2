@@ -9,7 +9,7 @@ Rebuilt the app as a production-quality static React/Vite/TypeScript web app for
 - Deployment status: production `dist/` builds locally; GitHub Pages workflow added
 - Data policy: no backend, login, analytics, tracking, external AI call, or automatic save
 - Access policy: static classroom access-code gate with local validation; `MASTER_CODE` and `ACCESS_CODE_REVISION` are supplied by environment and only derived digests are bundled; admin-created session links derive a per-link code seed.
-- Ownership policy: exact visible/exported/report text is `© Daisy Teacher. All rights reserved. 무단 복제 및 재배포 금지`
+- Ownership policy: exact visible/exported ownership text is `© Daisy Teacher. All rights reserved. 무단 복제 및 재배포 금지`; clipboard payloads intentionally omit that footer.
 - Learning-logic status: audit-driven scoring and report pass completed; all 8 learning types are reachable in the response space, `strategy_designer` is no longer hidden by the balanced rule, and result copy now uses neutral answer-grounded evidence.
 
 ## 2. Architecture
@@ -31,7 +31,7 @@ Rebuilt the app as a production-quality static React/Vite/TypeScript web app for
 - Question: 16 questions, native radio cards, progress, pointer-only auto-advance after new selections, keyboard/reduced-motion manual pacing, previous/next fallback, browser Back preservation, Q06 5-card fixture.
 - Result: current-response safety language, custom SVG radar without misleading visible caption, conditional type summary and strength/balance cards, detail report entry, copy/save/export/reset.
 - Detail report: separate student-facing learning-map report with large title, current-response safety note, neutral answer-grounded evidence, strength/balance/growth snapshot, mission, 5-axis interpretation, strategy bundle, cautions, and avoid methods.
-- AI prompt: four prompt modes, prompt inputs, memo auto-inclusion, full question/answer context, no tabs, live-updating preview, answer evidence, external-AI privacy guidance, `실시간 갱신` state, copy success feedback, copy fallback, save/delete/export, and result-summary navigation.
+- AI prompt: four prompt modes, prompt inputs, memo auto-inclusion, full question/answer context, no tabs, local-only live preview, answer evidence, external-AI privacy guidance, `로컬 미리보기` state, copy success feedback, copy fallback, save/delete/export, and result-summary navigation.
 - Responsive support: tablet/PC wide viewports remain primary; 360px+ phone portrait uses an adaptive stacked layout; 560–899px phone landscape uses a compact wide-layout mode; 359px portrait and below-560px landscape show narrow-screen guidance.
 
 ## 4. ImageGen Assets
@@ -74,21 +74,28 @@ Not pixel-perfect. The reference is a scaled montage, and the product-required s
 - Toast: status messages auto-dismiss after 3 seconds and stale timers do not clear newer messages.
 - Privacy: no app-level network path for answers, nickname, memo, result, or prompt.
 - Access codes: hidden admin modal verifies `MASTER_CODE`, defaults validity to 1 day, labels validity as day units, generates session classroom links plus 6-character 1-90 day codes, and renders/copies a QR image for the session link. New session links reject previous session codes and saved access passes; changing `ACCESS_CODE_REVISION` and redeploying remains the deployment-wide invalidation path.
-- Copyright: visible mark and low-opacity watermark appear across screens; result PNG export and copied detailed report include the exact copyright text; AI prompt body does not append it.
+- Copyright: visible mark and low-opacity watermark appear across screens; result PNG export keeps the exact copyright text; detailed-report copy, AI prompt copy, and manual-copy fallback text do not append it.
+- Maintenance update: runtime student-facing copy now uses `탐색`/`활동`/`학습 전략` language instead of presenting the flow as a diagnosis, while safety copy still says the app is not a personality or psychological test.
+- Build safety: production builds now require both `MASTER_CODE` and `ACCESS_CODE_REVISION`; local dev/serve/test paths keep deterministic development values.
+- Release scan: `npm run privacy:scan` now fails if `dist/` is missing, scans runtime source for app-level network/logging paths, and scans `dist/` for raw access-code values, placeholder secrets, and fixture markers.
+- Font payload: production font assets changed from three WOFF2 files totaling 1,963,524 bytes to one bundled Gowun Dodum WOFF2 file totaling 406,476 bytes. Pretendard remains first in the CSS body stack as a local/system font when available, with Korean system fallbacks; no runtime font CDN is used.
 
 ## 7. Commands Run
 
 | Command | Result |
 |---|---|
+| `git diff --check` | Pass |
 | `npm run typecheck` | Pass |
 | `npm run lint` | Pass |
-| `npm run test` | Pass, 9 files / 50 tests |
+| `npm run test` | Pass, 11 files / 55 tests |
 | `npm run logic:distribution` | Pass, all 8 types within 3-30% |
-| `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:visual` | Pass, 11 Chromium tests including access fixture, 1280×800 captures, wide/landscape smoke, 390×844 portrait fixture captures, and 360×740 detail/prompt captures |
-| `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:e2e` | Pass, 30 Chromium tests including access gate/admin session link generation, QR image copy/fallback, revision/session-mismatched access pass rejection, admin modal focus trap, 390×844 and 360×740 portrait rendering, 359×740 guidance, 390×844 and 360×740 core flows, scroll reset, touch target, and delete privacy checks |
-| `MASTER_CODE=development-master-code ACCESS_CODE_REVISION=development-access-code-revision VITE_ENABLE_FIXTURES=true npm run build` | Pass |
-| `rg -n "development-master-code\|development-access-code-revision\|replace-with-private-master-code\|replace-to-revoke\|ACCESS_CODE_REVISION\|DAISY-A1" dist` | Pass, no matches |
-| `npm run test:e2e:webkit` | Blocked: host missing WebKit system libraries |
+| `npm run test:e2e` | Expected local failure when port 4173 was already occupied; strict preview port stopped the run instead of silently moving ports |
+| `PLAYWRIGHT_PORT=4174 npm run test:e2e` | Pass, 33 Chromium tests including access gate/admin session link generation, QR image copy/fallback, revision/session-mismatched access pass rejection, clipboard ownership exclusion, manual-copy fallback accessibility/Escape handling, admin modal focus trap, 44px result/detail/prompt touch-target checks at 1280×800 and 844×390, 390×844 and 360×740 portrait rendering, 359×740 guidance, 390×844 and 360×740 core flows, scroll reset, touch target, and delete privacy checks |
+| `PLAYWRIGHT_PORT=4174 npm run test:visual` | Pass, 11 Chromium tests including access fixture, 1280×800 captures, wide/landscape smoke, 390×844 portrait fixture captures, and 360×740 detail/prompt captures |
+| `MASTER_CODE=development-master-code ACCESS_CODE_REVISION=development-access-code-revision npm run build` | Pass |
+| `npm run privacy:scan` | Pass, no runtime source network/logging paths and no raw access-code secrets/placeholders/fixture markers in `dist/` |
+| `npm audit --audit-level=moderate` | Pass, 0 vulnerabilities |
+| `npm run test:e2e:webkit` | Not run; WebKit/Safari is outside the current acceptance scope |
 
 ## 8. Browser And Viewport Checks
 
@@ -106,7 +113,7 @@ Not pixel-perfect. The reference is a scaled montage, and the product-required s
 | Chromium | 667x375 | Pass | compact phone landscape smoke |
 | Chromium | 560x375 | Pass | compact landscape minimum prompt fit |
 | Chromium | 559x375 | Pass | below-minimum landscape guidance |
-| WebKit | 1280x800 | Blocked | missing `libgtk-4`, ICU, GStreamer, WebP, AVIF, and related host libraries |
+| WebKit/Safari | 1280x800 | Not run | optional future compatibility check; current field target is Galaxy Tab / Android Chromium-class tablets |
 
 ## 9. Privacy Verification
 
@@ -116,7 +123,7 @@ Not pixel-perfect. The reference is a scaled montage, and the product-required s
 - Fonts, generated images, and static assets are local to the app build.
 - Memo is never sent automatically; when the student copies a generated prompt, non-empty memo text is included in that copied text and the UI warns against names, contact details, and sensitive personal information.
 - Access-pass storage contains only code/revision/session fingerprints and expiry; revision/session-mismatched passes are removed and return to the access gate.
-- Production builds require `MASTER_CODE`; `ACCESS_CODE_REVISION` should be set as a deployment variable when revocation control is needed. Local test builds use deterministic development values. Bundle scans should be run with real deployment values before release to confirm raw values are absent.
+- Production builds require both `MASTER_CODE` and `ACCESS_CODE_REVISION`. Local dev/serve/test builds use deterministic development values. `npm run privacy:scan` fails when `dist/` is missing, verifies source/runtime privacy constraints, and scans `dist/` for raw values/placeholders/fixture markers.
 
 ## 10. Independent Reviews
 
@@ -138,6 +145,8 @@ Fixed modal focus trap/restore and inert background, strengthened focus ring and
 
 Second accessibility/performance pass was also checked against the final screens: the prompt screen keeps a focused screen heading after tab removal, copy feedback changes the button label and announces through the toast live region, new animations are covered by `prefers-reduced-motion`, the export card is `aria-hidden`, and the generated hero/pencil assets are local WebP files.
 
+Third accessibility/performance review initially blocked release on three items. Fixed by sharing `PLAYWRIGHT_PORT` with the E2E privacy-origin assertion, adding an accessible name and Escape-close behavior to the manual-copy fallback, making result/detail/prompt primary classroom controls at least 44px tall on canonical tablet and compact landscape viewports, and adding regression coverage for those paths. The privacy scan was also tightened to fail if `dist/` is missing.
+
 ### Learning Logic Reviewers
 
 Fixed reviewer findings from the audit-driven pass: no-strength results no longer reuse type summaries that say `강점`, scenario-answer evidence is summarized in neutral coaching language instead of quoting raw low-response options, the detail report layout was compressed so key sections remain visible in the 1280×800 capture, and the prompt visual spec now matches the live no-tab/privacy-warning UI.
@@ -152,15 +161,16 @@ Primitive spec review initially requested missing edge-case tests for localStora
 
 - Vite base: `./`
 - Workflow: `.github/workflows/deploy-pages.yml`
-- Workflow uses `npm ci`, Chromium Playwright install, typecheck, lint, unit, e2e, visual, and production build before upload.
-- GitHub Pages production builds must provide `MASTER_CODE` through repository secrets or the build will fail; `ACCESS_CODE_REVISION` is read from repository variables and should be changed before redeploying when previous classroom codes need to be discarded.
+- Workflow uses `npm ci`, Chromium Playwright install, typecheck, lint, unit, e2e, visual, production build, and privacy/secret scan before upload.
+- GitHub Pages production builds must provide `MASTER_CODE` through repository secrets and `ACCESS_CODE_REVISION` through repository variables or the build will fail; change `ACCESS_CODE_REVISION` before redeploying when previous classroom codes need to be discarded.
 - Deployed URL is not available locally; GitHub Pages must be enabled in repository Settings after pushing.
 
 ## 12. Known Limitations
 
 - This is not a validated psychological instrument or psychometric test.
 - Visual reproduction is close but not pixel-perfect because the reference is a montage, not a source design file.
-- WebKit/Safari smoke could not run on this host due missing system dependencies requiring sudo-level install.
-- Font assets remain the largest payload; runtime browsers should prefer WOFF2, and JS/CSS gzip sizes are small.
+- WebKit/Safari smoke is intentionally excluded from the current acceptance scope and remains optional future compatibility work.
+- Real teacher/student classroom pilot validation is future work and was not performed in this local verification pass.
+- Font assets are still the largest single asset class but were reduced to one bundled Gowun Dodum WOFF2 file; body text uses the Pretendard/system Korean fallback stack without runtime font CDN requests.
 - The access-code system is client-side and can be bypassed by a determined person inspecting or modifying the static bundle; it is intended to reduce casual sharing, not provide strong authentication.
 - Admin-created session links invalidate previous codes only for students who use the new link; they do not remotely block an already shared old link. Deployment-wide invalidation still requires changing `ACCESS_CODE_REVISION` and redeploying the static app.

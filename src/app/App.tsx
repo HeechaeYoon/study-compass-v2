@@ -556,10 +556,12 @@ export function App() {
           }
         }}
         onConfirm={() => setManualCopyText(null)}
+        onEscape={() => setManualCopyText(null)}
       >
         <textarea
           id="manual-copy-text"
           className="manualCopy"
+          aria-label="수동 복사 텍스트"
           value={manualCopyText ?? ""}
           readOnly
         />

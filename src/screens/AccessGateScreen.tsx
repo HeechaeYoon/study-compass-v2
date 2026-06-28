@@ -26,7 +26,7 @@ export function AccessGateScreen({
         </h2>
         <Doodle kind="underline-blue" className="accessUnderline" />
         <p className="accessIntro">
-          선생님이 안내한 접속 코드를 입력하면 자기주도학습 진단을 시작할 수
+          선생님이 안내한 접속 코드를 입력하면 자기주도학습 전략 탐색을 시작할 수
           있어요.
         </p>
         <form

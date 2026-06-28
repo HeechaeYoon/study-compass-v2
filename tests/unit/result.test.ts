@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 import type { Axis, AxisLabel, AxisScores } from "../../src/data/axes";
-import { DAISY_COPYRIGHT_TEXT } from "../../src/data/ownership";
+import {
+  CLASSROOM_COPYRIGHT_NOTICE,
+  DAISY_COPYRIGHT_TEXT,
+} from "../../src/data/ownership";
 import { createFixtureResult } from "../../src/app/fixtures";
 import {
   buildDetailedReport,
@@ -68,9 +71,10 @@ describe("result copy", () => {
     expect(strongReport).not.toContain("자주 놓쳐요");
   });
 
-  it("adds Daisy attribution to copied detailed reports", () => {
-    expect(buildDetailedReport(createFixtureResult())).toContain(
-      DAISY_COPYRIGHT_TEXT,
-    );
+  it("keeps copied detailed reports free of classroom ownership text", () => {
+    const report = buildDetailedReport(createFixtureResult());
+
+    expect(report).not.toContain(DAISY_COPYRIGHT_TEXT);
+    expect(report).not.toContain(CLASSROOM_COPYRIGHT_NOTICE);
   });
 });

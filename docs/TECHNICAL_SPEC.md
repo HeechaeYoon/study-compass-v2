@@ -554,6 +554,7 @@ Provide a screen-reader summary:
 ## 20. Security and privacy checks
 
 - Search built bundle for analytics domains.
+- Run `npm run privacy:scan` after a production build. It fails if `dist/` is missing, scans runtime source for app-level network/logging paths, and scans `dist/` for raw access-code values, placeholder secrets, and fixture markers.
 - Inspect browser network during a full flow.
 - No answer values in query string or hash.
 - No `fetch`, XHR, WebSocket, beacon, or remote logging for student data.
@@ -564,7 +565,7 @@ Provide a screen-reader summary:
 
 ### Access-code deterrent
 
-- Production builds require unprefixed `MASTER_CODE` from the shell or `.env` file.
+- Production builds require unprefixed `MASTER_CODE` and `ACCESS_CODE_REVISION` from the shell, `.env` file, or CI secret/variable.
 - `MASTER_CODE` is digested in `vite.config.ts`; only `__ACCESS_VERIFIER_DIGEST__` is injected into client code.
 - `ACCESS_CODE_REVISION` is digested separately as `__ACCESS_CODE_SEED_DIGEST__`; changing it and redeploying invalidates previously generated classroom codes without changing the master code.
 - When the URL has a valid `session` parameter, the app derives an effective code seed from `__ACCESS_CODE_SEED_DIGEST__` plus that session. Admin generation creates a new 8-character session link, a 6-character code for that session, and a QR code containing only the session link.
@@ -597,11 +598,12 @@ Minimum manual or automated smoke checks:
 | Chromium | 1280×800 | full visual and functional |
 | Chromium | 1024×768 | responsive smoke |
 | Chromium | 1440×900 | responsive smoke |
-| WebKit | 1280×800 | functional smoke |
 | Chromium | 1920×1080 | max-width check |
 | Chromium | 390×844 | phone portrait responsive smoke |
 | Chromium | 360×740 | minimum phone portrait smoke |
 | Chromium | 359×740 | below-minimum portrait guidance |
+
+Current classroom device assumption: Galaxy Tab / Android Chromium-class tablets. Safari/WebKit is optional future compatibility work and is not a hard acceptance gate for the current scope.
 
 ---
 

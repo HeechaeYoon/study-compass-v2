@@ -89,6 +89,23 @@ describe("vite access verifier config", () => {
     ).toThrow("MASTER_CODE must be set for production builds.");
   });
 
+  it("fails production builds when ACCESS_CODE_REVISION is missing", () => {
+    expect(() =>
+      buildAccessVerifierDefine({
+        command: "build",
+        mode: "production",
+        env: { MASTER_CODE: "teacher-secret" },
+      }),
+    ).toThrow("ACCESS_CODE_REVISION must be set for production builds.");
+    expect(() =>
+      buildAccessVerifierDefine({
+        command: "build",
+        mode: "production",
+        env: { MASTER_CODE: "teacher-secret", ACCESS_CODE_REVISION: "" },
+      }),
+    ).toThrow("ACCESS_CODE_REVISION must be set for production builds.");
+  });
+
   it("loads unprefixed MASTER_CODE from env files for production builds", () => {
     const cwd = mkdtempSync(join(tmpdir(), "study-compass-env-"));
     try {

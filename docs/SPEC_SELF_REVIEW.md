@@ -174,7 +174,7 @@ This keeps the type anchored in planning and checking without letting the balanc
 - Background-removal processing for the pencil must avoid a white halo.
 - The prompt form has more fields than the reference; compact grouping must preserve the visual balance.
 - The result type thresholds and prototype vectors require future pilot validation.
-- `html-to-image` behavior must be tested specifically in Safari/WebKit.
+- `html-to-image` behavior in Safari/WebKit remains optional future compatibility work; current required browser checks focus on Chromium/Edge/Android Chromium-class tablets.
 
 ---
 

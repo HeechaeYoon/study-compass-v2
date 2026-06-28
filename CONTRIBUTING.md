@@ -4,7 +4,7 @@ Study Compass V2 is a privacy-first classroom web app for Korean middle-school s
 
 ## Good first contributions
 
-- Browser compatibility fixes for Chromium, Edge, and Safari/WebKit.
+- Browser compatibility fixes for Chromium, Edge, and Android Chromium-class tablets. Safari/WebKit checks are optional future compatibility work, not the current release gate.
 - Accessibility improvements with clear before/after evidence.
 - Test coverage for scoring, prompt generation, storage failure, copy fallback, and visual fixtures.
 - Documentation that helps educators deploy or adapt the app safely.
@@ -26,13 +26,13 @@ npm install
 npm run dev
 ```
 
-For production builds, provide a private classroom-admin master code:
+For production builds, provide both a private classroom-admin master code and an access-code revision string:
 
 ```bash
-MASTER_CODE=your-private-master-code npm run build
+MASTER_CODE=your-private-master-code ACCESS_CODE_REVISION=your-private-revision npm run build
 ```
 
-`ACCESS_CODE_REVISION` is optional and can be changed before redeploying to invalidate previous classroom access codes.
+Production builds fail when either value is missing. Change `ACCESS_CODE_REVISION` before redeploying to invalidate previous classroom access codes. Do not commit real values.
 
 ## Verification before a pull request
 
@@ -45,10 +45,20 @@ npm run test
 npm run logic:distribution
 npm run test:e2e
 npm run test:visual
-MASTER_CODE=your-private-master-code npm run build
+MASTER_CODE=your-private-master-code ACCESS_CODE_REVISION=your-private-revision npm run build
+MASTER_CODE=your-private-master-code ACCESS_CODE_REVISION=your-private-revision npm run privacy:scan
 ```
 
-If a browser dependency is unavailable, note the exact blocker in the PR.
+If the default preview port is busy, run a strict external preview and point Playwright at it:
+
+```bash
+MASTER_CODE=development-master-code ACCESS_CODE_REVISION=development-access-code-revision VITE_ENABLE_FIXTURES=true npm run build
+npm run preview -- --host 127.0.0.1 --port 4174 --strictPort
+PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:e2e
+PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:visual
+```
+
+If an optional browser dependency is unavailable, note the exact blocker in the PR. WebKit/Safari is not required for the current Galaxy Tab / Android Chromium classroom target.
 
 ## Pull request checklist
 
@@ -68,10 +78,9 @@ That file is the single source for:
 - the subtle global ownership mark
 - the low-opacity screen watermark
 - the result-image footer
-- the copied detailed-report footer
 
-The AI prompt body intentionally does not append the ownership text. Preserve that behavior for forks.
+Clipboard text payloads intentionally do not append the ownership text, including detailed-report copy, AI prompt copy, and manual-copy fallback text. Preserve that behavior for forks.
 
 ## Educator pilot feedback
 
-Use [`docs/PILOT_FEEDBACK_TEMPLATE.md`](docs/PILOT_FEEDBACK_TEMPLATE.md) for classroom or educator pilot notes. Pilot notes and GitHub issues must use aggregated observations, synthetic examples, or generalized wording only. Do not paste real student answers, nicknames, memos, screenshots with personal information, or copied prompts.
+Use [`docs/PILOT_FEEDBACK_TEMPLATE.md`](docs/PILOT_FEEDBACK_TEMPLATE.md) for future classroom or educator pilot notes. Real teacher/student pilot validation is outside the current local verification scope. Pilot notes and GitHub issues must use aggregated observations, synthetic examples, or generalized wording only. Do not paste real student answers, nicknames, memos, screenshots with personal information, or copied prompts.
