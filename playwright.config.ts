@@ -1,6 +1,14 @@
 import { defineConfig, devices } from "@playwright/test";
 
-const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? "http://127.0.0.1:4173";
+const previewHost = "127.0.0.1";
+const playwrightPort = process.env.PLAYWRIGHT_PORT ?? "4173";
+
+if (!/^\d+$/.test(playwrightPort)) {
+  throw new Error("PLAYWRIGHT_PORT must be a numeric TCP port.");
+}
+
+const defaultBaseURL = `http://${previewHost}:${playwrightPort}`;
+const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? defaultBaseURL;
 const useExternalServer = Boolean(process.env.PLAYWRIGHT_BASE_URL);
 const enableWebKit = process.env.ENABLE_WEBKIT === "true";
 
@@ -23,7 +31,7 @@ export default defineConfig({
     : {
       webServer: {
         command:
-          "MASTER_CODE=development-master-code VITE_ENABLE_FIXTURES=true npm run build && npm run preview -- --host 127.0.0.1",
+          `MASTER_CODE=development-master-code ACCESS_CODE_REVISION=development-access-code-revision VITE_ENABLE_FIXTURES=true npm run build && npm run preview -- --host ${previewHost} --port ${playwrightPort} --strictPort`,
         url: baseURL,
         reuseExistingServer: !process.env.CI,
         timeout: 120_000,

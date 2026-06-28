@@ -10,9 +10,9 @@ export function AppHeader() {
             <Doodle kind="underline-yellow" className="brandUnderline" />
           </div>
           <div className="brandDivider" aria-hidden="true" />
-          <p className="brandSubtitle">자기주도학습 유형 진단</p>
+          <p className="brandSubtitle">자기주도학습 전략 탐색</p>
         </div>
-        <div className="headerMeta" aria-label="진단 정보">
+        <div className="headerMeta" aria-label="활동 정보">
           <Doodle kind="star" className="headerStar" />
           <span>총 16문항</span>
           <span className="metaDivider" aria-hidden="true" />

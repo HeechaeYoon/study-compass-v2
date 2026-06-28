@@ -8,6 +8,7 @@ type ConfirmModalProps = {
   cancelLabel: string;
   onCancel: () => void;
   onConfirm: () => void;
+  onEscape?: () => void;
   children?: ReactNode;
 };
 
@@ -34,6 +35,7 @@ export function ConfirmModal({
   cancelLabel,
   onCancel,
   onConfirm,
+  onEscape,
   children,
 }: ConfirmModalProps) {
   const confirmRef = useRef<HTMLButtonElement | null>(null);
@@ -55,7 +57,7 @@ export function ConfirmModal({
 
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        onCancel();
+        (onEscape ?? onCancel)();
         return;
       }
 
@@ -94,7 +96,7 @@ export function ConfirmModal({
         previousActiveElement.focus({ preventScroll: true });
       }
     };
-  }, [onCancel, open]);
+  }, [onCancel, onEscape, open]);
 
   if (!open) return null;
 

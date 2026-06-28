@@ -114,7 +114,7 @@ test.describe("visual fixtures", () => {
         ).toBeInViewport();
       }
       if (fixture === "prompt") {
-        await expect(page.getByText(/입력한 내용과 메모는/)).toBeInViewport();
+        await expect(page.getByText(/로컬에서만 미리 만들어요/)).toBeInViewport();
       }
       await captureViewport(page, fixture, "390x844");
     }
@@ -132,7 +132,7 @@ test.describe("visual fixtures", () => {
           page.getByRole("heading", { name: "지금의 공부 길을 한눈에 보기" }),
         ).toBeInViewport();
       } else {
-        await expect(page.getByText(/입력한 내용과 메모는/)).toBeInViewport();
+        await expect(page.getByText(/로컬에서만 미리 만들어요/)).toBeInViewport();
       }
       await captureViewport(page, fixture, "360x740");
     }

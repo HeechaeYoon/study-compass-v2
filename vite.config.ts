@@ -55,10 +55,16 @@ export function buildAccessVerifierDefine({
   const accessCodeRevision =
     env.ACCESS_CODE_REVISION && env.ACCESS_CODE_REVISION.length > 0
       ? env.ACCESS_CODE_REVISION
-      : DEVELOPMENT_ACCESS_CODE_REVISION;
+      : isProductionBuild
+        ? ""
+        : DEVELOPMENT_ACCESS_CODE_REVISION;
 
   if (isProductionBuild && masterCode.length === 0) {
     throw new Error("MASTER_CODE must be set for production builds.");
+  }
+
+  if (isProductionBuild && accessCodeRevision.length === 0) {
+    throw new Error("ACCESS_CODE_REVISION must be set for production builds.");
   }
 
   return {

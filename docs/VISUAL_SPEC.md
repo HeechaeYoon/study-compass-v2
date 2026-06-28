@@ -119,7 +119,7 @@ The background must remain quiet. If the texture is obvious at first glance, it 
 ### Left cluster
 
 - Main title: `나의 공부 스타일을 탐색하는 시간`
-- Subtitle: `자기주도학습 유형 진단`
+- Subtitle: `자기주도학습 전략 탐색`
 - Vertical divider between title and subtitle
 - Yellow hand-drawn underline below the title
 - The underline starts around 15% into the title and extends to 96%.
@@ -156,7 +156,7 @@ The background must remain quiet. If the texture is obvious at first glance, it 
 
 ### Header responsive behavior
 
-- At 1024–1150px: main title 26px; right metadata 12px; subtitle can shorten to `자기주도학습 진단`.
+- At 1024–1150px: main title 26px; right metadata 12px; subtitle can shorten to `학습 전략 탐색`.
 - At 560–899px landscape: use compact spacing, smaller header text, and vertical page scroll while preserving the wide composition.
 - At 360px+ phone portrait: keep the same app flow but stack the composition into a readable one-column layout.
 - Below 360px portrait or below 560px landscape: replace app with unsupported-width guidance.
@@ -477,8 +477,8 @@ Behind cards:
 - Four evenly spaced items:
   - person icon: `이름 대신 닉네임 사용`
   - shield: `응답 데이터는 익명으로 처리`
-  - lock: `진단 결과는 본인에게만 제공`
-  - trash: `저장되지 않으며, 진단 후 삭제`
+  - lock: `활동 결과는 본인에게만 제공`
+  - trash: `저장되지 않으며, 활동 후 삭제`
 
 Because the actual app can save locally, change the last two lines to accurate language:
 
@@ -595,7 +595,7 @@ gap: 34px;
 
 ### Left result narrative
 
-1. Eyebrow: `진단이 완료되었어요!`
+1. Eyebrow: `탐색이 완료되었어요!`
 2. Line: `현재 답변으로 본 학습 전략 지도`
 3. Type name: large 38px
 4. Gray star doodle

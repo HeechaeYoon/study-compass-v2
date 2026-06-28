@@ -72,7 +72,7 @@ export function ResultScreen({
     <main className="screenSurface resultSurface" data-testid="screen-surface">
       <section className="resultTop">
         <div className="resultNarrative">
-          <p className="resultEyebrow">진단이 완료되었어요!</p>
+          <p className="resultEyebrow">탐색이 완료되었어요!</p>
           <p className="resultLead">{headline}</p>
           <div className="typeNameWrap">
             <h2 className="resultType" data-screen-heading tabIndex={-1}>

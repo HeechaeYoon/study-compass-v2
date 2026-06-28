@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { createFixtureResult } from "../../src/app/fixtures";
 import {
+  CLASSROOM_COPYRIGHT_NOTICE,
+  DAISY_COPYRIGHT_TEXT,
+} from "../../src/data/ownership";
+import {
   buildAiPrompt,
   buildPrompt,
   buildQuestionAnswerContext,
@@ -36,6 +40,13 @@ describe("AI prompt", () => {
       expect(prompt).toContain("문항과 답변 전체 맥락");
       expect(prompt).toContain("앱은 프롬프트를 자동으로 전송하지 않습니다");
     }
+  });
+
+  it("does not append classroom ownership text to prompt copy", () => {
+    const prompt = buildPrompt(createFixtureResult(), EMPTY_PROMPT_INPUTS, "studyPlan");
+
+    expect(prompt).not.toContain(DAISY_COPYRIGHT_TEXT);
+    expect(prompt).not.toContain(CLASSROOM_COPYRIGHT_NOTICE);
   });
 
   it("includes all optional inputs when set", () => {

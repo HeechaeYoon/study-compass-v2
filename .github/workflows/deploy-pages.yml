@@ -56,6 +56,12 @@ jobs:
           MASTER_CODE: ${{ secrets.MASTER_CODE }}
           ACCESS_CODE_REVISION: ${{ vars.ACCESS_CODE_REVISION }}
 
+      - name: Privacy and secret scan
+        run: npm run privacy:scan
+        env:
+          MASTER_CODE: ${{ secrets.MASTER_CODE }}
+          ACCESS_CODE_REVISION: ${{ vars.ACCESS_CODE_REVISION }}
+
       - name: Setup Pages
         if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         uses: actions/configure-pages@v5

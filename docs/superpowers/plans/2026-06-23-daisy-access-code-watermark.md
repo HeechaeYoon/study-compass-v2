@@ -25,8 +25,8 @@
 
 ## Tasks
 
-- [ ] Add `.env` ignores and tracked `.env.example` with `MASTER_CODE=replace-with-private-master-code` and `ACCESS_CODE_REVISION=1`.
-- [ ] Update `vite.config.ts` to read unprefixed `MASTER_CODE`, compute `SHA-256("study-compass-v2:" + MASTER_CODE)`, inject `__ACCESS_VERIFIER_DIGEST__`, read `ACCESS_CODE_REVISION` as a separate code seed digest, and fail production builds when the master code is missing.
+- [ ] Add `.env` ignores and tracked `.env.example` with `MASTER_CODE=replace-with-private-master-code` and `ACCESS_CODE_REVISION=replace-to-revoke`.
+- [ ] Update `vite.config.ts` to read unprefixed `MASTER_CODE`, compute `SHA-256("study-compass-v2:" + MASTER_CODE)`, inject `__ACCESS_VERIFIER_DIGEST__`, read `ACCESS_CODE_REVISION` as a separate code seed digest, and fail production builds when either production access-code value is missing.
 - [ ] Add `src/vite-env.d.ts` declarations for injected constants.
 - [ ] Write failing unit tests for access-code behavior: uppercase normalization, invalid prefix, signature mismatch, valid 1-day/7-day code, expiry at local midnight after valid days, and day range `1-90`.
 - [ ] Implement `src/domain/accessCode.ts` with 6-character uppercase classroom codes derived from issue date, validity days, and code seed digest.
@@ -37,7 +37,7 @@
 - [ ] Create `DaisyOwnershipMark` using exact text: `© Daisy Teacher. All rights reserved. 무단 복제 및 재배포 금지`; trigger admin modal after 7 clicks/keyboard activations within 4 seconds.
 - [ ] Wire `App.tsx`: load access pass on mount, render access gate before start when no valid pass, bypass only for fixture routes, keep master code out of React state after verification.
 - [ ] Add subtle global watermark CSS: fixed bottom ownership mark, low-opacity surface watermark, no overlap with controls, responsive behavior for portrait and compact landscape.
-- [ ] Add the same copyright text to result PNG export and copied detailed report footer. Do not append it to the AI prompt body.
+- [ ] Add the same copyright text to result PNG export. Do not append it to clipboard payloads, including copied detailed reports, AI prompts, or manual-copy fallback text.
 - [ ] Add fixture support for `/?fixture=access` and include it in visual tests.
 - [ ] Update E2E helper to unlock via admin modal, then run existing standard flow. Add tests for invalid code rejection, generated code acceptance, expired code rejection, localStorage failure session fallback, and no external network requests.
 - [ ] Update visual tests to capture access gate and assert ownership mark/watermark does not overlap core content at `1280x800`, `390x844`, and compact landscape.

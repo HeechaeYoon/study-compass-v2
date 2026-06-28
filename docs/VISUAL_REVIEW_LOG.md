@@ -38,15 +38,17 @@
 | Compact landscape | Responsive | Pass | Phone landscape was blocked by the old under-900px guidance rule; 560px prompt fit was a clipping risk. | Added a 560–899px landscape compact mode, hid overflow-prone pencil decoration at the lower bound, and added 560px bounding-box coverage. | `tests/visual/visual.spec.ts` |
 | Phone portrait | Responsive | Pass | 360px+ phone portrait was previously blocked by the guidance screen; review found inherited scroll and too-small touch targets at the minimum width. | Added portrait-specific layouts for Start, Question, Result, Detail, and Prompt, reset screen-transition scroll, kept core portrait controls at 44px+, captured 390×844 fixture screenshots plus 360×740 detail/prompt screenshots, and kept guidance below 360px portrait and below 560px landscape. | `artifacts/visual/start-390x844.png`, `artifacts/visual/detail-360x740.png` |
 | Daisy access | Access | Pass | New access-code gate and copyright watermark needed to fit the warm paper system without blocking student tasks. | Added `access` fixture capture, subtle ownership mark, exact full-text pseudo-element watermark, and responsive access gate/admin styling. | `artifacts/visual/access-1280x800.png`, `tests/visual/visual.spec.ts` |
+| Maintenance polish | Result/Prompt | Pass | Result secondary actions and prompt explanatory copy were slightly dense; font payload was high. | Kept the AI prompt CTA as the strongest result action, lightened secondary actions, compressed prompt privacy/explanation copy, renamed the badge to `로컬 미리보기`, and reduced bundled font assets while preserving the warm paper/notebook design. | `artifacts/visual/result-1280x800.png`, `artifacts/visual/prompt-1280x800.png` |
+| Accessibility review fix | Result/Detail/Prompt | Pass | Independent review found sub-44px controls in canonical/compact landscape and an unlabeled manual-copy textarea. | Raised core result/detail/prompt controls to 44px targets on tablet and compact landscape, kept prompt utilities inside the 1280×800 surface by using the two-column form grid, and added manual-copy label/Escape coverage. | `tests/e2e/app.spec.ts`, `artifacts/visual/prompt-1280x800.png` |
 
 ## Automated Metrics
 
 | Screen | SSIM | Pixel mismatch | Actual | Diff |
 |---|---:|---:|---|---|
-| Start | 0.4132 | 0.1049 | `artifacts/visual/start-surface.png` | `artifacts/visual/start-diff.png` |
-| Question | 0.4779 | 0.0810 | `artifacts/visual/question-surface.png` | `artifacts/visual/question-diff.png` |
-| Result | 0.4953 | 0.0875 | `artifacts/visual/result-surface.png` | `artifacts/visual/result-diff.png` |
-| Prompt | 0.3242 | 0.1068 | `artifacts/visual/prompt-surface.png` | `artifacts/visual/prompt-diff.png` |
+| Start | 0.4145 | 0.1047 | `artifacts/visual/start-surface.png` | `artifacts/visual/start-diff.png` |
+| Question | 0.4742 | 0.0814 | `artifacts/visual/question-surface.png` | `artifacts/visual/question-diff.png` |
+| Result | 0.4834 | 0.0926 | `artifacts/visual/result-surface.png` | `artifacts/visual/result-diff.png` |
+| Prompt | 0.3131 | 0.1079 | `artifacts/visual/prompt-surface.png` | `artifacts/visual/prompt-diff.png` |
 
 The SSIM values are advisory because the reference is a scaled montage with annotations. Pixel mismatch ratios remain within the documented advisory limit.
 
@@ -56,13 +58,13 @@ Selected:
 
 ```text
 Display: Gowun Dodum Korean 400
-Body: Pretendard 400 and 700, with system Korean fallbacks
+Body: Pretendard when locally/system available, then Apple SD Gothic Neo / Noto Sans KR / Malgun Gothic / sans-serif fallbacks
 ```
 
 Reason:
 
 ```text
-Gowun Dodum gives the hand-drawn Korean title character closest to the board. Pretendard keeps dense UI text readable. Extra Pretendard weights were removed after accessibility/performance review to reduce font payload.
+Gowun Dodum gives the hand-drawn Korean title character closest to the board. Bundled Pretendard was removed in the maintenance pass because its two WOFF2 assets dominated the payload; the body stack still prefers local/system Pretendard when available and otherwise uses Korean system sans fallbacks. Production font assets dropped from 1,963,524 bytes to 406,476 bytes with no runtime font CDN.
 ```
 
 ## Asset Decision

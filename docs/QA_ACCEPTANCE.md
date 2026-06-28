@@ -410,7 +410,7 @@ Mock localStorage exception and verify app remains usable.
 
 ### E2E-06 Responsive phone support
 
-At 390×844 and 360×740 portrait, show the app and allow the core flow. At 359px portrait and below-560px landscape, show guidance and hide the full app. Portrait transitions into result, detail, and prompt should start at the top of the new screen, and core touch targets should remain at least 44px tall.
+At 390×844 and 360×740 portrait, show the app and allow the core flow. At 359px portrait and below-560px landscape, show guidance and hide the full app. Portrait transitions into result, detail, and prompt should start at the top of the new screen. Core result/detail/prompt controls should remain at least 44px tall on the canonical tablet view and compact landscape view as well as portrait.
 
 ---
 
@@ -541,9 +541,10 @@ Suggested target:
 - deployed version has no fixture mode unless intentionally enabled
 - privacy behavior remains unchanged in production
 - production build receives `MASTER_CODE` through environment/secret, not source code
-- production build receives `ACCESS_CODE_REVISION` through environment/variable, not source code, when revocation is needed
+- production build receives `ACCESS_CODE_REVISION` through environment/variable, not source code; production build fails when it is missing
 - built bundle does not contain the raw production master code
 - built bundle does not contain the raw access-code revision value
+- `npm run privacy:scan` passes after build
 
 ## 14.1 Access-code and ownership acceptance
 
@@ -554,8 +555,15 @@ Suggested target:
 - admin modal generates a session classroom link, shows a QR code for that link, and supports copying the link/code bundle plus QR image with fallback
 - access pass stores only code and revision fingerprints plus expiry
 - access pass is ignored when its revision/session fingerprint differs from the current link
-- the copyright text appears on screen, in the low-opacity watermark, on exported result images, and in copied detailed reports
-- AI prompt body does not append the copyright text
+- the copyright text appears on screen, in the low-opacity watermark, and on exported result images
+- detailed-report copy, AI prompt copy, and manual-copy fallback text do not append the copyright text
+
+## 14.2 Browser and pilot scope
+
+- current classroom-device assumption is Galaxy Tab / Android Chromium-class tablets
+- Chromium/Edge/Android Chromium verification remains required
+- WebKit/Safari is optional future compatibility work, not a hard gate for this scope
+- real teacher/student classroom pilot validation remains future work and is not required for this local verification pass
 
 ---
 

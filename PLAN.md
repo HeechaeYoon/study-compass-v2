@@ -179,8 +179,8 @@ Notes:
 ## 14. Daisy Ownership And Access Codes
 
 - [x] Added exact copyright text across the app: `© Daisy Teacher. All rights reserved. 무단 복제 및 재배포 금지`.
-- [x] Added subtle global ownership mark, low-opacity screen watermark, result-image footer, and copied detailed-report footer.
-- [x] Kept the AI prompt body free of the copyright footer.
+- [x] Added subtle global ownership mark, low-opacity screen watermark, and result-image footer. Clipboard payloads now intentionally omit the copyright footer.
+- [x] Kept the AI prompt body and copied text payloads free of the copyright footer.
 - [x] Added required student access gate before the start screen.
 - [x] Added hidden 7-activation admin entry on the ownership mark.
 - [x] Added admin modal with `MASTER_CODE` verification, 6-character 1-90 day code generation, valid-until display, copy, and manual selection.
@@ -220,7 +220,7 @@ Notes:
 ## 17. OSS Reuse And Pilot Feedback Follow-up
 
 - [x] Created branch `chore/oss-reuse-and-feedback` from current `main`.
-- [x] Addressed issue #2 by making `src/data/ownership.ts` the single source for classroom ownership copy, including the visible mark, watermark, export footer, and copied detailed-report footer.
+- [x] Addressed issue #2 by making `src/data/ownership.ts` the single source for classroom ownership copy, including the visible mark, watermark, and export footer while clipboard payloads omit the footer.
 - [x] Addressed issue #3 by adding `docs/PILOT_FEEDBACK_TEMPLATE.md` for non-identifying educator pilot notes.
 - [x] Updated README, contributing docs, and manifest to document fork branding and non-identifying feedback workflows.
 - [x] Verified locally with `git diff --check`, `npm run typecheck`, `npm run lint`, `npm run test`, `npm run logic:distribution`, `MASTER_CODE=development-master-code ACCESS_CODE_REVISION=development-access-code-revision npm run build`, `npm audit --audit-level=moderate`, `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:e2e`, and `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4174 npm run test:visual`.
@@ -252,3 +252,22 @@ Notes:
 - [x] Kept `README.md` English-first for international OSS readers.
 - [x] Added a short Korean 안내 section near the top for Korean teachers/students, emphasizing local-only student data and current-response coaching language.
 - [x] Verified locally with `git diff --check`, `npm run typecheck`, `npm run lint`, `npm run test`, `MASTER_CODE=development-master-code ACCESS_CODE_REVISION=development-access-code-revision npm run build`, and `npm audit --audit-level=moderate`.
+
+## 22. README Korean Explanation
+
+- [x] Expanded the top Korean section from a brief 안내 into a fuller 설명 covering classroom use, 16-question flow, five learning-strategy axes, local-only data handling, no tracking/external AI calls, and current-response coaching language.
+
+## 23. Final Maintenance Improvements
+
+- [x] Removed Daisy ownership/copyright footer from clipboard payloads for detailed-report copy, AI prompt copy, and manual-copy fallback text while keeping visible ownership marks, screen watermark, and result image export footer.
+- [x] Softened student-facing runtime copy from `진단` framing to `탐색`/`활동`/`학습 전략` language while preserving safety copy that explains this is not a personality or psychological test.
+- [x] Strengthened production access-code configuration so `MASTER_CODE` and `ACCESS_CODE_REVISION` are both required for production builds; dev/serve/test still use deterministic development values.
+- [x] Updated Playwright preview handling with explicit `--port` and `--strictPort`, `PLAYWRIGHT_PORT`, and `PLAYWRIGHT_BASE_URL` support; confirmed default 4173 conflict now fails clearly and 4174 external preview works.
+- [x] Added `scripts/privacy-scan.mjs`, `npm run privacy:scan`, CI scan step, and tests/docs for privacy/secret/dist scanning.
+- [x] Tightened `privacy:scan` so release scans fail when `dist/` has not been built.
+- [x] Reduced production font assets from three WOFF2 files / 1,963,524 bytes to one bundled Gowun Dodum WOFF2 file / 406,476 bytes by removing bundled Pretendard and relying on the Pretendard/system Korean fallback stack for body text.
+- [x] Lightly adjusted result action hierarchy and prompt screen density without changing the main product flow or adding a UI framework.
+- [x] Fixed independent accessibility review blockers by adding an accessible name and Escape-close behavior to the manual-copy fallback, sharing `PLAYWRIGHT_PORT` with the E2E privacy-origin assertion, and keeping result/detail/prompt controls at 44px+ on canonical tablet and compact landscape viewports.
+- [x] Documented that WebKit/Safari and real teacher/student pilot validation are optional/future work, not current acceptance gates; Chromium/Edge/Android Chromium-class tablet validation remains required.
+- [x] Verified with `git diff --check`, `npm run typecheck`, `npm run lint`, `npm run test`, `npm run logic:distribution`, `MASTER_CODE=development-master-code ACCESS_CODE_REVISION=development-access-code-revision npm run build`, `npm run privacy:scan`, `npm audit --audit-level=moderate`, `PLAYWRIGHT_PORT=4174 npm run test:e2e`, and `PLAYWRIGHT_PORT=4174 npm run test:visual`.
+- [x] WebKit/Safari validation and real class pilot validation were intentionally not run for this pass.
